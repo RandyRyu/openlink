@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataForge Package — 프로젝트 통합 보고서</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1218;
+    --bg3: #151a22;
+    --bg4: #1c2330;
+    --border: #222c3a;
+    --border2: #2a3547;
+    --text: #c8d4e0;
+    --text2: #8a9bb0;
+    --text3: #506070;
+    --accent: #3d8ef0;
+    --accent2: #1a5fc8;
+    --green: #2dd4a0;
+    --yellow: #f0b440;
+    --red: #f05050;
+    --purple: #a080f0;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans KR', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 12, 16, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(61, 142, 240, 0.1);
+    border: 1px solid rgba(61, 142, 240, 0.3);
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+
+  .header-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text2);
+    letter-spacing: 0.02em;
+  }
+
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+
+  nav {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  nav a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-decoration: none;
+    padding: 6px 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 64px 40px 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(61, 142, 240, 0.06) 0%, transparent 70%),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px);
+    pointer-events: none;
+  }
+
+  .hero-kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-size: 36px;
+    font-weight: 700;
+    color: #e8f0f8;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--text2);
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    padding: 20px 32px;
+    border: 1px solid var(--border);
+    border-right: none;
+    background: var(--bg2);
+    min-width: 140px;
+  }
+  .stat:first-child { border-radius: 6px 0 0 6px; }
+  .stat:last-child { border-right: 1px solid var(--border); border-radius: 0 6px 6px 0; }
+
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .section {
+    padding: 48px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    background: rgba(61, 142, 240, 0.08);
+    border: 1px solid rgba(61, 142, 240, 0.2);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #dce8f4;
+    letter-spacing: -0.01em;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: var(--text3);
+    font-family: var(--mono);
+    margin-left: auto;
+  }
+
+  /* ── PROGRESS CARD ── */
+  .progress-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .progress-card:hover { border-color: var(--border2); }
+
+  .progress-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+
+  .progress-card-info {}
+
+  .progress-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #dce8f4;
+    margin-bottom: 4px;
+  }
+
+  .progress-card-desc {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  .progress-pct {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .bar-wrap {
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .bar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+    filter: blur(2px);
+  }
+
+  .c-blue  { background: var(--accent); }
+  .c-green { background: var(--green); }
+  .c-yellow{ background: var(--yellow); }
+  .c-red   { background: var(--red); }
+  .c-purple{ background: var(--purple); }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+  }
+
+  /* ── ITEM ── */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text2);
+    padding: 6px 0;
+  }
+
+  .item-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .dot-done  { background: var(--green); box-shadow: 0 0 6px rgba(45,212,160,0.5); }
+  .dot-wip   { background: var(--yellow); box-shadow: 0 0 6px rgba(240,180,64,0.4); }
+  .dot-todo  { background: var(--text3); }
+  .dot-drop  { background: var(--red); opacity: 0.6; }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  .tag-done   { color: var(--green);  border-color: rgba(45,212,160,0.3);  background: rgba(45,212,160,0.08); }
+  .tag-wip    { color: var(--yellow); border-color: rgba(240,180,64,0.3);  background: rgba(240,180,64,0.08); }
+  .tag-todo   { color: var(--text3);  border-color: var(--border);         background: var(--bg3); }
+  .tag-change { color: var(--purple); border-color: rgba(160,128,240,0.3); background: rgba(160,128,240,0.08); }
+  .tag-drop   { color: var(--red);    border-color: rgba(240,80,80,0.3);   background: rgba(240,80,80,0.08); }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: middle;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .data-table td:first-child { color: var(--text); font-weight: 500; }
+
+  .tbl-bar-wrap {
+    height: 3px;
+    background: var(--bg4);
+    border-radius: 2px;
+    overflow: hidden;
+    width: 80px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .tbl-bar { height: 100%; border-radius: 2px; }
+
+  /* ── CHANGE LOG ── */
+  .change-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .change-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .change-item:last-child { border-bottom: none; }
+
+  .change-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 0;
+    padding-right: 24px;
+    border-right: 1px solid var(--border);
+  }
+
+  .change-val {
+    padding: 14px 0 14px 24px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .change-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .arrow { color: var(--text3); font-size: 11px; }
+
+  .step-old {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    background: rgba(240,80,80,0.08);
+    border: 1px solid rgba(240,80,80,0.2);
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .step-new {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    background: rgba(45,212,160,0.08);
+    border: 1px solid rgba(45,212,160,0.25);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  /* ── PENDING ── */
+  .pending-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .pending-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yellow);
+    border-radius: 0 6px 6px 0;
+    padding: 16px 20px;
+  }
+
+  .pending-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .pending-card-desc {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  /* ── DOCS ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .doc-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .doc-card:hover { border-color: var(--border2); }
+
+  .doc-icon {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    background: rgba(61, 142, 240, 0.08);
+    border: 1px solid rgba(61, 142, 240, 0.2);
+    padding: 3px 8px;
+    border-radius: 3px;
+    width: fit-content;
+  }
+
+  .doc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .doc-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ── OVERVIEW GRID ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 768px) {
+    .overview-grid { grid-template-columns: 1fr; }
+  }
+
+  .info-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+  }
+
+  .info-block h3 {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  .kv-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .kv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .kv-key {
+    color: var(--text3);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .kv-val {
+    color: var(--text);
+    text-align: right;
+    font-size: 13px;
+  }
+
+  /* ── SUMMARY TABLE ── */
+  .summary-section {
+    margin-top: 40px;
+  }
+
+  .summary-section h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeUp 0.5s ease both; }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.30s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+  .section:nth-child(8) { animation-delay: 0.40s; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .cols2 { grid-template-columns: 1fr; } }
+
+  .tech-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin: 2px;
+  }
+
+  .phase-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .phase-row:last-child { border-bottom: none; }
+
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .phase-name {
+    color: var(--text);
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .phase-desc {
+    color: var(--text3);
+    font-size: 12px;
+    flex: 2;
+  }
+
+  .priority-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .p0 { color: var(--green);  background: rgba(45,212,160,0.1); border: 1px solid rgba(45,212,160,0.25); }
+  .p1 { color: var(--yellow); background: rgba(240,180,64,0.1); border: 1px solid rgba(240,180,64,0.25); }
+  .p2 { color: var(--text3);  background: var(--bg3); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <span class="logo-badge">DataForge</span>
+    <span class="header-title">Package · 프로젝트 통합 보고서</span>
+  </div>
+  <nav>
+    <a href="#overview">개요</a>
+    <a href="#docs">문서</a>
+    <a href="#progress">진행현황</a>
+    <a href="#arch">아키텍처</a>
+    <a href="#infra">인프라</a>
+    <a href="#changes">변경사항</a>
+    <a href="#pending">미완항목</a>
+  </nav>
+  <span class="header-meta">2026.03.11 기준</span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Project Report · DPE-110326</div>
+  <h1>DataForge <span>Package</span><br>외부 제조업 Edge 서비스</h1>
+  <p class="hero-sub">외부 고객사(동국제강 등)에 빠른 구축을 위한 설치형 패키지 제품 구현 — OPC-UA 수집부터 Kafka 스트리밍, 고객 서비스까지 통합 제공</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">~70%</div>
+      <div class="stat-label">전체 진행률</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">37W</div>
+      <div class="stat-label">전체 일정</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">5</div>
+      <div class="stat-label">문서 수</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">39</div>
+      <div class="stat-label">구축 파드 수</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">2,500만</div>
+      <div class="stat-label">일일 수집 건수</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 1. 프로젝트 개요 ── -->
+<section class="section" id="overview">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>프로젝트 개요</h2>
+  </div>
+
+  <div class="overview-grid">
+    <div class="info-block">
+      <h3>기본 정보</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">프로젝트명</span><span class="kv-val">DataForge Package</span></div>
+        <div class="kv-row"><span class="kv-key">문서 ID</span><span class="kv-val" style="font-family:var(--mono); color:var(--accent)">DPE-110326-051242</span></div>
+        <div class="kv-row"><span class="kv-key">일정</span><span class="kv-val">2025.09 ~ 2026.06</span></div>
+        <div class="kv-row"><span class="kv-key">총 기간</span><span class="kv-val">37주 (6개월)</span></div>
+        <div class="kv-row"><span class="kv-key">Main 담당</span><span class="kv-val">@유병재</span></div>
+        <div class="kv-row"><span class="kv-key">Sub 담당</span><span class="kv-val">@안종성</span></div>
+        <div class="kv-row"><span class="kv-key">방법론</span><span class="kv-val">CMMI 기반</span></div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3>3대 목표</h3>
+      <div class="kv-list">
+        <div class="kv-row" style="align-items:flex-start; flex-direction:column; gap:4px">
+          <span class="tag tag-done" style="margin-bottom:4px">Pack 1</span>
+          <span class="kv-val" style="text-align:left">Pipeline 구현 간소화 Pack</span>
+        </div>
+        <div class="divider" style="margin:8px 0"></div>
+        <div class="kv-row" style="align-items:flex-start; flex-direction:column; gap:4px">
+          <span class="tag tag-wip" style="margin-bottom:4px">Pack 2</span>
+          <span class="kv-val" style="text-align:left">Infra Pack — 무중단 아키텍처, 이중화</span>
+        </div>
+        <div class="divider" style="margin:8px 0"></div>
+        <div class="kv-row" style="align-items:flex-start; flex-direction:column; gap:4px">
+          <span class="tag tag-wip" style="margin-bottom:4px">Pack 3</span>
+          <span class="kv-val" style="text-align:left">서비스 고도화 — 데이터 표준화, 운영/고객 서비스 분리, Tag 수집 간소화</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <h3>추진 배경 (AS-IS → TO-BE)</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:4px;">
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">문제 (AS-IS)</div>
+        <div class="item"><span class="item-dot dot-drop"></span>운영 Infra 비용 과다</div>
+        <div class="item"><span class="item-dot dot-drop"></span>구축 공수 과다</div>
+        <div class="item"><span class="item-dot dot-drop"></span>고객 서비스 부족</div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">4대 전략</div>
+        <div class="item"><span class="item-dot dot-done"></span>인프라 단순화</div>
+        <div class="item"><span class="item-dot dot-done"></span>인프라 체계화</div>
+        <div class="item"><span class="item-dot dot-done"></span>인프라 안정화</div>
+        <div class="item"><span class="item-dot dot-done"></span>인프라 효율화</div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">완료 조건</div>
+        <div class="item"><span class="item-dot dot-wip"></span>DataForge 서비스 통합 테스트 통과</div>
+        <div class="item"><span class="item-dot dot-todo"></span>세부 기준 확정 필요</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 2. 문서 목록 ── -->
+<section class="section" id="docs">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>문서 목록</h2>
+    <span class="section-sub">총 5개 파일</span>
+  </div>
+
+  <div class="doc-grid">
+    <div class="doc-card">
+      <div class="doc-icon">기획/설계/계획</div>
+      <div class="doc-title">기획설계 계획서<br><span style="color:var(--text3); font-size:12px; font-weight:400;">통합 문서 (148페이지)</span></div>
+      <div class="doc-meta">DPE-110326-051242.pdf</div>
+      <div><span class="tag tag-done">완료</span></div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">수집 프로세스</div>
+      <div class="doc-title">Benthos Stream Manager README<br><span style="color:var(--text3); font-size:12px; font-weight:400;">개발 현황 문서</span></div>
+      <div class="doc-meta">readmemda4.pdf</div>
+      <div><span class="tag tag-done">완료</span></div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">수집 프로세스</div>
+      <div class="doc-title">Benthos Stream Manager<br><span style="color:var(--text3); font-size:12px; font-weight:400;">구조 설계 요약</span></div>
+      <div class="doc-meta">benthosstreammanagera4.pdf</div>
+      <div><span class="tag tag-done">완료</span></div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">서비스 개발</div>
+      <div class="doc-title">DF-Stream 요구사항 정의서 v1.2<br><span style="color:var(--text3); font-size:12px; font-weight:400;">기능/비기능 요구사항</span></div>
+      <div class="doc-meta">dfstreamrequirementsdefinitiona4.pdf · 2026-03-11</div>
+      <div><span class="tag tag-wip">진행중</span></div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">서비스 개발</div>
+      <div class="doc-title">DF-Stream 아키텍처 설계서 v1.0<br><span style="color:var(--text3); font-size:12px; font-weight:400;">기술 스택 및 시스템 아키텍처</span></div>
+      <div class="doc-meta">dfstreama4.pdf · 2026-03-11</div>
+      <div><span class="tag tag-wip">진행중</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. 단계별 진행 현황 ── -->
+<section class="section" id="progress">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>단계별 진행 현황</h2>
+  </div>
+
+  <!-- 기안 -->
+  <div class="progress-card">
+    <div class="progress-card-top">
+      <div class="progress-card-info">
+        <div class="progress-card-title">① 기안 (Planning)</div>
+        <div class="progress-card-desc">목적 · 목표 · 전략 · 완료조건 수립</div>
+      </div>
+      <div class="progress-pct" style="color:var(--green)">90%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-green" style="width:90%"></div></div>
+    <div class="detail-grid">
+      <div class="item"><span class="item-dot dot-done"></span>목적/목표/3대 Pack 정의 완료</div>
+      <div class="item"><span class="item-dot dot-done"></span>AS-IS/TO-BE 분석, 4대 전략 수립</div>
+      <div class="item"><span class="item-dot dot-done"></span>Data Delivery Service 구축 목적 문서 작성</div>
+      <div class="item"><span class="item-dot dot-done"></span>Agentic AI 비전 문서 (Ontology 기반, Palantir 벤치마킹)</div>
+      <div class="item"><span class="item-dot dot-done"></span>CMMI 방법론 기반 수행 순서 정의</div>
+      <div class="item"><span class="item-dot dot-todo"></span>완료조건 세부 기준 미확정</div>
+    </div>
+  </div>
+
+  <!-- 요구사항 -->
+  <div class="progress-card">
+    <div class="progress-card-top">
+      <div class="progress-card-info">
+        <div class="progress-card-title">② 요구사항 정리 (Requirements)</div>
+        <div class="progress-card-desc">DF-Stream 요구사항 정의서 v1.2 기준</div>
+      </div>
+      <div class="progress-pct" style="color:var(--accent)">75%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-blue" style="width:75%"></div></div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">기능별 요구사항 우선순위</div>
+      <div class="phase-row">
+        <span class="phase-num">AUTH</span>
+        <span class="phase-name">인증 / 인가</span>
+        <span class="phase-desc">OIDC Provider 자체 구현 (nest-oidc-provider) — Keycloak → Zitadel → oidc-provider 변경 이력</span>
+        <span class="priority-badge p0">P0</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">USER</span>
+        <span class="phase-name">사용자 관리</span>
+        <span class="phase-desc">CRUD, 페이지 권한, bcrypt 암호화</span>
+        <span class="priority-badge p0">P0</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">ORG</span>
+        <span class="phase-name">조직 관리</span>
+        <span class="phase-desc">organizations 테이블 기반 (business_place 컬럼 → 별도 테이블 변경)</span>
+        <span class="priority-badge p0">P0</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">SW</span>
+        <span class="phase-name">Stream Wizard</span>
+        <span class="phase-desc">4단계: INPUT(OPC-UA) → OUTPUT(Kafka) → PIPELINE(Bloblang) → DEPLOY</span>
+        <span class="priority-badge p0">P0</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">STR</span>
+        <span class="phase-name">Streams Manager</span>
+        <span class="phase-desc">CRUD, 시작/중지, 로그 조회</span>
+        <span class="priority-badge p0">P0</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">CONN</span>
+        <span class="phase-name">연결 관리</span>
+        <span class="phase-desc">Benthos / Kafka / Schema Registry 연결 CRUD + 헬스체크</span>
+        <span class="priority-badge p1">P1</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">OPC</span>
+        <span class="phase-name">OPC-UA 관리</span>
+        <span class="phase-desc">서버 등록, 노드 브라우징, 값 읽기</span>
+        <span class="priority-badge p1">P1</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">RBAC</span>
+        <span class="phase-name">역할 기반 권한</span>
+        <span class="phase-desc">roles / permissions / role_permissions / user_roles 테이블 설계</span>
+        <span class="priority-badge p2">P2</span>
+      </div>
+      <div class="phase-row">
+        <span class="phase-num">DFP</span>
+        <span class="phase-name">df_package 연동</span>
+        <span class="phase-desc">OPC 서버/노드/Kafka 클러스터/토픽 읽기 전용 조회</span>
+        <span class="priority-badge p1">P1</span>
+      </div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:12px 16px;">
+      <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">비기능 요구사항</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <span class="tech-badge">API 응답 ≤ 200ms</span>
+        <span class="tech-badge">스트림 배포 ≤ 5초</span>
+        <span class="tech-badge">OPC 브라우징 ≤ 3초</span>
+        <span class="tech-badge">가용성 99.9%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 아키텍처 -->
+  <div class="progress-card" id="arch">
+    <div class="progress-card-top">
+      <div class="progress-card-info">
+        <div class="progress-card-title">③ 아키텍처 설계 (Architecture)</div>
+        <div class="progress-card-desc">DF-Stream 아키텍처 설계서 v1.0 기준</div>
+      </div>
+      <div class="progress-pct" style="color:var(--accent)">80%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-blue" style="width:80%"></div></div>
+    <div class="cols2">
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.08em;">기술 스택</div>
+        <div class="item"><span class="item-dot dot-done"></span><span>Backend: <span class="tech-badge">NestJS</span> <span class="tech-badge">TypeORM</span> <span class="tech-badge">PostgreSQL</span> (Port 3001)</span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>Frontend: <span class="tech-badge">Next.js 16</span> <span class="tech-badge">React 19</span> <span class="tech-badge">shadcn/ui</span></span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>인증: <span class="tech-badge">JWT Bearer</span> → OIDC Provider 연동 예정</span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>캐싱: <span class="tech-badge">Valkey</span> (Redis 호환)</span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>수집: <span class="tech-badge">Benthos-UMH</span> + OPC-UA + Kafka + Avro</span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>메시징: <span class="tech-badge">Kafka KRaft</span> 3+ Broker + Schema Registry</span></div>
+        <div class="item"><span class="item-dot dot-done"></span><span>모니터링: <span class="tech-badge">Prometheus</span> + <span class="tech-badge">Grafana</span></span></div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.08em;">데이터 흐름</div>
+        <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:16px; font-family:var(--mono); font-size:12px; color:var(--text2); line-height:2;">
+          PLC<br>
+          <span style="color:var(--text3)">↓ OPC-UA</span><br>
+          KEPServerEX<br>
+          <span style="color:var(--text3)">↓ Benthos-UMH</span><br>
+          Kafka KRaft<br>
+          <span style="color:var(--text3)">↓ Kafka Connect</span><br>
+          <span style="color:var(--green)">TimescaleDB</span>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">DB 구조 패턴 (Desired State → Reconcile)</div>
+          <div class="item"><span class="item-dot dot-done"></span><span style="font-family:var(--mono); font-size:11px; color:var(--accent)">df_package</span><span> 읽기전용 마스터 (OPC/Kafka 원본)</span></div>
+          <div class="item"><span class="item-dot dot-done"></span><span style="font-family:var(--mono); font-size:11px; color:var(--green)">df_app</span><span> 읽기/쓰기 운영 (스트림, 사용자, 연결)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. 인프라 구성 ── -->
+<section class="section" id="infra">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>인프라 구성 현황</h2>
+    <span class="section-sub">진행률 65%</span>
+  </div>
+
+  <div class="bar-wrap" style="margin-bottom:24px;"><div class="bar c-yellow" style="width:65%"></div></div>
+
+  <div class="cols2" style="margin-bottom:24px;">
+    <div>
+      <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.08em;">완료 항목 ✓</div>
+      <div class="item"><span class="item-dot dot-done"></span>NFS 스토리지 구축 테스트</div>
+      <div class="item"><span class="item-dot dot-done"></span>Nginx-proxy 구축 테스트</div>
+      <div class="item"><span class="item-dot dot-done"></span>Kafka 4.2.0 KRaft 모드 (ZooKeeper 제거)</div>
+      <div class="item"><span class="item-dot dot-done"></span>Kafka-UI, Kafka-Connect 연동</div>
+      <div class="item"><span class="item-dot dot-done"></span>PostgreSQL 17.6.0 + Pgpool 4.6.3 클러스터</div>
+      <div class="item"><span class="item-dot dot-done"></span>TimescaleDB 구축 (2026.01.21 SSD 이관)</div>
+      <div class="item"><span class="item-dot dot-done"></span>사설 Docker Registry 구축</div>
+      <div class="item"><span class="item-dot dot-done"></span>K3s + Headlamp 설치 (2026.02.11)</div>
+      <div class="item"><span class="item-dot dot-done"></span>TimescaleDB 일일 2,500만 건 처리 확인</div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.08em;">진행 중 / 미완</div>
+      <div class="item"><span class="item-dot dot-wip"></span>Fluentd 구축 진행 중</div>
+      <div class="item"><span class="item-dot dot-wip"></span>GitLab Standalone 타입 적용 테스트</div>
+      <div class="item"><span class="item-dot dot-wip"></span>Docker Distribution(Registry) 적용 테스트</div>
+      <div class="item" style="margin-top:12px;"><span class="item-dot dot-drop"></span><span style="text-decoration:line-through; opacity:0.5;">NiFi 구축 테스트 → 폐기</span></div>
+    </div>
+  </div>
+
+  <div class="info-block" style="margin-bottom:16px;">
+    <h3>폐쇄망 CI/CD 스택 (검토 완료)</h3>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; margin-top:8px;">
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">Git</span><br><span class="tech-badge">GitLab Standalone</span></div>
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">CI</span><br><span class="tech-badge">Gitea Actions</span> <span class="tech-badge">Tekton</span></div>
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">이미지 빌드</span><br><span class="tech-badge">Kaniko</span></div>
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">이미지 저장소</span><br><span class="tech-badge">Harbor</span></div>
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">CD / GitOps</span><br><span class="tech-badge">ArgoCD</span> <span class="tech-badge">Image Updater</span></div>
+      <div><span style="color:var(--text3); font-size:11px; font-family:var(--mono);">배포 템플릿</span><br><span class="tech-badge">Helm</span> <span class="tech-badge">Kustomize</span></div>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <h3>Trino 클러스터링 단계별 도입 계획</h3>
+    <div style="margin-top:4px;">
+      <div class="phase-row"><span class="phase-num" style="color:var(--green)">Phase 0</span><span class="phase-name">JMX 모니터링 구성</span><span class="phase-desc">현황 파악 (6종 커넥터, 15+ 카탈로그)</span><span class="tag tag-done">계획</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 1</span><span class="phase-name">단일 노드 최적화</span><span class="phase-desc">쿼리 튜닝, 메모리 설정 최적화</span><span class="tag tag-todo">예정</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 2</span><span class="phase-name">2클러스터 분리</span><span class="phase-desc">OLAP / 실시간 조회 분리 운영</span><span class="tag tag-todo">예정</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 3</span><span class="phase-name">Trino Gateway</span><span class="phase-desc">라우팅 통합, 고가용성 확보</span><span class="tag tag-todo">예정</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 5. 수집 서비스 & 고객 서비스 ── -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>수집 서비스 개발 현황</h2>
+    <span class="section-sub">진행률 70%</span>
+  </div>
+
+  <div class="bar-wrap" style="margin-bottom:24px;"><div class="bar c-blue" style="width:70%"></div></div>
+
+  <div class="cols2" style="margin-bottom:16px;">
+    <div class="info-block">
+      <h3>Benthos Stream Manager (GUI)</h3>
+      <div style="margin-bottom:12px;">
+        <span class="tech-badge">Payload CMS 3.69.0</span>
+        <span class="tech-badge">Next.js 15.4</span>
+        <span class="tech-badge">React 19</span>
+        <span class="tech-badge">node-opcua 2.160</span>
+      </div>
+      <div class="item"><span class="item-dot dot-done"></span>10개 Collection 구현 완료</div>
+      <div class="item"><span class="item-dot dot-done"></span>6개 Custom Admin View</div>
+      <div class="item"><span class="item-dot dot-done"></span>Stream Wizard 4단계 구현</div>
+      <div class="item"><span class="item-dot dot-done"></span>Pipeline Editor (Bloblang 매핑)</div>
+      <div class="item"><span class="item-dot dot-done"></span>KEP Tag Browser, Kafka Manager</div>
+      <div class="item"><span class="item-dot dot-done"></span>Schema Registry Manager</div>
+    </div>
+    <div class="info-block">
+      <h3>수집 실적 (2026.01 기준)</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">수집 장치</span><span class="kv-val">소형압연 11개 디바이스</span></div>
+        <div class="kv-row"><span class="kv-key">수집 태그 수</span><span class="kv-val">892개 태그</span></div>
+        <div class="kv-row"><span class="kv-key">일일 수집량</span><span class="kv-val" style="color:var(--green); font-family:var(--mono)">약 2,500만 건</span></div>
+        <div class="kv-row"><span class="kv-key">스토리지</span><span class="kv-val">HDD → SSD 이관 완료</span></div>
+        <div class="kv-row"><span class="kv-key">성능 비교</span><span class="kv-val">InfluxDB 대비 동등 성능 확인</span></div>
+        <div class="kv-row"><span class="kv-key">추가 수집</span><span class="kv-val">2제강 센싱 테이블 (2026.01.22)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <h3>수집 파이프라인 네이밍 표준</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:8px;">
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:6px;">DB 계층</div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--text2); line-height:1.8;">
+          Database: <span style="color:var(--accent)">[회사]</span><br>
+          Schema: <span style="color:var(--accent)">[사업장]_[공장]</span><br>
+          Table: <span style="color:var(--accent)">[소스시스템]_[접미어]</span><br>
+          <span style="color:var(--text3)">예: css.changwon_sm2.tag_rt</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:6px;">Kafka Topic</div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--text2); line-height:1.8;">
+          <span style="color:var(--accent)">[회사].[사업장_공장].[소스시스템]</span><br>
+          <span style="color:var(--text3)">예: css.changwon_sm2.tag</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-family:var(--mono); color:var(--text3); margin-bottom:6px;">OPC 채널명</div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--text2); line-height:1.8;">
+          <span style="color:var(--accent)">[사업장코드]_[공장코드]_[두자리숫자]</span><br>
+          <span style="color:var(--text3)">예: changwon_sm2_01</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:40px;"></div>
+
+  <div class="section-header" style="margin-bottom:24px;">
+    <span class="section-num">06</span>
+    <h2>고객 서비스 개발 현황</h2>
+    <span class="section-sub">진행률 55%</span>
+  </div>
+
+  <div class="bar-wrap" style="margin-bottom:24px;"><div class="bar c-yellow" style="width:55%"></div></div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div>
+      <div style="font-size:11px; font-family:var(--mono); color:var(--green); margin-bottom:8px; letter-spacing:0.08em; text-transform:uppercase;">진행 중 (Phase 1–7, 60–70%)</div>
+      <div class="phase-row"><span class="phase-num">Phase 1</span><span class="phase-name">로컬 환경 구성</span><span class="phase-desc">Keycloak 인증 기반</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 2</span><span class="phase-name">표준 데이터 관리</span><span class="phase-desc">회사/사업장/공장/설비/기기 CRUD</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 3</span><span class="phase-name">OPC UA · 태그 관리</span><span class="phase-desc">노드 브라우징, 태그 등록</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 4</span><span class="phase-name">Kafka 메시지 허브</span><span class="phase-desc">토픽/클러스터 관리</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 5</span><span class="phase-name">파이프라인 엔진</span><span class="phase-desc">Benthos YAML 생성기</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 6</span><span class="phase-name">스트림 위저드</span><span class="phase-desc">4단계 스트림 생성</span><span class="tag tag-wip">70%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 7</span><span class="phase-name">데이터 수집·조회</span><span class="phase-desc">TimescaleDB, Valkey 캐싱</span><span class="tag tag-wip">60%</span></div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-family:var(--mono); color:var(--yellow); margin-bottom:8px; letter-spacing:0.08em; text-transform:uppercase;">미시작 (Phase 8–12)</div>
+      <div class="phase-row"><span class="phase-num">Phase 8</span><span class="phase-name">사용자·권한 관리</span><span class="phase-desc">RBAC + OIDC Provider</span><span class="tag tag-wip">30%</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 9</span><span class="phase-name">대시보드·모니터링</span><span class="phase-desc">실시간 현황 시각화</span><span class="tag tag-todo">미시작</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 10</span><span class="phase-name">데이터셋·추가 기능</span><span class="phase-desc">Meltano 연동 (Phase 4.5)</span><span class="tag tag-todo">미시작</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 11</span><span class="phase-name">테스트·최적화</span><span class="phase-desc">통합 테스트, 고부하 테스트</span><span class="tag tag-todo">미시작</span></div>
+      <div class="phase-row"><span class="phase-num">Phase 12</span><span class="phase-name">인프라 구축·배포</span><span class="phase-desc">프로덕션 배포 파이프라인</span><span class="tag tag-todo">미시작</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. 전체 진행률 요약 ── -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>전체 진행률 요약</h2>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>단계</th>
+        <th>목표</th>
+        <th>진행률</th>
+        <th>주요 미완 사항</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>기안</td>
+        <td style="color:var(--text2)">목적 · 목표 · 전략 수립</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-green" style="width:90%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--green)">90%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">완료조건 세부 기준 미확정</td>
+      </tr>
+      <tr>
+        <td>요구사항</td>
+        <td style="color:var(--text2)">기능/비기능 요구사항 정의</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-blue" style="width:75%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--accent)">75%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">P2 RBAC / OIDC 상세 미완</td>
+      </tr>
+      <tr>
+        <td>아키텍처</td>
+        <td style="color:var(--text2)">기술 스택 / 구조 확정</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-blue" style="width:80%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--accent)">80%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">OIDC Provider 통합 설계 진행 중</td>
+      </tr>
+      <tr>
+        <td>인프라</td>
+        <td style="color:var(--text2)">K8s 기반 서비스 구축</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-yellow" style="width:65%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--yellow)">65%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">Fluentd, CI/CD 파이프라인 미완</td>
+      </tr>
+      <tr>
+        <td>수집 서비스</td>
+        <td style="color:var(--text2)">OPC-UA → Kafka → DB 파이프라인</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-blue" style="width:70%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--accent)">70%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">고부하 테스트 / 안정화 미완</td>
+      </tr>
+      <tr>
+        <td>고객 서비스</td>
+        <td style="color:var(--text2)">데이터 조회 / 관리 서비스</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-yellow" style="width:55%"></div></div>
+          <span style="font-family:var(--mono); font-size:12px; color:var(--yellow)">55%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">Phase 8–12 미시작, 통합 테스트 미수행</td>
+      </tr>
+      <tr style="background:rgba(61,142,240,0.05);">
+        <td style="font-weight:700; color:#e8f0f8;">전체</td>
+        <td style="color:var(--text2)">DataForge Package 완성</td>
+        <td>
+          <div class="tbl-bar-wrap"><div class="tbl-bar c-blue" style="width:70%"></div></div>
+          <span style="font-family:var(--mono); font-size:14px; font-weight:700; color:var(--accent)">~70%</span>
+        </td>
+        <td style="color:var(--text3); font-size:12px;">Phase 8–12 및 통합 테스트 필요</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── 7. 주요 방향 변경 ── -->
+<section class="section" id="changes">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>주요 방향 변경 이력</h2>
+  </div>
+
+  <div class="change-list" style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:0 24px;">
+    <div class="change-item">
+      <div class="change-key">인증 시스템</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">Keycloak</span>
+          <span class="arrow">→</span>
+          <span class="step-old">Zitadel</span>
+          <span class="arrow">→</span>
+          <span class="step-new">oidc-provider (자체 구현)</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">nest-oidc-provider 기반 자체 OIDC Provider 구현으로 최종 결정</div>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-key">수집 엔진</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">NiFi</span>
+          <span class="arrow">→</span>
+          <span class="step-new">Benthos-UMH</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">NiFi 구축 테스트 후 폐기, Benthos-UMH로 대체 (경량성, OPC-UA 네이티브 지원)</div>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-key">Kafka 모드</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">ZooKeeper</span>
+          <span class="arrow">→</span>
+          <span class="step-new">KRaft 모드 (Kafka 4.1/4.2)</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">ZooKeeper 의존성 완전 제거, KRaft 단독 운영</div>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-key">수집 관리 GUI</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">DF-Stream 내 통합</span>
+          <span class="arrow">→</span>
+          <span class="step-new">별도 Payload CMS 기반 BSM</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">Benthos Stream Manager를 DF-Stream과 별개로 먼저 구현, 향후 통합 여부 결정 필요</div>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-key">DB 구조</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">단일 DB</span>
+          <span class="arrow">→</span>
+          <span class="step-new">df_package + df_app 분리</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">마스터 데이터(읽기전용)와 운영 데이터(읽기/쓰기) 2개 DataSource로 분리</div>
+      </div>
+    </div>
+    <div class="change-item" style="border-bottom:none;">
+      <div class="change-key">컨테이너 오케스트레이션</div>
+      <div class="change-val">
+        <div class="change-flow">
+          <span class="step-old">Docker Swarm</span>
+          <span class="arrow">→</span>
+          <span class="step-new">Kubernetes (K3s)</span>
+        </div>
+        <div style="font-size:12px; color:var(--text3); margin-top:6px;">Docker Swarm 검토 후 K3s 채택, Headlamp 대시보드 구성 완료</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 8. 미완 항목 ── -->
+<section class="section" id="pending">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>현재 시급한 미완 항목</h2>
+  </div>
+
+  <div class="pending-grid">
+    <div class="pending-card">
+      <div class="pending-card-title">Fluentd 구축 완료</div>
+      <div class="pending-card-desc">인프라 · 진행 중</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">GitLab CI/CD 파이프라인 구성</div>
+      <div class="pending-card-desc">인프라 · 테스트 중</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">Phase 8: 사용자/권한 관리</div>
+      <div class="pending-card-desc">고객 서비스 · RBAC + OIDC Provider (30%)</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">Phase 9: 대시보드 및 모니터링</div>
+      <div class="pending-card-desc">고객 서비스 · 미시작</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">Phase 10–12: 추가 기능 / 테스트 / 배포</div>
+      <div class="pending-card-desc">고객 서비스 · 미시작</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">BSM ↔ DF-Stream 통합 여부 결정</div>
+      <div class="pending-card-desc">아키텍처 의사결정 필요</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">통합 테스트 수행</div>
+      <div class="pending-card-desc">완료 조건 · DataForge 서비스 통합 테스트</div>
+    </div>
+    <div class="pending-card">
+      <div class="pending-card-title">고부하 테스트 / 안정화</div>
+      <div class="pending-card-desc">수집 서비스 · 장기 수집 안정성 검증</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>DataForge Package · 통합 보고서 · 2026.03.11</span>
+  <span>Main @유병재 · Sub @안종성</span>
+  <span style="font-family:var(--mono);">DPE-110326-051242</span>
+</footer>
+
+<script>
+  // Animate progress bars on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const bars = document.querySelectorAll('.bar, .tbl-bar');
+    bars.forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => { bar.style.width = w; }, 200);
+    });
+  });
+</script>
+</body>
+</html>
