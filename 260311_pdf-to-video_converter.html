@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to Video Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161a22;
+      --surface2: #1e2330;
+      --border: #2a3040;
+      --accent: #5b8dee;
+      --accent2: #7c5cbf;
+      --accent3: #3ec9a7;
+      --text: #e8ecf4;
+      --muted: #7a859e;
+      --code-bg: #111520;
+      --radius: 14px;
+      --shadow: 0 8px 40px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(13,15,20,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(91,141,238,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(124,92,191,.14) 0%, transparent 55%),
+        radial-gradient(ellipse 30% 25% at 80% 70%, rgba(62,201,167,.10) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(91,141,238,.12);
+      border: 1px solid rgba(91,141,238,.35);
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.04em;
+      margin-bottom: 24px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      font-weight: 400;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: transform .18s, box-shadow .18s, opacity .18s;
+    }
+    .btn:hover { transform: translateY(-2px); opacity: .9; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(91,141,238,.35);
+    }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* flow diagram */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 72px;
+    }
+    .flow-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      color: var(--muted);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Sections ── */
+    section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-bottom: 56px;
+    }
+
+    /* ── Features ── */
+    #features { background: var(--surface); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(91,141,238,.12);
+    }
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ── How it works ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      counter-reset: step;
+    }
+    .step {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px 24px;
+    }
+    .step::before {
+      counter-increment: step;
+      content: counter(step, decimal-leading-zero);
+      position: absolute;
+      top: -16px; left: 24px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .step p { color: var(--muted); font-size: .88rem; }
+    .step .hint {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--accent3);
+      background: rgba(62,201,167,.08);
+      border: 1px solid rgba(62,201,167,.2);
+      border-radius: 6px;
+      padding: 3px 10px;
+    }
+
+    /* progress bar demo */
+    .progress-demo {
+      margin-top: 60px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .progress-demo h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 20px;
+    }
+    .progress-phases {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .phase {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .phase-label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+    .phase-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .phase-bar {
+      height: 100%;
+      border-radius: 999px;
+      animation: grow 1.5s ease-out forwards;
+    }
+    .phase-bar.tts { background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 50%; }
+    .phase-bar.video { background: linear-gradient(90deg, var(--accent2), var(--accent3)); width: 40%; }
+    .phase-bar.merge { background: linear-gradient(90deg, var(--accent3), var(--accent)); width: 10%; }
+    @keyframes grow { from { width: 0; } }
+    .phase-pct {
+      font-size: .8rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* ── Stack ── */
+    #stack { background: var(--surface); }
+    .stack-groups {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 640px) { .stack-groups { grid-template-columns: 1fr; } }
+    .stack-group {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .stack-group h3 {
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stack-items { display: flex; flex-direction: column; gap: 14px; }
+    .stack-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .stack-pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: .78rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .stack-item p {
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 1.5;
+    }
+
+    /* ── API ── */
+    .api-table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    thead th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: var(--surface2); }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+    .method.get  { background: rgba(62,201,167,.12); color: var(--accent3); border: 1px solid rgba(62,201,167,.25); }
+    .method.post { background: rgba(91,141,238,.12); color: var(--accent);  border: 1px solid rgba(91,141,238,.25); }
+    .method.del  { background: rgba(230,100,100,.12); color: #e07070;        border: 1px solid rgba(230,100,100,.25); }
+    .path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .83rem;
+      color: var(--text);
+    }
+
+    /* ── Specs ── */
+    #specs { background: var(--surface); }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .spec-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+    }
+    .spec-card .spec-key {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .spec-card .spec-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+    }
+    .spec-card .spec-val span {
+      font-size: .8rem;
+      font-weight: 500;
+      font-family: 'Pretendard', sans-serif;
+      color: var(--muted);
+    }
+
+    /* ── Setup ── */
+    .setup-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      overflow-x: auto;
+    }
+    .code-block pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .83rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .code-block .comment { color: var(--muted); }
+    .code-block .cmd { color: var(--accent3); }
+    .code-block .flag { color: #e2a96a; }
+
+    /* ── Limitations ── */
+    .limit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .limit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .limit-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .limit-item strong { display: block; font-size: .9rem; margin-bottom: 4px; }
+    .limit-item p { color: var(--muted); font-size: .87rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    footer .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+    footer p {
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    <div class="dot"></div>
+    PDF to Video
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">기능</a></li>
+    <li><a href="#how">사용법</a></li>
+    <li><a href="#stack">기술 스택</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#setup">설치</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">✦ Open Source Project</div>
+  <h1>PDF 슬라이드를<br /><span>발표 영상으로</span></h1>
+  <p class="hero-desc">
+    프레젠테이션 PDF의 각 페이지에 발표 스크립트를 입력하면<br />
+    Google TTS 음성과 슬라이드를 합쳐 <strong>1920×1080 MP4</strong>를 자동 생성합니다.
+  </p>
+  <div class="hero-actions">
+    <a href="#setup" class="btn btn-primary">⚡ 시작하기</a>
+    <a href="#how" class="btn btn-ghost">사용 방법 보기</a>
+  </div>
+  <div class="flow">
+    <div class="flow-step">📄 PDF 업로드</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">✍️ 스크립트 입력</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🔊 TTS 변환</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🎬 MP4 생성</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">⬇️ 다운로드</div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">주요 기능</h2>
+    <p class="section-desc">드래그 앤 드롭 업로드부터 실시간 진행률까지, 발표 영상 제작에 필요한 모든 것을 제공합니다.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📂</div>
+        <h3>PDF 업로드</h3>
+        <p>드래그 앤 드롭 또는 파일 선택으로 간편하게 업로드. PDF 각 페이지를 고해상도(2배 확대) 이미지로 자동 추출합니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✍️</div>
+        <h3>페이지별 스크립트</h3>
+        <p>페이지 목록을 클릭해 발표 내용을 개별 입력하거나, JSON 형식으로 전체 스크립트를 한 번에 일괄 등록할 수 있습니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔊</div>
+        <h3>Google TTS 음성</h3>
+        <p>한국어 텍스트를 Google Text-to-Speech로 자연스러운 음성 파일로 변환합니다. 빈 스크립트는 자동으로 무음 처리됩니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>재생 속도 조절</h3>
+        <p>0.5x / 1.0x / 1.5x / 2.0x 속도를 선택해 발표 템포를 조절합니다. FFmpeg <code>atempo</code> 필터로 음질을 유지합니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎬</div>
+        <h3>1920×1080 MP4 생성</h3>
+        <p>H.264 + AAC 코덱으로 Full HD 발표 영상을 생성합니다. 슬라이드 비율을 유지하며 여백은 검정으로 채웁니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>실시간 진행률</h3>
+        <p>TTS 생성 → 클립 합성 → 최종 병합 단계별 진행 상황을 실시간 폴링으로 확인할 수 있습니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🐳</div>
+        <h3>Docker 지원</h3>
+        <p><code>docker compose up --build -d</code> 한 줄로 서버를 실행합니다. 데이터는 <code>./data/</code>에 영속적으로 보관됩니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗂️</div>
+        <h3>JSON 일괄 등록</h3>
+        <p><code>{"1": "스크립트", "2": "스크립트"}</code> 형식의 JSON 파일을 업로드해 모든 페이지 스크립트를 한 번에 등록합니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>REST API</h3>
+        <p>FastAPI 기반의 REST API로 외부 시스템과 연동하거나 자동화 파이프라인에 통합할 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how">
+  <div class="container">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">4단계로 완성</h2>
+    <p class="section-desc">복잡한 설정 없이 간단한 4단계만으로 발표 영상을 만들어 보세요.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>PDF 업로드</h3>
+        <p>발표 슬라이드 PDF를 드래그 앤 드롭하거나 파일 선택 버튼으로 업로드합니다. 페이지별 고해상도 이미지가 자동 추출됩니다.</p>
+        <span class="hint">드래그 앤 드롭 지원</span>
+      </div>
+      <div class="step">
+        <h3>스크립트 작성</h3>
+        <p>좌측 페이지 목록에서 슬라이드를 클릭해 발표 내용을 입력합니다. JSON 파일로 전체 스크립트를 한 번에 등록할 수도 있습니다.</p>
+        <span class="hint">JSON 일괄 등록 지원</span>
+      </div>
+      <div class="step">
+        <h3>속도 선택 후 생성</h3>
+        <p>원하는 재생 속도(0.5x~2.0x)를 선택하고 동영상 생성 버튼을 클릭합니다. 실시간 진행률이 표시됩니다.</p>
+        <span class="hint">실시간 진행률 표시</span>
+      </div>
+      <div class="step">
+        <h3>다운로드</h3>
+        <p>생성이 완료되면 MP4 파일을 바로 다운로드합니다. 새 프로젝트 버튼으로 다시 처음부터 시작할 수 있습니다.</p>
+        <span class="hint">MP4 즉시 다운로드</span>
+      </div>
+    </div>
+
+    <!-- Progress Demo -->
+    <div class="progress-demo">
+      <h3>동영상 생성 진행 단계</h3>
+      <div class="progress-phases">
+        <div class="phase">
+          <div class="phase-label">🔊 TTS 음성 생성</div>
+          <div class="phase-bar-wrap"><div class="phase-bar tts"></div></div>
+          <div class="phase-pct">0 → 50%</div>
+        </div>
+        <div class="phase">
+          <div class="phase-label">🎞️ 슬라이드 + 음성 결합</div>
+          <div class="phase-bar-wrap"><div class="phase-bar video"></div></div>
+          <div class="phase-pct">50 → 90%</div>
+        </div>
+        <div class="phase">
+          <div class="phase-label">📦 최종 동영상 병합</div>
+          <div class="phase-bar-wrap"><div class="phase-bar merge"></div></div>
+          <div class="phase-pct">90 → 100%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tech Stack -->
+<section id="stack">
+  <div class="container">
+    <div class="section-label">Tech Stack</div>
+    <h2 class="section-title">기술 스택</h2>
+    <p class="section-desc">검증된 오픈소스 라이브러리로 구성된 가벼운 스택입니다.</p>
+    <div class="stack-groups">
+      <div class="stack-group">
+        <h3>Backend</h3>
+        <div class="stack-items">
+          <div class="stack-item">
+            <span class="stack-pill">FastAPI</span>
+            <p>Python 3.11 기반 고성능 REST API 서버. 비동기 처리로 동영상 생성 중에도 다른 요청을 처리합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">PyMuPDF</span>
+            <p>PDF 파싱 및 페이지 이미지 추출. 2배 확대 매트릭스를 사용해 고해상도 PNG를 생성합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">gTTS</span>
+            <p>Google Text-to-Speech API로 한국어 텍스트를 자연스러운 MP3 음성으로 변환합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">moviepy</span>
+            <p>이미지 클립과 오디오 클립을 합성해 페이지별 영상을 생성하고 최종 MP4로 병합합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">FFmpeg</span>
+            <p>오디오 속도 조절(<code>atempo</code>), 무음 생성, 오디오 재샘플링 등 미디어 처리를 담당합니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stack-group">
+        <h3>Frontend</h3>
+        <div class="stack-items">
+          <div class="stack-item">
+            <span class="stack-pill">HTML5</span>
+            <p>Drag & Drop API, File API 등 최신 HTML5 기능을 활용한 단일 페이지 애플리케이션입니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">CSS3</span>
+            <p>프레임워크 없는 순수 CSS로 반응형 레이아웃과 부드러운 UI 인터랙션을 구현합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">Vanilla JS</span>
+            <p>외부 라이브러리 없이 상태 관리, API 통신, 실시간 폴링을 구현한 경량 클라이언트입니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">Google Fonts</span>
+            <p>DM Sans + Fraunces 서체를 비동기 로드해 깔끔하고 전문적인 UI를 제공합니다.</p>
+          </div>
+          <div class="stack-item">
+            <span class="stack-pill">Docker</span>
+            <p>Dockerfile + docker-compose.yml로 환경 독립적인 배포를 지원. 볼륨 마운트로 데이터를 영속합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API -->
+<section id="api">
+  <div class="container">
+    <div class="section-label">API Reference</div>
+    <h2 class="section-title">REST API 엔드포인트</h2>
+    <p class="section-desc">FastAPI로 제공되는 7개의 엔드포인트로 전체 워크플로를 자동화할 수 있습니다.</p>
+    <div class="api-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Path</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td class="path">/</td>
+            <td>메인 페이지 (index.html) 반환</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td class="path">/api/upload</td>
+            <td>PDF 업로드 및 페이지 이미지 추출. <code>project_id</code>와 페이지 목록을 반환합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td class="path">/api/pages/{project_id}/{filename}</td>
+            <td>추출된 페이지 PNG 이미지 반환</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td class="path">/api/generate/{project_id}</td>
+            <td>스크립트와 속도를 받아 TTS + 동영상 생성을 비동기로 시작합니다.</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td class="path">/api/status/{project_id}</td>
+            <td>진행 상태(<code>status</code>, <code>progress</code>, <code>message</code>) 폴링용 엔드포인트</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td class="path">/api/download/{project_id}</td>
+            <td>완성된 MP4 파일 다운로드</td>
+          </tr>
+          <tr>
+            <td><span class="method del">DELETE</span></td>
+            <td class="path">/api/cleanup/{project_id}</td>
+            <td>업로드 PDF, 페이지 이미지, 오디오 임시 파일 삭제 (완성 MP4는 유지)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Specs -->
+<section id="specs">
+  <div class="container">
+    <div class="section-label">Output Specs</div>
+    <h2 class="section-title">출력 동영상 사양</h2>
+    <p class="section-desc">발표용 Full HD 품질로 생성됩니다.</p>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="spec-key">포맷</div>
+        <div class="spec-val">MP4</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">비디오 코덱</div>
+        <div class="spec-val">H.264 <span>(libx264)</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">오디오 코덱</div>
+        <div class="spec-val">AAC</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">해상도</div>
+        <div class="spec-val">1920×1080 <span>Full HD</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">프레임레이트</div>
+        <div class="spec-val">24 <span>fps</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">샘플레이트</div>
+        <div class="spec-val">44,100 <span>Hz / Stereo</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">오디오 비트레이트</div>
+        <div class="spec-val">192 <span>kbps</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">TTS 언어</div>
+        <div class="spec-val">한국어 <span>(ko)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Setup -->
+<section id="setup">
+  <div class="container">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">설치 및 실행</h2>
+    <p class="section-desc">Docker를 사용하는 방법을 권장합니다. 로컬 환경에서도 conda 또는 venv로 쉽게 실행할 수 있습니다.</p>
+
+    <div class="setup-tabs">
+      <button class="tab-btn active" onclick="switchTab('docker', this)">Docker (권장)</button>
+      <button class="tab-btn" onclick="switchTab('conda', this)">conda</button>
+      <button class="tab-btn" onclick="switchTab('venv', this)">venv</button>
+    </div>
+
+    <div id="tab-docker" class="tab-content active">
+      <div class="code-block">
+        <pre><span class="comment"># Docker Desktop이 실행 중인지 확인하세요</span>
+
+<span class="comment"># 빌드 및 실행 (최초 1회)</span>
+<span class="cmd">docker compose up</span> <span class="flag">--build -d</span>
+
+<span class="comment"># 브라우저에서 접속</span>
+<span class="comment"># → http://localhost:8000</span>
+
+<span class="comment"># 컨테이너 관리</span>
+<span class="cmd">docker compose stop</span>          <span class="comment"># 중지 (컨테이너 보존)</span>
+<span class="cmd">docker compose start</span>         <span class="comment"># 재시작</span>
+<span class="cmd">docker compose down</span>          <span class="comment"># 중지 + 컨테이너 삭제</span>
+<span class="cmd">docker compose logs</span> <span class="flag">-f</span>      <span class="comment"># 실시간 로그 확인</span></pre>
+      </div>
+    </div>
+
+    <div id="tab-conda" class="tab-content">
+      <div class="code-block">
+        <pre><span class="comment"># FFmpeg 설치 (macOS)</span>
+<span class="cmd">brew install</span> ffmpeg
+
+<span class="comment"># conda 환경 생성 및 패키지 설치</span>
+<span class="cmd">conda create</span> <span class="flag">-n</span> pdfmov python=3.11 <span class="flag">-y</span>
+<span class="cmd">conda activate</span> pdfmov
+<span class="cmd">pip install</span> <span class="flag">-r</span> requirements.txt
+
+<span class="comment"># 서버 시작 (백그라운드)</span>
+<span class="cmd">./start_uvicorn.sh</span>
+
+<span class="comment"># 또는 포그라운드 (개발용)</span>
+<span class="cmd">uvicorn</span> app:app <span class="flag">--host</span> 127.0.0.1 <span class="flag">--port</span> 8000 <span class="flag">--reload</span>
+
+<span class="comment"># 서버 종료</span>
+<span class="cmd">./stop_uvicorn.sh</span></pre>
+      </div>
+    </div>
+
+    <div id="tab-venv" class="tab-content">
+      <div class="code-block">
+        <pre><span class="comment"># 가상환경 생성 및 활성화</span>
+<span class="cmd">python</span> <span class="flag">-m</span> venv venv
+<span class="cmd">source</span> venv/bin/activate      <span class="comment"># Windows: venv\Scripts\activate</span>
+
+<span class="comment"># 패키지 설치</span>
+<span class="cmd">pip install</span> <span class="flag">-r</span> requirements.txt
+
+<span class="comment"># 서버 시작</span>
+<span class="cmd">uvicorn</span> app:app <span class="flag">--host</span> 127.0.0.1 <span class="flag">--port</span> 8000
+
+<span class="comment"># 브라우저에서 접속</span>
+<span class="comment"># → http://127.0.0.1:8000</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Limitations -->
+<section>
+  <div class="container">
+    <div class="section-label">Limitations</div>
+    <h2 class="section-title">제한사항</h2>
+    <p class="section-desc">프로덕션 환경에서 사용 시 아래 사항을 참고하세요.</p>
+    <div class="limit-list">
+      <div class="limit-item">
+        <div class="limit-icon">🌐</div>
+        <div>
+          <strong>인터넷 연결 필요</strong>
+          <p>TTS 생성 시 Google TTS API를 호출하므로 인터넷 연결이 필요합니다. Docker 환경에서는 컨테이너 외부 네트워크 접근이 허용되어야 합니다.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-icon">🇰🇷</div>
+        <div>
+          <strong>한국어 전용 TTS</strong>
+          <p>현재 gTTS 언어 설정이 한국어(<code>ko</code>)로 고정되어 있습니다. 다른 언어를 사용하려면 코드 수정이 필요합니다.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-icon">⚙️</div>
+        <div>
+          <strong>단일 프로세스 처리</strong>
+          <p>단일 프로세스 구조로 동시에 여러 프로젝트를 처리할 수 없습니다. 다중 사용자 환경에서는 작업 큐(Celery 등) 도입이 권장됩니다.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-icon">🔄</div>
+        <div>
+          <strong>서버 재시작 시 상태 초기화</strong>
+          <p>진행 중인 프로젝트 상태는 메모리에 저장되므로 서버 재시작 시 초기화됩니다. 완료된 동영상 파일은 디스크에 유지됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Tools -->
+<section id="specs">
+  <div class="container">
+    <div class="section-label">AI Tools</div>
+    <h2 class="section-title">사용된 AI Tools</h2>
+    <p class="section-desc">개발시 사용된 AI Tools 정보를 참고하세요.</p>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="spec-key">개발툴</div>
+        <div class="spec-val">Visual Studio Code</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">AI Model (1)</div>
+        <div class="spec-val">Gemini Pro <span>(in GitHub)</span></div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">AI Model (2)</div>
+        <div class="spec-val">Claude Sonnet</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-key">Workspace</div>
+        <div class="spec-val">GitHub <span>(VNTG)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="logo">PDF to Video</div>
+  <p>프레젠테이션 슬라이드를 발표 영상으로 변환하는 오픈소스 웹 서비스</p>
+  <div class="badge-row">
+    <span class="badge">Python 3.11</span>
+    <span class="badge">FastAPI</span>
+    <span class="badge">gTTS</span>
+    <span class="badge">moviepy</span>
+    <span class="badge">FFmpeg</span>
+    <span class="badge">Docker</span>
+    <span class="badge">MIT License</span>
+  </div>
+</footer>
+
+<script>
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
