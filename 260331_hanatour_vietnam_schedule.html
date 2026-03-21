@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>하정연 어머님 칠순 여행 · 베트남 다낭/호이안</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --jade: #1a6b5c;
+    --jade-dark: #0f4438;
+    --jade-light: #2d9478;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #faf6ef;
+    --warm-white: #fffdf8;
+    --text-dark: #1c1c1c;
+    --text-mid: #4a4a4a;
+    --text-soft: #7a7a7a;
+    --coral: #e05c3a;
+    --sky: #4a9bb5;
+    --border: #e0d8c8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--text-dark);
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--jade-dark) 0%, var(--jade) 50%, #237a68 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(201,168,76,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 20%, rgba(255,255,255,0.07) 0%, transparent 60%);
+  }
+  .hero-badge {
+    display: inline-block;
+    border: 1.5px solid var(--gold-light);
+    color: var(--gold-light);
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 5px 18px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(26px, 5vw, 42px);
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.3;
+    position: relative; z-index: 1;
+    margin-bottom: 8px;
+  }
+  .hero h1 span {
+    color: var(--gold-light);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 300;
+    position: relative; z-index: 1;
+    margin-bottom: 32px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .stat-pill .icon { font-size: 16px; }
+  .stat-pill strong { color: var(--gold-light); font-weight: 600; }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 48px 0 24px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-title h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--jade-dark);
+    white-space: nowrap;
+  }
+  .section-title .s-icon {
+    width: 32px; height: 32px;
+    background: var(--jade);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── INFO CARDS ROW ── */
+  .info-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .info-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--jade), var(--gold));
+  }
+  .info-card .label {
+    font-size: 11px;
+    color: var(--text-soft);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .info-card .value {
+    font-size: 14px;
+    color: var(--text-dark);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .info-card .value.highlight { color: var(--jade); }
+
+  /* ── CONTACT CARDS ── */
+  .contact-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .contact-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .contact-avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--jade), var(--jade-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .contact-info .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+  }
+  .contact-info .role {
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+  .contact-info .phone {
+    font-size: 13px;
+    color: var(--jade);
+    font-weight: 500;
+    font-family: 'Noto Sans KR', monospace;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 52px;
+    top: 24px; bottom: 24px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--jade), var(--gold-light), var(--jade));
+  }
+
+  .day-block {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .day-badge {
+    flex-shrink: 0;
+    width: 106px;
+    padding-top: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .day-circle {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--jade);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 0 0 4px var(--cream), 0 0 0 6px var(--jade);
+    z-index: 1;
+    position: relative;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .day-circle .d-num { font-size: 13px; }
+  .day-date {
+    font-size: 10px;
+    color: var(--text-soft);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .day-content {
+    flex: 1;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .day-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .day-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--jade-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-title .route {
+    font-size: 12px;
+    color: var(--text-soft);
+    font-weight: 400;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .meal-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .meal-tag {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .meal-tag.breakfast { background: #fff8e1; color: #b8860b; border: 1px solid #e8d68a; }
+  .meal-tag.lunch    { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .meal-tag.dinner   { background: #fce4ec; color: #ad1457; border: 1px solid #f48fb1; }
+
+  .day-body { padding: 16px 20px; }
+  .schedule-list { list-style: none; }
+  .schedule-item {
+    display: flex;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px dashed #eee;
+    align-items: flex-start;
+  }
+  .schedule-item:last-child { border-bottom: none; }
+  .s-time {
+    font-size: 11px;
+    color: var(--text-soft);
+    min-width: 44px;
+    padding-top: 2px;
+    font-weight: 500;
+  }
+  .s-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--jade-light);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .s-dot.gold { background: var(--gold); }
+  .s-dot.coral { background: var(--coral); }
+  .s-text {
+    font-size: 13px;
+    color: var(--text-mid);
+    flex: 1;
+    line-height: 1.6;
+  }
+  .s-text strong { color: var(--text-dark); font-weight: 600; }
+  .s-text .tag {
+    display: inline-block;
+    background: #e8f5e9;
+    color: var(--jade);
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 4px;
+    font-weight: 500;
+    vertical-align: middle;
+  }
+  .s-text .tag.tip { background: #fff8e1; color: #b8860b; }
+  .s-text .tag.flight { background: #e3f2fd; color: #1565c0; }
+
+  /* flight block */
+  .flight-block {
+    background: linear-gradient(135deg, #e3f2fd 0%, #ede7f6 100%);
+    border: 1px solid #b3d4f5;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .flight-block .fn { font-weight: 700; color: #1565c0; font-size: 14px; }
+  .flight-block .arr { color: var(--text-mid); font-size: 12px; }
+  .flight-block .plane { font-size: 20px; }
+
+  /* ── VIETNAM INFO ── */
+  .vn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .vn-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .vn-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .vn-card .vn-label { font-size: 11px; color: var(--text-soft); margin-bottom: 4px; font-weight: 500; }
+  .vn-card .vn-val { font-size: 13px; font-weight: 600; color: var(--text-dark); line-height: 1.5; }
+
+  /* ── ATTRACTIONS ── */
+  .spots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .spot-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .spot-header {
+    padding: 14px 18px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .spot-icon { font-size: 24px; }
+  .spot-name { font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 700; color: var(--jade-dark); }
+  .spot-en { font-size: 11px; color: var(--text-soft); }
+  .spot-body { padding: 12px 18px 14px; font-size: 12.5px; color: var(--text-mid); line-height: 1.7; }
+
+  /* ── TIPS ── */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .tip-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .tip-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--jade-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tip-card ul { list-style: none; }
+  .tip-card li {
+    font-size: 12.5px;
+    color: var(--text-mid);
+    padding: 4px 0;
+    border-bottom: 1px dashed #eee;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.6;
+  }
+  .tip-card li:last-child { border-bottom: none; }
+  .tip-card li::before { content: '·'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--jade-dark);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  footer strong { color: var(--gold-light); }
+
+  @media (max-width: 600px) {
+    .timeline::before { left: 44px; }
+    .day-badge { width: 90px; }
+    .hero { padding: 40px 20px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">♥ HANATOUR · 가족 여행 패키지 ♥</div>
+  <h1>하정연 어머님<br><span>칠순 여행</span></h1>
+  <div class="hero-sub">베트남 다낭 / 호이안 · 3박 5일</div>
+  <div class="hero-stats">
+    <div class="stat-pill"><span class="icon">📅</span> <strong>2026.03.31</strong> ~ 04.04</div>
+    <div class="stat-pill"><span class="icon">✈️</span> 김해 → 다낭 <strong>BX0773</strong></div>
+    <div class="stat-pill"><span class="icon">🏨</span> 멜리아 빈펄 <strong>5성급</strong></div>
+    <div class="stat-pill"><span class="icon">🕐</span> 한국 -2시간</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 기본 정보 -->
+  <div class="section-title">
+    <div class="s-icon">📋</div>
+    <h2>여행 기본 정보</h2>
+  </div>
+  <div class="info-row">
+    <div class="info-card">
+      <div class="label">출국 집결</div>
+      <div class="value highlight">3월 31일 18:00<br>김해공항 국제선 2층 4번 게이트 앞</div>
+    </div>
+    <div class="info-card">
+      <div class="label">VIP 출국수속 담당</div>
+      <div class="value">김재신 부장<br>📞 010-5054-5612</div>
+    </div>
+    <div class="info-card">
+      <div class="label">진주↔김해 셔틀</div>
+      <div class="value">배정전 기사님<br>📞 010-7767-7196</div>
+    </div>
+    <div class="info-card">
+      <div class="label">현지 가이드</div>
+      <div class="value highlight">림종성 (남)<br>📞 +84 038-689-0929</div>
+    </div>
+  </div>
+
+  <!-- 여행 일정 -->
+  <div class="section-title">
+    <div class="s-icon">🗺️</div>
+    <h2>일자별 여행 일정</h2>
+  </div>
+
+  <div class="timeline">
+
+    <!-- Day 1 -->
+    <div class="day-block">
+      <div class="day-badge">
+        <div class="day-circle" style="background:var(--jade-dark)"><span class="d-num">1</span><span>일</span></div>
+        <div class="day-date">3월 31일</div>
+      </div>
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-title">🛫 출발 · 다낭 도착 <span class="route">부산 → 다낭</span></div>
+          <div class="meal-tags">
+            <span class="meal-tag dinner">석: 치킨·족발세트·인당맥주</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <ul class="schedule-list">
+            <li class="schedule-item">
+              <span class="s-time">18:00</span><div class="s-dot gold"></div>
+              <div class="s-text"><strong>김해공항</strong> 국제선 2층 4번 게이트 앞 집결 · VIP 출국수속 진행</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">20:50</span><div class="s-dot gold"></div>
+              <div class="s-text">
+                <div class="flight-block">
+                  <span class="plane">✈️</span>
+                  <div>
+                    <div class="fn">BX0773</div>
+                    <div class="arr">부산 출발 → 다낭 도착 23:50 (약 4시간 50분)</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">23:50</span><div class="s-dot"></div>
+              <div class="s-text"><strong>다낭 도착</strong> → 가이드 미팅 후 호텔 이동 (약 20~30분) → 체크인 후 휴식</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">숙박</span><div class="s-dot gold"></div>
+              <div class="s-text">🏨 <strong>멜리아 빈펄 리버프론트</strong> 트윈 5성급</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day-block">
+      <div class="day-badge">
+        <div class="day-circle"><span class="d-num">2</span><span>일</span></div>
+        <div class="day-date">4월 1일</div>
+      </div>
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-title">🏮 호이안 관광 <span class="route">다낭 → 호이안 → 다낭</span></div>
+          <div class="meal-tags">
+            <span class="meal-tag breakfast">조: 호텔식</span>
+            <span class="meal-tag lunch">중: 반쎄오정식</span>
+            <span class="meal-tag dinner">석: 모닝글로리시그니처</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <ul class="schedule-list">
+            <li class="schedule-item">
+              <span class="s-time">오전</span><div class="s-dot gold"></div>
+              <div class="s-text">호텔 조식 후 <strong>오전 자유시간</strong></div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text"><strong>호이안</strong> 이동 (약 30분) → 시내관광
+                <br>· 내원교 (일본교) · 쩐가사당 · 풍흥고가 · 광조회관</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🚣 <strong>투본강 에코배 투어</strong> (도자기마을·목공예마을 관광)</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot coral"></div>
+              <div class="s-text">🧺 <strong>투본강 바구니배</strong> 체험</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">저녁</span><div class="s-dot"></div>
+              <div class="s-text">🌙 <strong>호이안 야간 시티투어</strong></div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">⛵ <strong>소원배·소원등</strong> 체험</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🤼 <strong>베트남 전통 씨름</strong> 체험</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot gold"></div>
+              <div class="s-text">💆 <strong>전신맛사지 2시간</strong> (아동은 성장맛사지) <span class="tag tip">팁 별도 $4</span></div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">숙박</span><div class="s-dot gold"></div>
+              <div class="s-text">🏨 <strong>멜리아 빈펄 리버프론트</strong> 트윈 5성급</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day-block">
+      <div class="day-badge">
+        <div class="day-circle" style="background:#1e7c6a"><span class="d-num">3</span><span>일</span></div>
+        <div class="day-date">4월 2일</div>
+      </div>
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-title">🚡 바나힐 · 다낭 관광 <span class="route">다낭 → 바나힐 → 다낭</span></div>
+          <div class="meal-tags">
+            <span class="meal-tag breakfast">조: 호텔식</span>
+            <span class="meal-tag lunch">중: 포시즌뷔페</span>
+            <span class="meal-tag dinner">석: 소불고기전골</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <ul class="schedule-list">
+            <li class="schedule-item">
+              <span class="s-time">오전</span><div class="s-dot gold"></div>
+              <div class="s-text">호텔 조식 후 출발</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🏔️ <strong>바나산 국립공원</strong> 관광
+                <span class="tag">해발 1,500m</span>
+                <br>· 케이블카 (세계 최장·최고 논스탑) · 놀이동산 · 자유시간</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">오후</span><div class="s-dot"></div>
+              <div class="s-text">다낭으로 이동 (약 2시간) → 현지식 점심</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot coral"></div>
+              <div class="s-text">❤️ <strong>사랑의 부두</strong> 방문</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🐉 <strong>다낭 용 다리 (Dragon Bridge)</strong> 관광</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">저녁</span><div class="s-dot gold"></div>
+              <div class="s-text">🛳️ <strong>한강유람선 탑승</strong></div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">숙박</span><div class="s-dot gold"></div>
+              <div class="s-text">🏨 <strong>멜리아 빈펄 리버프론트</strong> 트윈 5성급</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-block">
+      <div class="day-badge">
+        <div class="day-circle" style="background:var(--gold); color:#333"><span class="d-num">4</span><span>일</span></div>
+        <div class="day-date">4월 3일</div>
+      </div>
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-title">⛰️ 마블마운틴 · 시내 관광 <span class="route">다낭 시내</span></div>
+          <div class="meal-tags">
+            <span class="meal-tag breakfast">조: 호텔식</span>
+            <span class="meal-tag lunch">중: 샤브샤브</span>
+            <span class="meal-tag dinner">석: 무제한 삼겹살</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <ul class="schedule-list">
+            <li class="schedule-item">
+              <span class="s-time">오전</span><div class="s-dot gold"></div>
+              <div class="s-text">호텔 조식 후 체크아웃 · 오전 자유시간</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🗿 <strong>마블마운틴 (오행산)</strong> 관광
+                <span class="tag">엘리베이터 이용</span></div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">⛪ <strong>다낭 대성당</strong> (1923년 프랑스 식민지 시절 건축)</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot"></div>
+              <div class="s-text">🌉 <strong>한시장</strong> → 다낭대성당 → 손짜야시장</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time"></span><div class="s-dot coral"></div>
+              <div class="s-text">☕ <strong>손짜 마리나 카페</strong> (음료 1잔 포함)</div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">저녁</span><div class="s-dot gold"></div>
+              <div class="s-text">🍖 석식 후 다낭 국제공항으로 이동</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 5 -->
+    <div class="day-block">
+      <div class="day-badge">
+        <div class="day-circle" style="background:#555"><span class="d-num">5</span><span>일</span></div>
+        <div class="day-date">4월 4일</div>
+      </div>
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-title">🛬 귀국 <span class="route">다낭 → 부산</span></div>
+          <div class="meal-tags">
+            <span class="meal-tag breakfast">조: 불포함 (기내식)</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <ul class="schedule-list">
+            <li class="schedule-item">
+              <span class="s-time">00:45</span><div class="s-dot gold"></div>
+              <div class="s-text">
+                <div class="flight-block">
+                  <span class="plane">✈️</span>
+                  <div>
+                    <div class="fn">BX0774</div>
+                    <div class="arr">다낭 출발 → 부산 도착 07:25 (약 4시간 40분) · 기내식 제공</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="schedule-item">
+              <span class="s-time">07:25</span><div class="s-dot coral"></div>
+              <div class="s-text">🎉 <strong>부산 (김해공항) 도착</strong> · 여행 종료</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <!-- 베트남 기본 정보 -->
+  <div class="section-title">
+    <div class="s-icon">🇻🇳</div>
+    <h2>베트남 기본 정보</h2>
+  </div>
+  <div class="vn-grid">
+    <div class="vn-card"><span class="vn-icon">💱</span><div>
+      <div class="vn-label">환율 (VND)</div>
+      <div class="vn-val">살 때: 100동 = 6.37원<br>팔 때: 100동 = 5.03원</div>
+    </div></div>
+    <div class="vn-card"><span class="vn-icon">🕐</span><div>
+      <div class="vn-label">시차</div>
+      <div class="vn-val">한국보다 2시간 느림<br>한국 15:00 = 베트남 13:00</div>
+    </div></div>
+    <div class="vn-card"><span class="vn-icon">🌡️</span><div>
+      <div class="vn-label">날씨 (3월)</div>
+      <div class="vn-val">평균기온 25~30°C<br>고온다습, 열대성</div>
+    </div></div>
+    <div class="vn-card"><span class="vn-icon">🔌</span><div>
+      <div class="vn-label">전압 / 콘센트</div>
+      <div class="vn-val">220V / 50Hz<br>국내 어댑터 그대로 사용 가능</div>
+    </div></div>
+    <div class="vn-card"><span class="vn-icon">🧳</span><div>
+      <div class="vn-label">수하물</div>
+      <div class="vn-val">위탁: 15kg 1개<br>기내: 10kg 이하 1개</div>
+    </div></div>
+    <div class="vn-card"><span class="vn-icon">🛃</span><div>
+      <div class="vn-label">면세 한도</div>
+      <div class="vn-val">주류 22도↑ 1.5L<br>담배 1보루 / 시가 100개피</div>
+    </div></div>
+  </div>
+
+  <!-- 주요 관광지 -->
+  <div class="section-title">
+    <div class="s-icon">📍</div>
+    <h2>주요 관광지 안내</h2>
+  </div>
+  <div class="spots-grid">
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🌉</span>
+        <div><div class="spot-name">내원교 (일본교)</div><div class="spot-en">Japanese Covered Bridge</div></div>
+      </div>
+      <div class="spot-body">1593년 일본인들이 건설한 목조지붕 다리. 유네스코 세계문화유산으로 지정된 호이안의 상징. 야간에 화려한 조명으로 더욱 아름답습니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🏛️</span>
+        <div><div class="spot-name">풍흥고가</div><div class="spot-en">Phung Hung Old House</div></div>
+      </div>
+      <div class="spot-body">19세기 건축된 베트남·중국·일본 혼합 양식의 고가. 현재까지 8대째 후손이 거주하며, 호이안 구시가지에서 가장 오래된 건물입니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🏯</span>
+        <div><div class="spot-name">광조회관 (관우사당)</div><div class="spot-en">Quang Trieu Assembly Hall</div></div>
+      </div>
+      <div class="spot-body">1800년대 중국 광저우 상인들이 지은 회관으로, 현재는 중국 동포들의 향우회 장소 겸 제단으로 사용됩니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🚡</span>
+        <div><div class="spot-name">바나산 국립공원</div><div class="spot-en">Ba Na Hills</div></div>
+      </div>
+      <div class="spot-body">세계 최장·최고 논스탑 케이블카(5,042m, 해발 1,300m). 산 정상의 대규모 복합리조트와 놀이공원. 기네스북 등재.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🐉</span>
+        <div><div class="spot-name">다낭 용 다리</div><div class="spot-en">Da Nang Dragon Bridge</div></div>
+      </div>
+      <div class="spot-body">한강을 가로지르는 다낭의 랜드마크 다리. 주말 밤에는 용의 입에서 불과 물을 뿜는 쇼가 진행됩니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">⛰️</span>
+        <div><div class="spot-name">마블마운틴 (오행산)</div><div class="spot-en">Marble Mountain</div></div>
+      </div>
+      <div class="spot-body">다낭 외곽 12km. 순수 대리석으로 이뤄진 5개 산. 수많은 동굴과 사원이 있으며 정상에서 다낭 전경을 파노라마로 감상할 수 있습니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">⛪</span>
+        <div><div class="spot-name">다낭 대성당</div><div class="spot-en">Da Nang Cathedral</div></div>
+      </div>
+      <div class="spot-body">1923년 프랑스 식민지 시절 건축된 분홍색 외벽의 중세 고딕 양식 성당. 현지에서는 '수탉성당'이라 불립니다.</div>
+    </div>
+    <div class="spot-card">
+      <div class="spot-header">
+        <span class="spot-icon">🛕</span>
+        <div><div class="spot-name">쩐가사당</div><div class="spot-en">Tran Family Chapel</div></div>
+      </div>
+      <div class="spot-body">베트남·중국·일본 양식이 뒤섞인 사당. 응우옌 왕조 관리였던 중국인 후손이 건축하였으며 선조들의 유품이 전시되어 있습니다.</div>
+    </div>
+  </div>
+
+  <!-- 여행 준비 팁 -->
+  <div class="section-title">
+    <div class="s-icon">💡</div>
+    <h2>여행 준비 & 유의사항</h2>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <h4>🧳 필수 준비물</h4>
+      <ul>
+        <li>여권 (출발 기준 유효기간 6개월 이상)</li>
+        <li>세면도구 (칫솔, 치약, 면도기)</li>
+        <li>우산 / 우의 (접이식 우산 권장)</li>
+        <li>자외선 차단제, 모자, 썬글라스</li>
+        <li>비상약 (혈압약, 지사제, 소화제, 감기약 등)</li>
+        <li>드라이어 (없는 경우 많음 · 220V 확인)</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>💳 환전 & 결제</h4>
+      <ul>
+        <li>미국달러로 환전 후 현지 환전 권장</li>
+        <li>해외 사용 가능 카드 (VISA, MASTER, AMEX)</li>
+        <li>호텔 팁: 1박 1달러 (침대 또는 베개 위)</li>
+        <li>벨보이 팁: 짐 운반시 1달러</li>
+        <li>마사지 팁: $4 별도</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>📱 통신 & 기타</h4>
+      <ul>
+        <li>데이터 해외로밍 또는 데이터차단 서비스 신청</li>
+        <li>휴대폰 보조배터리: 위탁수하물 불가 (기내 반입)</li>
+        <li>국제선 액체류: 100ml 이하 개별용기, 1인 1L 투명비닐백</li>
+        <li>수하물: 위탁 15kg / 기내 10kg</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>⚠️ 현지 안전 수칙</h4>
+      <ul>
+        <li>소매치기 주의 · 혼자 이동은 위험</li>
+        <li>귀중품은 호텔 안전금고 보관</li>
+        <li>식수는 반드시 안내원 지시에 따라 섭취</li>
+        <li>현지인과 악수 시 왼손 사용 금지</li>
+        <li>호텔 퇴실 시 열쇠·전화요금·미니바 정산 필수</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  <strong>하나투어</strong> · 하정연 어머님 칠순 여행 · 베트남 다낭/호이안<br>
+  기간: 2026.03.31 ~ 04.04 (3박 5일) · 현지가이드: 림종성 <strong>+84 038-689-0929</strong><br>
+  ※ 상기 일정은 항공 및 현지 사정에 의하여 다소 변경될 수 있습니다.
+</footer>
+
+</body>
+</html>
