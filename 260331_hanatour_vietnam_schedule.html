@@ -219,6 +219,38 @@
     font-family: 'Noto Sans KR', monospace;
   }
 
+  /* ── PHONE LINKS ── */
+  a.tel-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    padding: 1px 3px;
+    margin: -1px -3px;
+  }
+  a.tel-link:hover {
+    background: rgba(26, 107, 92, 0.10);
+    color: var(--jade);
+    text-decoration: underline;
+  }
+  a.tel-link:active {
+    background: rgba(26, 107, 92, 0.22);
+  }
+  .info-card .value a.tel-link {
+    color: var(--jade-dark);
+    font-weight: 600;
+  }
+  .info-card .value.highlight a.tel-link {
+    color: var(--jade);
+  }
+  footer a.tel-link {
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+
   /* ── TIMELINE ── */
   .timeline { position: relative; }
   .timeline::before {
@@ -505,15 +537,15 @@
     </div>
     <div class="info-card">
       <div class="label">VIP 출국수속 담당</div>
-      <div class="value">김재신 부장<br>📞 010-5054-5612</div>
+      <div class="value">김재신 부장<br><a href="tel:01050545612" class="tel-link">📞 010-5054-5612</a></div>
     </div>
     <div class="info-card">
       <div class="label">진주↔김해 셔틀</div>
-      <div class="value">배정전 기사님<br>📞 010-7767-7196</div>
+      <div class="value">배정전 기사님<br><a href="tel:01077677196" class="tel-link">📞 010-7767-7196</a></div>
     </div>
     <div class="info-card">
       <div class="label">현지 가이드</div>
-      <div class="value highlight">림종성 (남)<br>📞 +84 038-689-0929</div>
+      <div class="value highlight">림종성 (남)<br><a href="tel:+840386890929" class="tel-link">📞 +84 038-689-0929</a></div>
     </div>
   </div>
 
@@ -913,7 +945,7 @@
 
 <footer>
   <strong>하나투어</strong> · 하정연 어머님 칠순 여행 · 베트남 다낭/호이안<br>
-  기간: 2026.03.31 ~ 04.04 (3박 5일) · 현지가이드: 림종성 <strong>+84 038-689-0929</strong><br>
+  기간: 2026.03.31 ~ 04.04 (3박 5일) · 현지가이드: 림종성 <a href="tel:+840386890929" class="tel-link"><strong>+84 038-689-0929</strong></a><br>
   ※ 상기 일정은 항공 및 현지 사정에 의하여 다소 변경될 수 있습니다.
 </footer>
 
