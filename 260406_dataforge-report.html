@@ -1,0 +1,4051 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DataForge DF-Stream — 통합 진행 보고서 2026.04.06</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #070a0f;
+                --bg2: #0c1018;
+                --bg3: #111620;
+                --bg4: #18202e;
+                --border: #1c2738;
+                --border2: #263347;
+                --text: #bfcfe0;
+                --text2: #6e8aa4;
+                --text3: #3e5468;
+                --accent: #4fa3f7;
+                --accent2: #2278d4;
+                --green: #2fd49e;
+                --yellow: #f5ba3c;
+                --red: #f05252;
+                --purple: #a87af5;
+                --orange: #f07c40;
+                --teal: #2fd4c8;
+                --mono: "IBM Plex Mono", monospace;
+                --sans: "IBM Plex Sans KR", sans-serif;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: var(--sans);
+                font-size: 14px;
+                line-height: 1.75;
+            }
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border2);
+                border-radius: 3px;
+            }
+
+            /* ── HEADER ── */
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                background: rgba(7, 10, 15, 0.95);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border);
+                height: 52px;
+                padding: 0 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+            }
+            .h-left {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                flex-shrink: 0;
+            }
+            .logo {
+                font-family: var(--mono);
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--accent);
+                background: rgba(79, 163, 247, 0.1);
+                border: 1px solid rgba(79, 163, 247, 0.28);
+                padding: 3px 10px;
+                border-radius: 3px;
+            }
+            .h-title {
+                font-family: var(--mono);
+                font-size: 12px;
+                color: var(--text2);
+            }
+            nav {
+                display: flex;
+                gap: 0;
+                overflow-x: auto;
+                flex-shrink: 1;
+            }
+            nav a {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--text3);
+                text-decoration: none;
+                padding: 5px 11px;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+                transition: color 0.2s;
+                white-space: nowrap;
+            }
+            nav a:hover {
+                color: var(--accent);
+            }
+            .h-badge {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 700;
+                color: var(--orange);
+                background: rgba(240, 124, 64, 0.12);
+                border: 1px solid rgba(240, 124, 64, 0.3);
+                padding: 2px 9px;
+                border-radius: 3px;
+                flex-shrink: 0;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+            }
+
+            /* ── HERO ── */
+            .hero {
+                padding: 56px 40px 44px;
+                border-bottom: 1px solid var(--border);
+                position: relative;
+                overflow: hidden;
+            }
+            .hero::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    radial-gradient(
+                        ellipse 50% 55% at 88% 35%,
+                        rgba(79, 163, 247, 0.08) 0%,
+                        transparent 70%
+                    ),
+                    radial-gradient(
+                        ellipse 30% 30% at 12% 75%,
+                        rgba(168, 122, 245, 0.05) 0%,
+                        transparent 60%
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        transparent,
+                        transparent 64px,
+                        rgba(255, 255, 255, 0.011) 64px,
+                        rgba(255, 255, 255, 0.011) 65px
+                    ),
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent,
+                        transparent 64px,
+                        rgba(255, 255, 255, 0.011) 64px,
+                        rgba(255, 255, 255, 0.011) 65px
+                    );
+                pointer-events: none;
+            }
+            .hero-kicker {
+                font-family: var(--mono);
+                font-size: 11px;
+                font-weight: 500;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--orange);
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .hero-kicker::before {
+                content: "";
+                width: 20px;
+                height: 1px;
+                background: var(--orange);
+            }
+            .hero h1 {
+                font-size: 32px;
+                font-weight: 700;
+                color: #d4e6f8;
+                line-height: 1.2;
+                letter-spacing: -0.02em;
+                margin-bottom: 10px;
+            }
+            .hero h1 em {
+                color: var(--accent);
+                font-style: normal;
+            }
+            .hero-sub {
+                font-size: 14px;
+                color: var(--text2);
+                max-width: 580px;
+                margin-bottom: 36px;
+            }
+            .stats {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .stat {
+                padding: 16px 26px;
+                border: 1px solid var(--border);
+                border-right: none;
+                background: var(--bg2);
+                min-width: 120px;
+            }
+            .stat:first-child {
+                border-radius: 6px 0 0 6px;
+            }
+            .stat:last-child {
+                border-right: 1px solid var(--border);
+                border-radius: 0 6px 6px 0;
+            }
+            .stat-v {
+                font-family: var(--mono);
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 1;
+                margin-bottom: 5px;
+            }
+            .stat-l {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--text3);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+
+            /* ── ALERT BANNER ── */
+            .alert {
+                margin: 0;
+                padding: 14px 40px;
+                background: rgba(240, 124, 64, 0.07);
+                border-bottom: 1px solid rgba(240, 124, 64, 0.25);
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+            .alert-icon {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 700;
+                color: var(--orange);
+                background: rgba(240, 124, 64, 0.15);
+                border: 1px solid rgba(240, 124, 64, 0.3);
+                padding: 2px 8px;
+                border-radius: 3px;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                flex-shrink: 0;
+            }
+            .alert-text {
+                font-size: 13px;
+                color: var(--text2);
+            }
+            .alert-text strong {
+                color: var(--orange);
+            }
+
+            /* ── SECTIONS ── */
+            .section {
+                padding: 42px 40px;
+                border-bottom: 1px solid var(--border);
+            }
+            .sec-hd {
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 28px;
+                flex-wrap: wrap;
+            }
+            .sec-num {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                color: var(--accent);
+                background: rgba(79, 163, 247, 0.08);
+                border: 1px solid rgba(79, 163, 247, 0.2);
+                padding: 2px 8px;
+                border-radius: 3px;
+            }
+            .section h2 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #cfe0f0;
+                letter-spacing: -0.01em;
+            }
+            .sec-meta {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--text3);
+                margin-left: auto;
+            }
+
+            /* ── GRID ── */
+            .g2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 13px;
+            }
+            .g3 {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 13px;
+            }
+            .g4 {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 11px;
+            }
+            @media (max-width: 900px) {
+                .g2,
+                .g3 {
+                    grid-template-columns: 1fr;
+                }
+                .g4 {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+
+            /* ── CARD ── */
+            .card {
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 18px 22px;
+                transition: border-color 0.2s;
+            }
+            .card:hover {
+                border-color: var(--border2);
+            }
+            .card h3 {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--text3);
+                margin-bottom: 14px;
+            }
+
+            /* ── PROGRESS CARD ── */
+            .pc {
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 22px 26px;
+                margin-bottom: 13px;
+            }
+            .pc-top {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                margin-bottom: 14px;
+                gap: 16px;
+            }
+            .pc-title {
+                font-size: 15px;
+                font-weight: 600;
+                color: #cfe0f0;
+                margin-bottom: 4px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .pc-sub {
+                font-size: 11px;
+                color: var(--text3);
+                font-family: var(--mono);
+            }
+            .pc-pct {
+                font-family: var(--mono);
+                font-size: 26px;
+                font-weight: 600;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+            .bar-wrap {
+                height: 3px;
+                background: var(--bg4);
+                border-radius: 2px;
+                overflow: hidden;
+                margin-bottom: 18px;
+            }
+            .bar {
+                height: 100%;
+                border-radius: 2px;
+                position: relative;
+                transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .bar::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 5px;
+                background: rgba(255, 255, 255, 0.3);
+                filter: blur(2px);
+            }
+            .c-blue {
+                background: var(--accent);
+            }
+            .c-green {
+                background: var(--green);
+            }
+            .c-yellow {
+                background: var(--yellow);
+            }
+            .c-purple {
+                background: var(--purple);
+            }
+            .c-teal {
+                background: var(--teal);
+            }
+            .c-orange {
+                background: var(--orange);
+            }
+
+            /* ── TAGS ── */
+            .tag {
+                display: inline-block;
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 500;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                padding: 2px 7px;
+                border-radius: 3px;
+                border: 1px solid;
+            }
+            .t-done {
+                color: var(--green);
+                border-color: rgba(47, 212, 158, 0.3);
+                background: rgba(47, 212, 158, 0.08);
+            }
+            .t-wip {
+                color: var(--yellow);
+                border-color: rgba(245, 186, 60, 0.3);
+                background: rgba(245, 186, 60, 0.08);
+            }
+            .t-todo {
+                color: var(--text3);
+                border-color: var(--border);
+                background: var(--bg3);
+            }
+            .t-backlog {
+                color: var(--purple);
+                border-color: rgba(168, 122, 245, 0.3);
+                background: rgba(168, 122, 245, 0.08);
+            }
+            .t-new {
+                color: var(--orange);
+                border-color: rgba(240, 124, 64, 0.35);
+                background: rgba(240, 124, 64, 0.09);
+            }
+            .t-drop {
+                color: var(--red);
+                border-color: rgba(240, 82, 82, 0.3);
+                background: rgba(240, 82, 82, 0.08);
+            }
+            .t-hot {
+                color: var(--red);
+                border-color: rgba(240, 82, 82, 0.35);
+                background: rgba(240, 82, 82, 0.1);
+                font-weight: 700;
+            }
+            .t-p0 {
+                color: var(--green);
+                background: rgba(47, 212, 158, 0.08);
+                border: 1px solid rgba(47, 212, 158, 0.25);
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                padding: 2px 7px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+            .t-p1 {
+                color: var(--yellow);
+                background: rgba(245, 186, 60, 0.08);
+                border: 1px solid rgba(245, 186, 60, 0.25);
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                padding: 2px 7px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+            .t-p2 {
+                color: var(--text3);
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                padding: 2px 7px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+
+            /* ── DOTS ── */
+            .item {
+                display: flex;
+                align-items: flex-start;
+                gap: 9px;
+                font-size: 12px;
+                color: var(--text2);
+                padding: 5px 0;
+            }
+            .dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                margin-top: 6px;
+                flex-shrink: 0;
+            }
+            .d-done {
+                background: var(--green);
+                box-shadow: 0 0 6px rgba(47, 212, 158, 0.5);
+            }
+            .d-wip {
+                background: var(--yellow);
+                box-shadow: 0 0 5px rgba(245, 186, 60, 0.4);
+            }
+            .d-todo {
+                background: var(--text3);
+            }
+            .d-new {
+                background: var(--orange);
+                box-shadow: 0 0 5px rgba(240, 124, 64, 0.4);
+            }
+            .d-drop {
+                background: var(--red);
+                opacity: 0.55;
+            }
+            .d-hot {
+                background: var(--red);
+                box-shadow: 0 0 6px rgba(240, 82, 82, 0.6);
+            }
+
+            /* ── KV LIST ── */
+            .kv {
+                display: flex;
+                flex-direction: column;
+                gap: 9px;
+            }
+            .kv-r {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                gap: 8px;
+                font-size: 13px;
+            }
+            .kv-k {
+                color: var(--text3);
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+            .kv-v {
+                color: var(--text);
+                text-align: right;
+                font-size: 13px;
+            }
+
+            /* ── TABLE ── */
+            .tbl {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+            }
+            .tbl th {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 500;
+                letter-spacing: 0.09em;
+                text-transform: uppercase;
+                color: var(--text3);
+                text-align: left;
+                padding: 9px 14px;
+                border-bottom: 1px solid var(--border);
+                background: var(--bg2);
+            }
+            .tbl td {
+                padding: 11px 14px;
+                border-bottom: 1px solid var(--border);
+                color: var(--text2);
+                vertical-align: middle;
+            }
+            .tbl tr:hover td {
+                background: rgba(255, 255, 255, 0.015);
+            }
+            .tbl td:first-child {
+                color: var(--text);
+                font-weight: 500;
+            }
+            .tbl-bar {
+                height: 3px;
+                background: var(--bg4);
+                border-radius: 2px;
+                overflow: hidden;
+                width: 68px;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 7px;
+            }
+            .tbl-b {
+                height: 100%;
+                border-radius: 2px;
+            }
+
+            /* ── CODE ── */
+            .code {
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                padding: 14px 18px;
+                font-family: var(--mono);
+                font-size: 11.5px;
+                color: var(--text2);
+                line-height: 1.9;
+                overflow-x: auto;
+            }
+            .hl {
+                color: var(--accent);
+            }
+            .hl2 {
+                color: var(--green);
+            }
+            .hl3 {
+                color: var(--yellow);
+            }
+            .hl4 {
+                color: var(--orange);
+            }
+
+            /* ── TECH BADGE ── */
+            .tb {
+                display: inline-block;
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--text2);
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                padding: 2px 8px;
+                border-radius: 3px;
+                margin: 2px;
+            }
+
+            /* ── PHASE ROW ── */
+            .ph-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 9px 0;
+                border-bottom: 1px solid var(--border);
+                font-size: 13px;
+            }
+            .ph-row:last-child {
+                border-bottom: none;
+            }
+            .ph-num {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--text3);
+                width: 64px;
+                flex-shrink: 0;
+            }
+            .ph-name {
+                color: var(--text);
+                font-weight: 500;
+                flex: 1;
+                min-width: 100px;
+            }
+            .ph-desc {
+                color: var(--text3);
+                font-size: 12px;
+                flex: 2;
+            }
+
+            /* ── CHANGE LOG ── */
+            .chg-list {
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 0 22px;
+            }
+            .chg-row {
+                display: grid;
+                grid-template-columns: 164px 1fr;
+                border-bottom: 1px solid var(--border);
+            }
+            .chg-row:last-child {
+                border-bottom: none;
+            }
+            .chg-k {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 500;
+                color: var(--text3);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                padding: 13px 18px 13px 0;
+                border-right: 1px solid var(--border);
+            }
+            .chg-v {
+                padding: 13px 0 13px 18px;
+                font-size: 13px;
+                color: var(--text2);
+            }
+            .flow {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                flex-wrap: wrap;
+            }
+            .f-old {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--red);
+                background: rgba(240, 82, 82, 0.08);
+                border: 1px solid rgba(240, 82, 82, 0.2);
+                padding: 2px 7px;
+                border-radius: 3px;
+                text-decoration: line-through;
+                opacity: 0.7;
+            }
+            .f-new {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--green);
+                background: rgba(47, 212, 158, 0.08);
+                border: 1px solid rgba(47, 212, 158, 0.25);
+                padding: 2px 7px;
+                border-radius: 3px;
+            }
+            .f-add {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--orange);
+                background: rgba(240, 124, 64, 0.08);
+                border: 1px solid rgba(240, 124, 64, 0.25);
+                padding: 2px 7px;
+                border-radius: 3px;
+            }
+            .f-arr {
+                color: var(--text3);
+                font-size: 11px;
+            }
+
+            /* ── PENDING ── */
+            .pend-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+                gap: 10px;
+            }
+            .pend-card {
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-left: 3px solid var(--yellow);
+                border-radius: 0 6px 6px 0;
+                padding: 13px 17px;
+            }
+            .pend-card.critical {
+                border-left-color: var(--red);
+            }
+            .pend-card.new {
+                border-left-color: var(--orange);
+            }
+            .pend-card.decision {
+                border-left-color: var(--purple);
+            }
+            .pend-card.done {
+                border-left-color: var(--green);
+                opacity: 0.75;
+            }
+            .pend-title {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 4px;
+            }
+            .pend-sub {
+                font-size: 11px;
+                color: var(--text3);
+                font-family: var(--mono);
+            }
+
+            /* ── NEW BADGE ── */
+            .nbadge {
+                display: inline-block;
+                font-family: var(--mono);
+                font-size: 9px;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--orange);
+                background: rgba(240, 124, 64, 0.12);
+                border: 1px solid rgba(240, 124, 64, 0.3);
+                padding: 1px 5px;
+                border-radius: 3px;
+                vertical-align: middle;
+                margin-left: 5px;
+            }
+            .confirmed-badge {
+                display: inline-block;
+                font-family: var(--mono);
+                font-size: 9px;
+                font-weight: 700;
+                color: var(--green);
+                background: rgba(47, 212, 158, 0.1);
+                border: 1px solid rgba(47, 212, 158, 0.3);
+                padding: 1px 5px;
+                border-radius: 3px;
+                vertical-align: middle;
+                margin-left: 5px;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+
+            /* ── TIMELINE ── */
+            .tl {
+                display: flex;
+                gap: 0;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+            .tl-ph {
+                flex: 1;
+                min-width: 150px;
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-right: none;
+                padding: 15px 16px;
+            }
+            .tl-ph:first-child {
+                border-radius: 6px 0 0 6px;
+            }
+            .tl-ph:last-child {
+                border-right: 1px solid var(--border);
+                border-radius: 0 6px 6px 0;
+            }
+            .tl-label {
+                font-family: var(--mono);
+                font-size: 10px;
+                font-weight: 600;
+                color: var(--text3);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 5px;
+            }
+            .tl-name {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 4px;
+            }
+            .tl-date {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--text3);
+                margin-bottom: 8px;
+            }
+            .tl-item {
+                font-size: 11px;
+                color: var(--text2);
+                padding: 2px 0;
+            }
+
+            /* ── DECISION TABLE ── */
+            .dec-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+            }
+            .dec-table th {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--text3);
+                text-align: left;
+                padding: 8px 12px;
+                border-bottom: 1px solid var(--border);
+                background: var(--bg2);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+            .dec-table td {
+                padding: 10px 12px;
+                border-bottom: 1px solid var(--border);
+                color: var(--text2);
+                vertical-align: top;
+            }
+            .dec-table tr:hover td {
+                background: rgba(255, 255, 255, 0.012);
+            }
+
+            /* ── PLANE STATUS ── */
+            .plane-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 13px;
+            }
+            .plane-card {
+                background: var(--bg3);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                padding: 14px 16px;
+            }
+            .plane-card-title {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            /* ── DIVIDER ── */
+            .div {
+                height: 1px;
+                background: var(--border);
+                margin: 18px 0;
+            }
+
+            /* ── FOOTER ── */
+            footer {
+                padding: 28px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--text3);
+                letter-spacing: 0.05em;
+                border-top: 1px solid var(--border);
+            }
+
+            /* ── ANIM ── */
+            @keyframes fadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(12px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .section {
+                animation: fadeUp 0.45s ease both;
+            }
+            .section:nth-child(1) {
+                animation-delay: 0.04s;
+            }
+            .section:nth-child(2) {
+                animation-delay: 0.08s;
+            }
+            .section:nth-child(3) {
+                animation-delay: 0.12s;
+            }
+            .section:nth-child(4) {
+                animation-delay: 0.16s;
+            }
+            .section:nth-child(5) {
+                animation-delay: 0.2s;
+            }
+            .section:nth-child(6) {
+                animation-delay: 0.24s;
+            }
+            .section:nth-child(7) {
+                animation-delay: 0.28s;
+            }
+            .section:nth-child(8) {
+                animation-delay: 0.32s;
+            }
+            .section:nth-child(9) {
+                animation-delay: 0.36s;
+            }
+            .section:nth-child(10) {
+                animation-delay: 0.4s;
+            }
+            .section:nth-child(11) {
+                animation-delay: 0.44s;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- HEADER -->
+        <header>
+            <div class="h-left">
+                <span class="logo">DataForge</span>
+                <span class="h-title">DF-Stream · 통합 진행 보고서</span>
+            </div>
+            <nav>
+                <a href="#overview">개요</a>
+                <a href="#docs">문서</a>
+                <a href="#phase1">Phase 1</a>
+                <a href="#arch">아키텍처</a>
+                <a href="#policy">개발정책</a>
+                <a href="#progress">진행현황</a>
+                <a href="#schedule">일정</a>
+                <a href="#decisions">의사결정</a>
+                <a href="#changes">변경이력</a>
+                <a href="#glossary">용어</a>
+                <a href="#pending">미완항목</a>
+            </nav>
+            <span class="h-badge">● 현재 진행중</span>
+        </header>
+
+        <!-- ALERT BANNER -->
+        <div class="alert">
+            <span class="alert-icon">Today</span>
+            <span class="alert-text"
+                ><strong>2026년 4월 6일 현재 —</strong> BSM v1.0 Cycle 100% 완료
+                (3/31). <strong>Phase 1</strong> 진행 중 (3/11 ~ 4/20). Stream
+                Wizard & Manager UI 개발 중. 요구사항 v1.7 · 아키텍처 v1.0
+                확정.</span
+            >
+        </div>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-kicker">2026.04.06 기준 · Project Report</div>
+            <h1>DataForge <em>DF-Stream</em><br />외부 제조업 Edge 서비스</h1>
+            <p class="hero-sub">
+                OPC-UA 실시간 수집부터 MES/ERP/L2 운영 데이터 파이프라인, 통합
+                인증(OIDC), 이메일 알림까지 — 외부 제조업 고객사를 위한 설치형
+                패키지 플랫폼.
+            </p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--accent)">~74%</div>
+                    <div class="stat-l">전체 진행률</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--green)">100%</div>
+                    <div class="stat-l">BSM v1.0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--yellow)">
+                        Phase 1
+                    </div>
+                    <div class="stat-l">현재 단계</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--accent)">v1.7</div>
+                    <div class="stat-l">요구사항 버전</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--text2)">3</div>
+                    <div class="stat-l">NestJS 앱</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-v" style="color: var(--text2)">15</div>
+                    <div class="stat-l">미결 의사결정</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 01. 프로젝트 개요 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="overview">
+            <div class="sec-hd">
+                <span class="sec-num">01</span>
+                <h2>프로젝트 개요</h2>
+            </div>
+
+            <div class="g2" style="margin-bottom: 13px">
+                <div class="card">
+                    <h3>기본 정보</h3>
+                    <div class="kv">
+                        <div class="kv-r">
+                            <span class="kv-k">프로젝트명</span
+                            ><span class="kv-v"
+                                >DataForge Package (DF-Stream)</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">현재 날짜</span
+                            ><span
+                                class="kv-v"
+                                style="
+                                    color: var(--orange);
+                                    font-family: var(--mono);
+                                "
+                                >2026-04-06</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">요구사항</span
+                            ><span
+                                class="kv-v"
+                                style="
+                                    font-family: var(--mono);
+                                    color: var(--accent);
+                                "
+                                >v1.7 (2026-03-11)</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">아키텍처</span
+                            ><span
+                                class="kv-v"
+                                style="
+                                    font-family: var(--mono);
+                                    color: var(--accent);
+                                "
+                                >v1.0 (2026-03-11)</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">BSM v1.0</span
+                            ><span class="kv-v" style="color: var(--green)"
+                                >✓ 완료 (18/18, 100%)</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">현재 Phase</span
+                            ><span class="kv-v" style="color: var(--yellow)"
+                                >Phase 1 — 3/11 ~ 4/20</span
+                            >
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">Main 담당</span
+                            ><span class="kv-v">@유병재</span>
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">Sub 담당</span
+                            ><span class="kv-v">@김성만</span>
+                        </div>
+                        <div class="kv-r">
+                            <span class="kv-k">프로젝트 관리</span
+                            ><span class="kv-v">Plane.so (df/BSM)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>4개 서비스 구성</h3>
+                    <div class="div" style="margin: 0 0 10px"></div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--accent);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                            "
+                            >apps/api<br /><span style="color: var(--text3)"
+                                >:3001</span
+                            ></span
+                        >
+                        <div>
+                            <div class="ph-name">NestJS API</div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                스트림·태그·연결·운영 파이프라인 관리
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--orange);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                            "
+                            >apps/auth<br /><span style="color: var(--text3)"
+                                >:3002</span
+                            ></span
+                        >
+                        <div>
+                            <div class="ph-name">
+                                NestJS Auth <span class="nbadge">분리</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                OIDC Provider + Multi Auth + RBAC
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--green);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                            "
+                            >apps/web<br /><span style="color: var(--text3)"
+                                >:3000</span
+                            ></span
+                        >
+                        <div>
+                            <div class="ph-name">Next.js Web</div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                Stream Wizard / 관리 UI / 대시보드
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--purple);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                            "
+                            >Listmonk<br /><span style="color: var(--text3)"
+                                >:9000</span
+                            ></span
+                        >
+                        <div>
+                            <div class="ph-name">
+                                이메일 서비스 <span class="nbadge">신규</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                Self-hosted 트랜잭션 메일 + Subscriber Sync
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>사용자 역할 (v1.3 확정)</h3>
+                <div class="g4" style="margin-top: 4px; gap: 13px">
+                    <div>
+                        <div class="t-p0" style="margin-bottom: 8px">
+                            현장 운영자
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text2);
+                                margin-top: 6px;
+                            "
+                        >
+                            수집 파이프라인 구성/배포. Stream Wizard GUI, 스트림
+                            시작·중지·삭제
+                        </div>
+                    </div>
+                    <div>
+                        <div class="t-p0" style="margin-bottom: 8px">
+                            관리자 (Admin)
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text2);
+                                margin-top: 6px;
+                            "
+                        >
+                            사용자·권한·연결 관리. 시스템 모니터링. 로그 조회
+                        </div>
+                    </div>
+                    <div>
+                        <div class="t-p1" style="margin-bottom: 8px">
+                            데이터 엔지니어
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text2);
+                                margin-top: 6px;
+                            "
+                        >
+                            Bloblang 파이프라인 작성·테스트. Avro Schema 관리.
+                            DDL Parser 활용
+                        </div>
+                    </div>
+                    <div>
+                        <div class="t-p1" style="margin-bottom: 8px">
+                            데이터 분석가
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text2);
+                                margin-top: 6px;
+                            "
+                        >
+                            Trino 데이터 조회. 표준 데이터 열람. 데이터 카탈로그
+                            활용 (Phase 3)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 02. 문서 목록 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="docs">
+            <div class="sec-hd">
+                <span class="sec-num">02</span>
+                <h2>문서 목록</h2>
+                <span class="sec-meta">총 10개 참조 문서</span>
+            </div>
+
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px"
+            >
+                <div>
+                    <div
+                        style="
+                            font-size: 10px;
+                            font-family: var(--mono);
+                            color: var(--text3);
+                            margin-bottom: 10px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.1em;
+                        "
+                    >
+                        기존 문서 (2월 이전)
+                    </div>
+                    <div
+                        style="display: flex; flex-direction: column; gap: 8px"
+                    >
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    기획설계 계획서 (148p)
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    DPE-110326-051242.pdf
+                                </div>
+                            </div>
+                            <span class="tag t-done">완료</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    BSM README / 구조 설계
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    readmemda4.pdf / benthosstreammanagera4.pdf
+                                </div>
+                            </div>
+                            <span class="tag t-done">완료</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    DF-Stream 요구사항 정의서 v1.2
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    dfstreamrequirementsdefinitiona4.pdf
+                                </div>
+                            </div>
+                            <span class="tag t-drop">구버전</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    DF-Stream 아키텍처 설계서
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    dfstreama4.pdf
+                                </div>
+                            </div>
+                            <span class="tag t-done">완료</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div
+                        style="
+                            font-size: 10px;
+                            font-family: var(--mono);
+                            color: var(--orange);
+                            margin-bottom: 10px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.1em;
+                        "
+                    >
+                        ★ 현재 기준 최신 문서 (20260406)
+                    </div>
+                    <div
+                        style="display: flex; flex-direction: column; gap: 8px"
+                    >
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                border-color: rgba(240, 124, 64, 0.25);
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    요구사항 정의서
+                                    <strong style="color: var(--orange)"
+                                        >v1.7</strong
+                                    >
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    20260406_요구사항정의서.pdf · 28 pages
+                                </div>
+                            </div>
+                            <span class="tag t-new">현행</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                border-color: rgba(240, 124, 64, 0.25);
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    시스템 아키텍처
+                                    <strong style="color: var(--orange)"
+                                        >v1.0</strong
+                                    >
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    20260406_시스템아키텍처.pdf · 14 pages
+                                </div>
+                            </div>
+                            <span class="tag t-new">현행</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                border-color: rgba(240, 124, 64, 0.25);
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    개발 정책 (Architecture/Ops/Security)
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    20260406_개발정책.pdf · 9 pages
+                                </div>
+                            </div>
+                            <span class="tag t-new">현행</span>
+                        </div>
+                        <div
+                            class="card"
+                            style="
+                                padding: 12px 16px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                border-color: rgba(240, 124, 64, 0.25);
+                            "
+                        >
+                            <div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        color: var(--text);
+                                    "
+                                >
+                                    용어사전 + Plane.so MCP 연동
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 11px;
+                                        color: var(--text3);
+                                        font-family: var(--mono);
+                                    "
+                                >
+                                    20260406_용어사전.pdf · 용어사전.pdf · 14
+                                    pages
+                                </div>
+                            </div>
+                            <span class="tag t-new">현행</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 03. Phase 1 현황 (강조) -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="phase1">
+            <div class="sec-hd">
+                <span class="sec-num">03</span>
+                <h2>Phase 1 현황 <span class="nbadge">현재 진행중</span></h2>
+                <span class="sec-meta">2026.03.11 ~ 04.20 (잔여 14일)</span>
+            </div>
+
+            <!-- BSM 완료 박스 -->
+            <div
+                style="
+                    background: rgba(47, 212, 158, 0.06);
+                    border: 1px solid rgba(47, 212, 158, 0.25);
+                    border-radius: 6px;
+                    padding: 20px 26px;
+                    margin-bottom: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 16px;
+                "
+            >
+                <div>
+                    <div
+                        style="
+                            font-family: var(--mono);
+                            font-size: 11px;
+                            color: var(--green);
+                            letter-spacing: 0.1em;
+                            text-transform: uppercase;
+                            margin-bottom: 6px;
+                        "
+                    >
+                        ✓ COMPLETED — BSM v1.0 Cycle
+                    </div>
+                    <div
+                        style="
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: #cfe0f0;
+                        "
+                    >
+                        Benthos Stream Manager v1.0 — 18/18 Tasks 완료 (100%)
+                    </div>
+                    <div
+                        style="
+                            font-size: 12px;
+                            color: var(--text2);
+                            margin-top: 4px;
+                        "
+                    >
+                        2026-03-01 ~ 03-31 · Payload CMS 3.69 + Next.js 15.4 +
+                        React 19 + node-opcua 2.160
+                    </div>
+                </div>
+                <div
+                    style="
+                        font-family: var(--mono);
+                        font-size: 40px;
+                        font-weight: 700;
+                        color: var(--green);
+                        line-height: 1;
+                    "
+                >
+                    100%
+                </div>
+            </div>
+
+            <div class="g2" style="margin-bottom: 13px">
+                <div class="card">
+                    <h3>BSM v1.0 완성 항목 (모두 완료 ✓)</h3>
+                    <div class="item">
+                        <span class="dot d-done"></span>OPC-UA, Kafka, SR,
+                        Benthos 연결 CRUD + 헬스체크
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Stream Wizard 4단계
+                        (INPUT → OUTPUT → PIPELINE → DEPLOY)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Pipeline Editor —
+                        Bloblang 매핑 작성·테스트
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>KEP Tag Browser —
+                        KEPServerEX 노드 브라우징
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Kafka Manager —
+                        토픽·파티션·레그 관리
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Schema Registry Manager
+                        — Subject·버전 관리
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>MSW v2 mock handler 62개
+                        완성
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Next.js 기본 앱 구조
+                        (기본 페이지 완성)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Docker 배포 구성
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Phase 1 잔여 작업 (planned → 4/20 목표)</h3>
+                    <div class="item">
+                        <span class="dot d-wip"></span
+                        ><strong style="color: var(--yellow)"
+                            >StreamsService.deploy()</strong
+                        >
+                        — 9단계 플로우 구현
+                    </div>
+                    <div class="item">
+                        <span class="dot d-wip"></span
+                        ><strong style="color: var(--yellow)"
+                            >Stream API</strong
+                        >
+                        — start / stop / delete 엔드포인트
+                    </div>
+                    <div class="item">
+                        <span class="dot d-wip"></span
+                        ><strong style="color: var(--yellow)"
+                            >Stream Wizard UI</strong
+                        >
+                        (DF-Stream Next.js Web) — 4단계 폼
+                    </div>
+                    <div class="item">
+                        <span class="dot d-wip"></span
+                        ><strong style="color: var(--yellow)"
+                            >Streams Manager UI</strong
+                        >
+                        — 목록·상세·로그 뷰
+                    </div>
+                    <div class="item">
+                        <span class="dot d-wip"></span>Phase 2 선행 — 개발 환경
+                        Docker Compose 구성
+                    </div>
+                    <div class="div"></div>
+                    <div
+                        style="
+                            font-size: 11px;
+                            font-family: var(--mono);
+                            color: var(--text3);
+                        "
+                    >
+                        Plane.so 워크아이템 상태: planned → 완료 전환 필요
+                    </div>
+                    <div
+                        style="
+                            font-size: 11px;
+                            font-family: var(--mono);
+                            color: var(--text3);
+                            margin-top: 4px;
+                        "
+                    >
+                        잔여 기간:
+                        <span style="color: var(--yellow)">약 14일</span> (4/7 ~
+                        4/20)
+                    </div>
+                </div>
+            </div>
+
+            <!-- StreamsService.deploy() 플로우 -->
+            <div class="card">
+                <h3>StreamsService.deploy() — 핵심 배포 플로우 (9단계)</h3>
+                <div class="code" style="margin-top: 4px; font-size: 11px">
+                    <span style="color: var(--text3)"
+                        >// apps/api/src/streams/streams.service.ts</span
+                    ><br />
+                    <span class="hl">StreamsService</span
+                    >.deploy(CreateStreamDto, User)<br /><br />
+                    1.
+                    <span class="hl2">StreamLogsService</span>.createLog(action:
+                    'deploy', status: 'in_progress')<br />
+                    2.
+                    <span class="hl2">DfPackageService</span
+                    >.getOpcServerByUid(uid) → opc_server_mt + endpoint_mt<br />
+                    3.
+                    <span class="hl2">DfPackageService</span
+                    >.getOpcServerNodes(uid) → opc_server_node_mt<br />
+                    4.
+                    <span class="hl2">DfPackageService</span
+                    >.getKafkaClusterByUid(uid) → cluster_mt + broker_mt<br />
+                    5.
+                    <span class="hl2">DfPackageService</span
+                    >.getKafkaClusterTopics(uid) → kafka_topic_mt<br />
+                    6.
+                    <span class="hl2">BenthosConfigGeneratorService</span
+                    >.generate(params)<br />
+                    ├── buildInput() → OPC-UA input (poll/subscribe/broker)<br />
+                    ├── buildKafkaOutput() → Kafka output (addresses, topic,
+                    compression)<br />
+                    └── buildPipeline() → Bloblang + Schema Registry encode<br />
+                    7. Stream UPSERT (status: 'deploying', deployed_config:
+                    json)<br />
+                    8. <span class="hl3">callBenthosApi</span>(baseUrl,
+                    streamId, config) ← POST /streams/:id (30s timeout)<br />
+                    9a. <span class="hl2">SUCCESS</span>: stream.status =
+                    'active', last_deployed_at = now()<br />
+                    9b. <span class="hl">FAILURE</span>: stream.status =
+                    'error', stream.error_message = error
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 04. 시스템 아키텍처 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="arch">
+            <div class="sec-hd">
+                <span class="sec-num">04</span>
+                <h2>
+                    시스템 아키텍처
+                    <span class="confirmed-badge">v1.0 확정</span>
+                </h2>
+            </div>
+
+            <div class="g2" style="margin-bottom: 13px">
+                <div class="card">
+                    <h3>기술 스택</h3>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >Backend: <span class="tb">NestJS 11</span>
+                            <span class="tb">TypeORM</span>
+                            <span class="tb">PostgreSQL 17</span></span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >Frontend: <span class="tb">Next.js 16</span>
+                            <span class="tb">React 19</span>
+                            <span class="tb">shadcn/ui</span>
+                            <span class="tb">Tailwind</span></span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >폼/쿼리: <span class="tb">RHF + Zod</span>
+                            <span class="tb">TanStack Query</span>
+                            <span class="tb">TanStack Table</span></span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >차트: <span class="tb">ECharts</span>
+                            <span class="tb">Recharts</span></span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >수집: <span class="tb">Benthos-UMH</span> + OPC-UA
+                            + Avro</span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >메시징: <span class="tb">Kafka KRaft 4.x</span> 3+
+                            Broker + Schema Registry</span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >캐싱: <span class="tb">Valkey</span> (Redis
+                            호환)</span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span
+                        ><span
+                            >모노레포: <span class="tb">pnpm workspace</span> +
+                            <span class="tb">Turborepo</span></span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-new"></span
+                        ><span
+                            >인증: <span class="tb">nest-oidc-provider</span> +
+                            <span class="tb">apps/auth</span> 독립 앱
+                            (v1.5)</span
+                        >
+                    </div>
+                    <div class="item">
+                        <span class="dot d-new"></span
+                        ><span
+                            >이메일:
+                            <span class="tb">Listmonk</span> Self-hosted
+                            (v1.7)</span
+                        >
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>전체 데이터 흐름</h3>
+                    <div class="code">
+                        <span class="hl4">PLC / 설비</span><br />
+                        <span style="color: var(--text3)">
+                            ↓ OPC-UA (opc.tcp://) · Basic256Sha256</span
+                        ><br />
+                        <span class="hl">KEPServerEX</span>
+                        <span style="color: var(--text3)">(Port 4840)</span
+                        ><br />
+                        <span style="color: var(--text3)"> ↓ HTTP API</span
+                        ><br />
+                        <span class="hl">Benthos-UMH</span>
+                        <span style="color: var(--text3)"
+                            >(Port 4195) · Avro 직렬화</span
+                        ><br />
+                        <span style="color: var(--text3)">
+                            ↓ → Schema Registry (Avro 검증)</span
+                        ><br />
+                        <span class="hl">Kafka KRaft</span>
+                        <span style="color: var(--text3)">(3+ Broker)</span
+                        ><br />
+                        <span style="color: var(--text3)">
+                            ↓ Kafka Connect JDBC Sink (UPSERT)</span
+                        ><br />
+                        <span class="hl2">TimescaleDB</span>
+                        <span style="color: var(--text3)">(시계열 저장)</span
+                        ><br />
+                        <br />
+                        <span class="hl3">MES / ERP / L2</span><br />
+                        <span style="color: var(--text3)">
+                            ↓ DDL → NestJS Operational Pipeline</span
+                        ><br />
+                        <span style="color: var(--text3)">
+                            ↓ Avro → SR → Kafka Connect → Benthos</span
+                        ><br />
+                        <span class="hl2">TimescaleDB / PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="g2">
+                <div class="card">
+                    <h3>DB 이중 DataSource (Kubernetes Desired State 패턴)</h3>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--accent);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                                width: 80px;
+                            "
+                            >df_package</span
+                        >
+                        <div>
+                            <div class="ph-name">READ ONLY — 마스터 데이터</div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                OPC 서버·노드, Kafka 클러스터·토픽,
+                                공장·설비·기기. Ansible/Terraform 전용 관리
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--green);
+                                font-family: var(--mono);
+                                font-size: 11px;
+                                width: 80px;
+                            "
+                            >df_app</span
+                        >
+                        <div>
+                            <div class="ph-name">READ/WRITE — 운영 데이터</div>
+                            <div style="font-size: 11px; color: var(--text3)">
+                                users, streams, connections, RBAC
+                                roles/permissions, OIDC sessions, pipelines,
+                                stream_logs
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div"></div>
+                    <div style="font-size: 11px; color: var(--text3)">
+                        Cross-Schema는 FK 없이 uid 기반
+                        <strong style="color: var(--text2)"
+                            >loose reference</strong
+                        >로 관리. df_app → df_package 참조 시 코드 레벨 조인.
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>앱 간 의존 관계 (v1.5 확정)</h3>
+                    <div class="code" style="font-size: 11px">
+                        <span class="hl2">apps/web</span> →
+                        <span class="hl4">apps/auth</span>
+                        <span style="color: var(--text3)"
+                            >(로그인·OIDC·토큰 발급)</span
+                        ><br />
+                        <span class="hl2">apps/web</span> →
+                        <span class="hl">apps/api</span>
+                        <span style="color: var(--text3)"
+                            >(Bearer JWT · 데이터 API)</span
+                        ><br />
+                        <span class="hl4">apps/auth</span> →
+                        <span class="hl">apps/api</span>
+                        <span style="color: var(--text3)"
+                            >(JWT introspection)</span
+                        ><br />
+                        <span class="hl4">apps/auth</span> → Listmonk
+                        <span style="color: var(--text3)"
+                            >(가입·잠금 알림 메일)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → Listmonk
+                        <span style="color: var(--text3)"
+                            >(파이프라인 상태 알림)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → Benthos
+                        <span style="color: var(--text3)"
+                            >(스트림 배포 HTTP API)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → Kafka
+                        <span style="color: var(--text3)">(토픽·연결 관리)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → SR
+                        <span style="color: var(--text3)"
+                            >(Avro 스키마 조회)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → KafkaConn
+                        <span style="color: var(--text3)"
+                            >(커넥터 CRUD + pause)</span
+                        ><br />
+                        <span class="hl">apps/api</span> → KEPServer
+                        <span style="color: var(--text3)"
+                            >(OPC-UA 브라우징)</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 05. 개발 정책 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="policy">
+            <div class="sec-hd">
+                <span class="sec-num">05</span>
+                <h2>개발 정책 <span class="confirmed-badge">확정</span></h2>
+            </div>
+
+            <div class="g3" style="margin-bottom: 13px">
+                <div class="card">
+                    <h3>OPC-UA 수집 Class</h3>
+                    <div class="ph-row">
+                        <span class="ph-num" style="color: var(--accent)"
+                            >Class A</span
+                        ><span class="ph-name">실시간/라인</span
+                        ><span class="ph-desc">100ms ~ 500ms</span>
+                    </div>
+                    <div class="ph-row">
+                        <span class="ph-num" style="color: var(--yellow)"
+                            >Class B</span
+                        ><span class="ph-name">배치/설비</span
+                        ><span class="ph-desc">1s ~ 5s</span>
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span class="ph-num" style="color: var(--text3)"
+                            >Class C</span
+                        ><span class="ph-name">집계/운영</span
+                        ><span class="ph-desc">10s ~ 1min</span>
+                    </div>
+                    <div class="div"></div>
+                    <div class="item">
+                        <span class="dot d-done"></span>보안: Basic256Sha256 /
+                        Sign &amp; Encrypt
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>노드:
+                        [Site].[Area].[Line].[AssetID]
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>인증: Service Account
+                        Authentication
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Kafka 클러스터 정책</h3>
+                    <div class="item">
+                        <span class="dot d-done"></span>KRaft 3 Broker (HA,
+                        Split-brain 방지)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Auto Create Disabled —
+                        명시적 토픽 생성만
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Retention: 7일 / 50GB
+                        (파티션당)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Replication factor: 3 ·
+                        Min ISR: 2
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>압축: snappy (기본) /
+                        gzip/lz4/zstd 선택
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Schema Registry:
+                        BACKWARD_TRANSITIVE
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Kafka Connect Upsert
+                        (PK: asset_id, timestamp)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>DLQ:
+                        errors.tolerance=all, {topic}.error
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>보안 정책</h3>
+                    <div class="item">
+                        <span class="dot d-done"></span>JWT: RS256 (apps/auth
+                        Private Key 서명 → JWKS 공개)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Access Token: 15분 /
+                        Refresh Token: 7일
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>RBAC: admin &gt;
+                        operator &gt; viewer (API 엔드포인트 단위)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>로그인 실패 5회 → 계정
+                        잠금 (loginAttempts)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Multi Auth: Local /
+                        Google OIDC / LDAP·AD / 외부 OIDC IdP
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>도메인 화이트리스트:
+                        AUTH_ALLOWED_DOMAINS
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>로그 민감정보 마스킹:
+                        password, token, secret, hash, salt
+                    </div>
+                </div>
+            </div>
+
+            <div class="g2">
+                <div class="card">
+                    <h3>네이밍 컨벤션 (확정)</h3>
+                    <div class="code" style="font-size: 11px">
+                        <span class="hl3">Kafka Topic</span>
+                        css.{bp}-{factory}.{source}-{dataset}<br />
+                        <span style="color: var(--text3)">
+                            ex)
+                            css.changwon-fp.mes-heat-treat-extract-result</span
+                        ><br />
+                        <span class="hl3">Stream ID</span> = Kafka Topic
+                        (동일)<br />
+                        <span class="hl3">Connector</span> {topic}.sink<br />
+                        <span class="hl3">Consumer Group</span>
+                        {topic}.timescale<br />
+                        <span class="hl3">DLQ Topic</span> {topic}.error<br />
+                        <span class="hl3">Avro Subject</span>
+                        css.{bp}_{factory}.{source}_{dataset}<br />
+                        <span class="hl3">DB Schema</span> {bp}_{factory} →
+                        changwon_fp<br />
+                        <span class="hl3">DB Table</span>
+                        {source}_{dataset}<span class="hl2">_tt</span> →
+                        mes_heat_treat_extract_result_tt
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>DB 테이블 접미어 규칙</h3>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--accent);
+                                font-family: var(--mono);
+                            "
+                            >_mt</span
+                        ><span class="ph-name">Master Table</span
+                        ><span class="ph-desc"
+                            >정적 마스터 데이터 (corp_mt, device_mt…)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--yellow);
+                                font-family: var(--mono);
+                            "
+                            >_ct</span
+                        ><span class="ph-name">Code Table</span
+                        ><span class="ph-desc"
+                            >코드성 데이터 (db_type_ct, src_system_ct…)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--text2);
+                                font-family: var(--mono);
+                            "
+                            >_rt</span
+                        ><span class="ph-name">Relation Table</span
+                        ><span class="ph-desc"
+                            >N:M 관계 (equipment_device_rt…)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--purple);
+                                font-family: var(--mono);
+                            "
+                            >_ht</span
+                        ><span class="ph-name">History Table</span
+                        ><span class="ph-desc"
+                            >이력 데이터 (benthos_deployment_ht…)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--green);
+                                font-family: var(--mono);
+                            "
+                            >_tt</span
+                        ><span class="ph-name">Target Table</span
+                        ><span class="ph-desc"
+                            >수집 결과 저장 (…_extract_result_tt)</span
+                        >
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                color: var(--text2);
+                                font-family: var(--mono);
+                            "
+                            >v_</span
+                        ><span class="ph-name">View</span
+                        ><span class="ph-desc"
+                            >조회 뷰 (v_tag_metadata, v_opc_server_list)</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 06. 단계별 진행 현황 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="progress">
+            <div class="sec-hd">
+                <span class="sec-num">06</span>
+                <h2>단계별 진행 현황</h2>
+            </div>
+
+            <!-- 요구사항 -->
+            <div class="pc">
+                <div class="pc-top">
+                    <div>
+                        <div class="pc-title">
+                            요구사항 정의
+                            <span class="confirmed-badge">v1.7 확정</span>
+                        </div>
+                        <div class="pc-sub">
+                            v1.0 → v1.7 (7단계 업데이트 · 최종 확정)
+                        </div>
+                    </div>
+                    <div class="pc-pct" style="color: var(--accent)">90%</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar c-blue" style="width: 90%"></div>
+                </div>
+                <div class="g2">
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--text3);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            v1.0~1.4 기본 요구사항
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>AUTH: JWT
+                            로그인·갱신·RBAC (P0 완료)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>USER: CRUD, bcrypt,
+                            역할 관리 (P0 완료)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>SW: Stream Wizard
+                            4단계 전체 (P0 완료)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>STR: Streams Manager
+                            CRUD + 시작/중지 (P0)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>CONN:
+                            Benthos/Kafka/SR 연결 + 헬스체크 (P0)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>OPC: 서버 등록, 노드
+                            브라우징, 값 읽기 (P0)
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--green);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            v1.5~1.7 신규 추가 (확정)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span
+                            ><strong>v1.5</strong> apps/auth 독립 분리 — OIDC
+                            Provider + Multi Auth Strategy 4종
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span
+                            ><strong>v1.6</strong> Operational Data Pipeline
+                            (MES/ERP/L2 → DDL → Kafka → DB)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span
+                            ><strong>v1.6</strong> DDL Parser
+                            (Oracle/MySQL/PostgreSQL 통합 지원)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span
+                            ><strong>v1.6</strong> Pipeline Auto-Generator 6단계
+                            (DDL→Avro→SR→Connect→Benthos→TÀ)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span
+                            ><strong>v1.7</strong> Listmonk 이메일 서비스 통합
+                            (Subscriber Sync Cron)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>P2/P3 RBAC 세부 구현
+                            · OIDC Provider 전체 미완
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 아키텍처 -->
+            <div class="pc">
+                <div class="pc-top">
+                    <div>
+                        <div class="pc-title">
+                            아키텍처 설계
+                            <span class="confirmed-badge">v1.0 확정</span>
+                        </div>
+                        <div class="pc-sub">
+                            시스템아키텍처 v1.0 · 2026-03-11 공식 릴리즈 · 14
+                            pages
+                        </div>
+                    </div>
+                    <div class="pc-pct" style="color: var(--accent)">88%</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar c-blue" style="width: 88%"></div>
+                </div>
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: repeat(
+                            auto-fill,
+                            minmax(240px, 1fr)
+                        );
+                        gap: 4px;
+                    "
+                >
+                    <div class="item">
+                        <span class="dot d-done"></span>전체 시스템 다이어그램
+                        확정
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>NestJS 모듈 구조 확정
+                        (12개 모듈)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>StreamsService.deploy()
+                        9단계 플로우
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>Benthos JSON 자동생성
+                        로직 확정
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>df_package 전체 테이블
+                        설계 (25+)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>df_app Phase 1/2/3
+                        테이블 설계
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>API 엔드포인트 전체
+                        문서화 (/docs Swagger)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>보안 아키텍처
+                        (JWT→RolesGuard→ValidationPipe)
+                    </div>
+                    <div class="item">
+                        <span class="dot d-done"></span>apps/auth 분리 아키텍처
+                        확정
+                    </div>
+                    <div class="item">
+                        <span class="dot d-todo"></span>Operational Pipeline
+                        TypeORM 엔티티 미완
+                    </div>
+                </div>
+            </div>
+
+            <!-- 인프라 -->
+            <div class="pc">
+                <div class="pc-top">
+                    <div>
+                        <div class="pc-title">인프라 구성</div>
+                        <div class="pc-sub">
+                            K3s Kubernetes 기반 39개 파드 목표
+                        </div>
+                    </div>
+                    <div class="pc-pct" style="color: var(--yellow)">65%</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar c-yellow" style="width: 65%"></div>
+                </div>
+                <div class="g2">
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--green);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            완료 ✓
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>NFS 스토리지,
+                            Nginx-proxy, K3s + Headlamp
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>Kafka 4.2.0 KRaft
+                            (ZooKeeper 완전 제거)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>PostgreSQL 17.6.0 +
+                            Pgpool 4.6.3 클러스터
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>TimescaleDB (SSD
+                            이관, 일 2,500만 건 검증)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>사설 Docker
+                            Registry, Kafka-UI, Kafka-Connect
+                        </div>
+                        <div class="item">
+                            <span class="dot d-drop"></span
+                            ><span
+                                style="
+                                    text-decoration: line-through;
+                                    opacity: 0.5;
+                                "
+                                >NiFi → 폐기</span
+                            >
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--yellow);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            진행중 / 미완
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Fluentd 구축 (진행
+                            중)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>GitLab Standalone
+                            CI/CD 테스트 중
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Harbor / Docker
+                            Distribution 적용 테스트
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>ArgoCD + Image
+                            Updater (CD/GitOps)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Kaniko 이미지 빌드,
+                            Helm + Kustomize
+                        </div>
+                        <div class="item">
+                            <span class="dot d-new"></span>Listmonk Docker
+                            Compose 구성 필요 (Phase 2-D)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 수집 서비스 -->
+            <div class="pc">
+                <div class="pc-top">
+                    <div>
+                        <div class="pc-title">
+                            수집 서비스 (Benthos Stream Manager)
+                        </div>
+                        <div class="pc-sub">
+                            BSM v1.0 완료 · 소형압연 892태그 · 일 2,500만 건
+                            실운영 중
+                        </div>
+                    </div>
+                    <div class="pc-pct" style="color: var(--green)">82%</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar c-green" style="width: 82%"></div>
+                </div>
+                <div class="g2">
+                    <div>
+                        <div class="item">
+                            <span class="dot d-done"></span>BSM v1.0 — 18/18
+                            Tasks 100% 완료 (3/31)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>소형압연 11개
+                            디바이스, 892개 태그 실수집
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>일일 약 2,500만 건
+                            저장 확인
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>HDD → SSD 이관 후
+                            InfluxDB 대비 동등 성능
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>2제강 센싱 테이블
+                            추가 (2026.01.22)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>tag_rt 테이블:
+                            숫자/문자열 통합, 압축 2일/청크 1일/삭제 7일
+                        </div>
+                    </div>
+                    <div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>고부하 테스트 / 장기
+                            안정성 검증
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>BSM ↔ DF-Stream 통합
+                            여부 결정 미정
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Virtual Tag 기능
+                            활용 검토
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Consumer Lag
+                            모니터링 임계치 운영 (>10,000 msg)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DF-Stream 서비스 -->
+            <div class="pc">
+                <div class="pc-top">
+                    <div>
+                        <div class="pc-title">DF-Stream 서비스 개발</div>
+                        <div class="pc-sub">
+                            NestJS API + Next.js Web · Phase 1 진행 중
+                        </div>
+                    </div>
+                    <div class="pc-pct" style="color: var(--yellow)">45%</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar c-yellow" style="width: 45%"></div>
+                </div>
+                <div class="g2">
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--yellow);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            Phase 1 (진행 중)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>API 기본 구조
+                            (NestJS 모듈, TypeORM 2 DataSource)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>Web 기본 구조
+                            (Next.js App Router, shadcn/ui 90+)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>MSW v2 mock handler
+                            62개 (완성)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>기본 페이지 구조
+                            완성
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Stream Wizard API /
+                            UI (planned → 구현 중)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Streams Manager API /
+                            UI (planned)
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                            style="
+                                font-size: 10px;
+                                font-family: var(--mono);
+                                color: var(--text3);
+                                margin-bottom: 8px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                            "
+                        >
+                            Phase 2~3 (backlog)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Phase 2-A: apps/auth
+                            + Google OIDC (4/21~)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Phase 2-B: LDAP/AD ·
+                            Local · 외부 OIDC IdP
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Phase 2-C:
+                            Operational Data Pipeline (DDL→6단계)
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Phase 2-D: Listmonk
+                            이메일 서비스 연동
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Phase 3: 데이터
+                            카탈로그, Trino, 품질 규칙 (5/21~)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 07. 전체 진행률 요약 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section">
+            <div class="sec-hd">
+                <span class="sec-num">07</span>
+                <h2>전체 진행률 요약</h2>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>단계</th>
+                        <th>목표</th>
+                        <th>진행률</th>
+                        <th>주요 잔여 사항</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>기안</td>
+                        <td style="color: var(--text2)">목적·목표·전략·일정</td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-green"
+                                    style="width: 95%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--green);
+                                "
+                                >95%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            완료조건 세부 기준 미확정
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>요구사항</td>
+                        <td style="color: var(--text2)">
+                            기능/비기능 정의 v1.7
+                        </td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-blue"
+                                    style="width: 90%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--accent);
+                                "
+                                >90%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            P2/P3 RBAC·OIDC·카탈로그 미구현
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>아키텍처</td>
+                        <td style="color: var(--text2)">기술 스택·구조 확정</td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-blue"
+                                    style="width: 88%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--accent);
+                                "
+                                >88%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            ODP TypeORM 엔티티·의사결정 15건 미완
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>인프라</td>
+                        <td style="color: var(--text2)">K8s 서비스 구축</td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-yellow"
+                                    style="width: 65%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--yellow);
+                                "
+                                >65%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            Fluentd, GitLab CI/CD, ArgoCD 미완
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>수집 서비스</td>
+                        <td style="color: var(--text2)">BSM + OPC→Kafka→DB</td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-green"
+                                    style="width: 82%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--green);
+                                "
+                                >82%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            고부하 안정화·BSM 통합 결정
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DF-Stream 서비스</td>
+                        <td style="color: var(--text2)">
+                            API + Web 고객 서비스
+                        </td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-yellow"
+                                    style="width: 45%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 12px;
+                                    color: var(--yellow);
+                                "
+                                >45%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            Phase 1 Stream Wizard/Manager 구현 중
+                        </td>
+                    </tr>
+                    <tr style="background: rgba(79, 163, 247, 0.04)">
+                        <td style="font-weight: 700; color: #cfe0f0">전체</td>
+                        <td style="color: var(--text2)">
+                            DataForge Package 완성
+                        </td>
+                        <td>
+                            <div class="tbl-bar">
+                                <div
+                                    class="tbl-b c-blue"
+                                    style="width: 74%"
+                                ></div>
+                            </div>
+                            <span
+                                style="
+                                    font-family: var(--mono);
+                                    font-size: 14px;
+                                    font-weight: 700;
+                                    color: var(--accent);
+                                "
+                                >~74%</span
+                            >
+                        </td>
+                        <td style="color: var(--text3); font-size: 12px">
+                            Phase 1 완료 후 Phase 2~3 착수 예정
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 08. Phase 일정 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="schedule">
+            <div class="sec-hd">
+                <span class="sec-num">08</span>
+                <h2>Phase 일정 · Plane.so 현황</h2>
+            </div>
+
+            <div class="tl" style="margin-bottom: 20px">
+                <div class="tl-ph" style="border-left: 3px solid var(--yellow)">
+                    <div class="tl-label">▶ Phase 1 (진행중)</div>
+                    <div class="tl-name" style="color: var(--yellow)">
+                        수집 파이프라인
+                    </div>
+                    <div class="tl-date">2026.03.11 ~ 04.20</div>
+                    <div class="tl-item" style="color: var(--green)">
+                        ✓ MSW mock 62개
+                    </div>
+                    <div class="tl-item" style="color: var(--green)">
+                        ✓ 기본 앱 구조
+                    </div>
+                    <div class="tl-item" style="color: var(--yellow)">
+                        → Stream Wizard API
+                    </div>
+                    <div class="tl-item" style="color: var(--yellow)">
+                        → Stream Wizard UI
+                    </div>
+                    <div class="tl-item" style="color: var(--yellow)">
+                        → Streams Manager
+                    </div>
+                </div>
+                <div class="tl-ph">
+                    <div class="tl-label">Phase 2-A</div>
+                    <div class="tl-name">apps/auth + Google</div>
+                    <div class="tl-date">2026.04.21 ~</div>
+                    <div class="tl-item">• apps/auth NestJS 분리</div>
+                    <div class="tl-item">• OIDC Provider 구현</div>
+                    <div class="tl-item">• Google OIDC 연동</div>
+                    <div class="tl-item">• RBAC 기본 구현</div>
+                </div>
+                <div class="tl-ph">
+                    <div class="tl-label">Phase 2-B</div>
+                    <div class="tl-name">Multi Auth</div>
+                    <div class="tl-date">2026.04.21 ~ 05.20</div>
+                    <div class="tl-item">• LDAP / Active Directory</div>
+                    <div class="tl-item">• Local 인증</div>
+                    <div class="tl-item">• 외부 OIDC IdP</div>
+                    <div class="tl-item">• Trino RBAC 연동</div>
+                </div>
+                <div class="tl-ph">
+                    <div class="tl-label">Phase 2-C</div>
+                    <div class="tl-name">Operational Pipeline</div>
+                    <div class="tl-date">2026.04.21 ~ 05.20</div>
+                    <div class="tl-item">• DDL Parser (Oracle/MySQL/PG)</div>
+                    <div class="tl-item">• Pipeline Auto-Generator 6단계</div>
+                    <div class="tl-item">• Deploy/Undeploy/Upgrade/Delete</div>
+                    <div class="tl-item">• df_package DDL 확장 (10테이블)</div>
+                </div>
+                <div class="tl-ph">
+                    <div class="tl-label">Phase 2-D</div>
+                    <div class="tl-name">Listmonk 이메일</div>
+                    <div class="tl-date">2026.04.21 ~ 05.20</div>
+                    <div class="tl-item">• Docker Compose 구성</div>
+                    <div class="tl-item">• NestJS HttpModule 연동</div>
+                    <div class="tl-item">• Subscriber Sync Cron</div>
+                    <div class="tl-item">• 트랜잭션 메일 템플릿 5종</div>
+                </div>
+                <div
+                    class="tl-ph"
+                    style="
+                        border-right: 1px solid var(--border);
+                        border-radius: 0 6px 6px 0;
+                        border-left: 3px solid var(--purple);
+                    "
+                >
+                    <div class="tl-label">Phase 3</div>
+                    <div class="tl-name" style="color: var(--purple)">
+                        데이터 카탈로그
+                    </div>
+                    <div class="tl-date">2026.05.21 ~ 05.31</div>
+                    <div class="tl-item">• catalog_items</div>
+                    <div class="tl-item">• data_lineage</div>
+                    <div class="tl-item">• Trino 쿼리 연동</div>
+                    <div class="tl-item">• 품질 규칙/보존 정책</div>
+                </div>
+            </div>
+
+            <!-- Plane.so 현황 -->
+            <div class="card">
+                <h3>Plane.so 워크아이템 현황 (2026-04-06 기준)</h3>
+                <div class="plane-grid" style="margin-top: 8px">
+                    <div class="plane-card">
+                        <div class="plane-card-title">
+                            BSM v1.0 Cycle <span class="tag t-done">완료</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>MSW v2 mock handler
+                            62개 — completed
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>기본 앱 구조
+                            (Next.js + UI) — completed
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>18/18 Tasks 100%
+                            (2026-03-01 ~ 03-31)
+                        </div>
+                    </div>
+                    <div class="plane-card">
+                        <div class="plane-card-title">
+                            Phase 1 (진행 중)
+                            <span class="tag t-wip">planned</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>스트림 CRUD /
+                            start/stop/delete API — planned
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Stream Wizard &amp;
+                            Manager 4단계 UI — planned
+                        </div>
+                        <div class="item">
+                            <span class="dot d-wip"></span>Phase 2 준비 (Docker
+                            Compose, CI/CD) — planned
+                        </div>
+                    </div>
+                    <div class="plane-card">
+                        <div class="plane-card-title">Backlog (Phase 2~3)</div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>OIDC Provider &amp;
+                            RBAC — backlog
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Operational Data
+                            Pipeline — backlog
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>Listmonk 이메일 연동
+                            — backlog
+                        </div>
+                        <div class="item">
+                            <span class="dot d-todo"></span>데이터 카탈로그 /
+                            Trino — backlog
+                        </div>
+                    </div>
+                    <div class="plane-card">
+                        <div class="plane-card-title">레이블 체계</div>
+                        <div class="item">
+                            <span class="dot d-done"></span>backend / frontend /
+                            auth / database
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>api / infra /
+                            security / testing / docs
+                        </div>
+                        <div class="item">
+                            <span class="dot d-done"></span>operational-pipeline
+                            / mail
+                        </div>
+                        <div
+                            style="
+                                font-size: 11px;
+                                color: var(--text3);
+                                margin-top: 8px;
+                                font-family: var(--mono);
+                            "
+                        >
+                            Project ID: b02dcbf8 · BSM · workspace: df
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 09. 핵심 의사결정 미완 항목 (NEW) -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="decisions">
+            <div class="sec-hd">
+                <span class="sec-num">09</span>
+                <h2>
+                    핵심 의사결정 미완 항목 <span class="nbadge">15건</span>
+                </h2>
+            </div>
+            <p
+                style="
+                    font-size: 13px;
+                    color: var(--text2);
+                    margin-bottom: 20px;
+                "
+            >
+                요구사항 정의서 v1.7 §8 "오픈 이슈"에 명시된 15건의 의사결정
+                미완 항목. 각 Phase 착수 전 반드시 해결 필요.
+            </p>
+
+            <table class="dec-table" style="margin-bottom: 0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>이슈</th>
+                        <th>선택지</th>
+                        <th>연관 요구사항</th>
+                        <th>Phase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            1
+                        </td>
+                        <td style="color: var(--text)">Kafka 토픽 생성 방식</td>
+                        <td>REST Proxy ½ 직접 생성 vs 기존 =Ì 재사용</td>
+                        <td><span class="t-p1">SW2-004</span></td>
+                        <td><span class="tag t-wip">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            2
+                        </td>
+                        <td style="color: var(--text)">node_group 계층 구조</td>
+                        <td>node_group 없는 단순 구조 vs 계층 구조 유지</td>
+                        <td><span class="t-p1">SW1-006</span></td>
+                        <td><span class="tag t-wip">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            3
+                        </td>
+                        <td style="color: var(--text)">스트림 헬스체크 방식</td>
+                        <td>Cron 주기 폴링 vs 배포 상태 기반</td>
+                        <td><span class="t-p2">NFR-REL-002</span></td>
+                        <td><span class="tag t-wip">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            4
+                        </td>
+                        <td style="color: var(--text); font-weight: 600">
+                            OIDC PostgreSQL Adapter
+                        </td>
+                        <td>oidc-provider 세션/토큰 저장 테이블 구현 방식</td>
+                        <td><span class="t-p2">AUTH-006, AUTH-008</span></td>
+                        <td><span class="tag t-todo">Phase 2-A</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            5
+                        </td>
+                        <td style="color: var(--text)">
+                            df_app 테이블 생성 주체
+                        </td>
+                        <td>NestJS 자동 생성 vs df_app 수동 DDL 관리</td>
+                        <td><span class="t-p2">아키텍처</span></td>
+                        <td><span class="tag t-todo">Phase 2-A</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            6
+                        </td>
+                        <td style="color: var(--text)">Trino RBAC 구현 방식</td>
+                        <td>
+                            JWT claims → WHERE 절 필터 vs OPA/File-based 정책
+                        </td>
+                        <td><span class="t-p2">RBAC-005</span></td>
+                        <td><span class="tag t-todo">Phase 2-B</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            7
+                        </td>
+                        <td style="color: var(--text)">
+                            organizations 테이블 설계
+                        </td>
+                        <td>
+                            users.business_place 컬럼 → 별도 테이블 마이그레이션
+                        </td>
+                        <td><span class="t-p2">ORG-001, AUTH-005</span></td>
+                        <td><span class="tag t-todo">Phase 2-A</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            8
+                        </td>
+                        <td style="color: var(--text)">OIDC 로그인 UI 구현</td>
+                        <td>
+                            oidc-provider 내장 interaction UI vs Next.js 커스텀
+                            UI
+                        </td>
+                        <td><span class="t-p2">AUTH-006</span></td>
+                        <td><span class="tag t-todo">Phase 2-A</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            9
+                        </td>
+                        <td style="color: var(--text)">
+                            LDAP 신규 사용자 프로비저닝
+                        </td>
+                        <td>
+                            최초 로그인 시 자동 생성 + LDAP_DEFAULT_ROLE 설정
+                        </td>
+                        <td><span class="t-p2">AUTH-010, USER-008</span></td>
+                        <td><span class="tag t-todo">Phase 2-B</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            10
+                        </td>
+                        <td style="color: var(--text)">
+                            인증 전환 시 password_hash 처리
+                        </td>
+                        <td>Local → LDAP/Google 전환 시 NULL 처리 + UI 정책</td>
+                        <td><span class="t-p2">USER-008, AUTH-012</span></td>
+                        <td><span class="tag t-todo">Phase 2-B</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            11
+                        </td>
+                        <td style="color: var(--text)">
+                            DDL Parser Oracle 복합 PK
+                        </td>
+                        <td>복합 PK + 인라인 인덱스 처리 방식 결정</td>
+                        <td><span class="t-p1">ODP-001~006</span></td>
+                        <td><span class="tag t-todo">Phase 2-C</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            12
+                        </td>
+                        <td style="color: var(--text)">
+                            Target DB DataSource 설계
+                        </td>
+                        <td>
+                            TimescaleDB를 df_package에 포함 vs 별도 DataSource
+                        </td>
+                        <td><span class="t-p1">ODP-011, ODP-023</span></td>
+                        <td><span class="tag t-todo">Phase 2-C</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            13
+                        </td>
+                        <td style="color: var(--text)">
+                            Python FastAPI 통합 방식
+                        </td>
+                        <td>NestJS 내 통합(확정) vs 별도 서비스 유지 여부</td>
+                        <td><span class="t-p1">Phase 2-C</span></td>
+                        <td><span class="tag t-todo">Phase 2-C</span></td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                            "
+                        >
+                            14
+                        </td>
+                        <td style="color: var(--text)">
+                            mail 공유 패키지 구조
+                        </td>
+                        <td>
+                            apps/api + apps/auth 각자 import vs packages/mail
+                            공유
+                        </td>
+                        <td><span class="t-p1">MAIL-030</span></td>
+                        <td><span class="tag t-todo">Phase 2-D</span></td>
+                    </tr>
+                    <tr style="border-bottom: none">
+                        <td
+                            style="
+                                font-family: var(--mono);
+                                color: var(--text3);
+                                border: none;
+                            "
+                        >
+                            15
+                        </td>
+                        <td style="color: var(--text); border: none">
+                            알림 구독 정책
+                        </td>
+                        <td>
+                            파이프라인 알림 구독 기본값 (역할 기반? 파이프라인별
+                            opt-in?)
+                        </td>
+                        <td><span class="t-p2">MAIL 연관</span></td>
+                        <td><span class="tag t-todo">Phase 2-D</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 10. 방향 변경 이력 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="changes">
+            <div class="sec-hd">
+                <span class="sec-num">10</span>
+                <h2>주요 방향 변경 이력</h2>
+            </div>
+
+            <div class="chg-list">
+                <div class="chg-row">
+                    <div class="chg-k">인증 시스템</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">Keycloak</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-old">Zitadel</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new">oidc-provider</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-add">apps/auth 독립 (v1.5)</span>
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            nest-oidc-provider 기반 OIDC Provider를 독립 NestJS
+                            앱(apps/auth, Port 3002)으로 분리. Multi Auth
+                            Strategy 4종 (Local / Google OIDC / LDAP·AD / 외부
+                            OIDC IdP) 지원.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">수집 엔진</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">NiFi</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new">Benthos-UMH</span>
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            NiFi 폐기. OPC-UA 네이티브 지원, 경량화, Virtual Tag
+                            기능을 갖춘 Benthos-UMH로 대체. 실운영 검증 완료.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">Kafka 모드</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">ZooKeeper</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new"
+                                >KRaft 모드 (Kafka 4.1/4.2)</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            ZooKeeper 의존성 완전 제거. KRaft 단독 운영으로 운영
+                            복잡도 감소.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">수집 GUI</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">DF-Stream 내 통합</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new"
+                                >별도 Payload CMS 기반 BSM</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            BSM v1.0 3/31 완료. 향후 DF-Stream과 통합 여부는
+                            의사결정 미완 상태.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">DB 구조</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">단일 DB</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new"
+                                >df_package (READ-ONLY) + df_app (R/W)</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            Kubernetes desired state → reconcile 패턴 적용.
+                            Cross-Schema FK 없이 uid loose reference.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">컨테이너</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">Docker Swarm</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new">K3s (Kubernetes)</span>
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            Headlamp 대시보드 구성 완료. Helm + Kustomize 배포
+                            템플릿 예정.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row">
+                    <div class="chg-k">운영 파이프라인</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-old">Python/FastAPI 별도</span
+                            ><span class="f-arr">→</span
+                            ><span class="f-new"
+                                >NestJS apps/api 통합 (v1.6)</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            package/operational-data-pipeline(Python)를 NestJS
+                            apps/api operational-pipeline 모듈로 통합.
+                            DI/인증/에러핸들링 재사용.
+                        </div>
+                    </div>
+                </div>
+                <div class="chg-row" style="border: none">
+                    <div class="chg-k">이메일 서비스</div>
+                    <div class="chg-v">
+                        <div class="flow">
+                            <span class="f-add"
+                                >Listmonk Self-hosted 추가 (v1.7)</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: var(--text3);
+                                margin-top: 5px;
+                            "
+                        >
+                            Self-hosted 트랜잭션 이메일. DF-Stream users ↔
+                            Listmonk Subscriber 동기화. apps/auth + apps/api
+                            모두에서 연동. Go 템플릿 기반 {{.Tx.Data.*}} 변수
+                            사용.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 11. 용어 사전 요약 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="glossary">
+            <div class="sec-hd">
+                <span class="sec-num">11</span>
+                <h2>
+                    핵심 용어 사전
+                    <span class="confirmed-badge">2026-03-12 확정</span>
+                </h2>
+            </div>
+
+            <div class="g3">
+                <div class="card">
+                    <h3>수집 파이프라인</h3>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >OPC-UA</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >설비/PLC 실시간 통신 표준. opc.tcp://
+                            프로토콜</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >Tag</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >OPC-UA 노드의 측정값. KEPServerEX에서 PLC와 1:1
+                            매핑</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >Virtual Tag</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Benthos-UMH에서 계산·변환으로 생성한 가상
+                            태그</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >Bloblang</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Benthos 전용 데이터 변환 DSL</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >Stream</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >OPC-UA→Kafka 수집 설정 단위.
+                            생성→배포→실행→중지→삭제</span
+                        >
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--accent);
+                                width: 80px;
+                            "
+                            >deployed_config</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >배포된 Benthos JSON 설정. 상태 복구용 저장</span
+                        >
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>메시징 / 스토리지</h3>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >KRaft</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >ZooKeeper 없는 Kafka 내장 합의 모드</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >Avro</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Schema Registry 기반 직렬화. BACKWARD_TRANSITIVE
+                            정책</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >DLQ</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Dead Letter Queue. 처리 실패 메시지 격리
+                            ({topic}.error)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >JDBC Sink</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Kafka → PostgreSQL/TimescaleDB UPSERT 커넥터</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >Business Place</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >OPC·Kafka·Benthos 인프라 단위 최상위 조직
+                            구분</span
+                        >
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--yellow);
+                                width: 80px;
+                            "
+                            >TimescaleDB</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >PostgreSQL 기반 시계열 DB. Hypertable 청크
+                            관리</span
+                        >
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>인증 / 서비스</h3>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >OIDC Provider</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >DF-Stream 자체 구현 IdP (nest-oidc-provider)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >JWKS</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >JWT 검증 공개 키 세트
+                            (/oidc/.well-known/jwks.json)</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >RBAC</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >역할 기반 접근 제어. admin > operator >
+                            viewer</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >Auth Strategy</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >AUTH_STRATEGY 환경변수로 선택:
+                            local/google/ldap/oidc</span
+                        >
+                    </div>
+                    <div class="ph-row">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >Listmonk</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Self-hosted 이메일. REST API + Go 템플릿 기반
+                            메일</span
+                        >
+                    </div>
+                    <div class="ph-row" style="border: none">
+                        <span
+                            class="ph-num"
+                            style="
+                                font-family: var(--mono);
+                                font-size: 10px;
+                                color: var(--purple);
+                                width: 80px;
+                            "
+                            >Comp. Tx</span
+                        ><span class="ph-desc" style="flex: 3"
+                            >Compensating Transaction: 파이프라인 생성 실패 시
+                            부분 롤백</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- 12. 미완 항목 -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="section" id="pending">
+            <div class="sec-hd">
+                <span class="sec-num">12</span>
+                <h2>시급한 미완 항목</h2>
+            </div>
+
+            <div
+                style="
+                    font-size: 10px;
+                    font-family: var(--mono);
+                    color: var(--red);
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                "
+            >
+                🔴 CRITICAL — Phase 1 내 완료 (4/20까지)
+            </div>
+            <div class="pend-grid" style="margin-bottom: 16px">
+                <div class="pend-card critical">
+                    <div class="pend-title">StreamsService.deploy() 완성</div>
+                    <div class="pend-sub">
+                        9단계 플로우 · Benthos HTTP API 연동
+                    </div>
+                </div>
+                <div class="pend-card critical">
+                    <div class="pend-title">Stream Wizard UI 완성</div>
+                    <div class="pend-sub">4단계 폼 · DF-Stream Next.js Web</div>
+                </div>
+                <div class="pend-card critical">
+                    <div class="pend-title">Streams Manager UI 완성</div>
+                    <div class="pend-sub">목록·상세·로그·시작/중지 뷰</div>
+                </div>
+                <div class="pend-card critical">
+                    <div class="pend-title">
+                        Phase 1 의사결정 해결 (이슈 #1~3)
+                    </div>
+                    <div class="pend-sub">
+                        토픽 생성 방식 · node_group · 헬스체크
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="
+                    font-size: 10px;
+                    font-family: var(--mono);
+                    color: var(--yellow);
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                "
+            >
+                🟡 Phase 2 (4/21~5/20) — 착수 전 결정 필요
+            </div>
+            <div class="pend-grid" style="margin-bottom: 16px">
+                <div class="pend-card new">
+                    <div class="pend-title">apps/auth NestJS 앱 구성</div>
+                    <div class="pend-sub">
+                        ★ OIDC Provider + RS256 JWT + PostgreSQL Adapter
+                    </div>
+                </div>
+                <div class="pend-card new">
+                    <div class="pend-title">Google OIDC / LDAP 인증 구현</div>
+                    <div class="pend-sub">
+                        ★ Phase 2-A/B · Multi Auth Strategy 4종
+                    </div>
+                </div>
+                <div class="pend-card new">
+                    <div class="pend-title">Operational Data Pipeline 구현</div>
+                    <div class="pend-sub">
+                        ★ DDL Parser + 6단계 Auto-Generator (Phase 2-C)
+                    </div>
+                </div>
+                <div class="pend-card new">
+                    <div class="pend-title">Listmonk 이메일 서비스 연동</div>
+                    <div class="pend-sub">
+                        ★ Docker Compose + Subscriber Sync Cron (Phase 2-D)
+                    </div>
+                </div>
+                <div class="pend-card">
+                    <div class="pend-title">Fluentd 구축 완료</div>
+                    <div class="pend-sub">인프라 · 로그 수집 파이프라인</div>
+                </div>
+                <div class="pend-card">
+                    <div class="pend-title">GitLab CI/CD 파이프라인</div>
+                    <div class="pend-sub">
+                        Kaniko + Harbor + ArgoCD + Image Updater
+                    </div>
+                </div>
+                <div class="pend-card">
+                    <div class="pend-title">
+                        RBAC + Next.js 페이지 권한 제어
+                    </div>
+                    <div class="pend-sub">
+                        역할 기반 라우팅 가드 구현 (RBAC-006)
+                    </div>
+                </div>
+                <div class="pend-card">
+                    <div class="pend-title">Trino RBAC 연동</div>
+                    <div class="pend-sub">
+                        JWT claims → WHERE 절 필터링 (RBAC-005)
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="
+                    font-size: 10px;
+                    font-family: var(--mono);
+                    color: var(--purple);
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                "
+            >
+                🟣 Phase 3 (5/21~5/31)
+            </div>
+            <div class="pend-grid" style="margin-bottom: 16px">
+                <div class="pend-card" style="border-left-color: var(--purple)">
+                    <div class="pend-title">데이터 카탈로그 구현</div>
+                    <div class="pend-sub">
+                        catalog_items, data_lineage, data_quality_rules
+                    </div>
+                </div>
+                <div class="pend-card" style="border-left-color: var(--purple)">
+                    <div class="pend-title">Trino 쿼리 연동 + 접근 로그</div>
+                    <div class="pend-sub">
+                        data_access_logs, data_retention_policies
+                    </div>
+                </div>
+                <div class="pend-card" style="border-left-color: var(--purple)">
+                    <div class="pend-title">통합 테스트 수행</div>
+                    <div class="pend-sub">DataForge 서비스 완료 조건 달성</div>
+                </div>
+                <div class="pend-card" style="border-left-color: var(--purple)">
+                    <div class="pend-title">고부하 / 장기 안정성 테스트</div>
+                    <div class="pend-sub">
+                        수집 서비스 · 스트림 배포 부하 테스트
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="
+                    font-size: 10px;
+                    font-family: var(--mono);
+                    color: var(--text3);
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                "
+            >
+                ⚪ 아키텍처 의사결정 (시기 미정)
+            </div>
+            <div class="pend-grid">
+                <div class="pend-card decision">
+                    <div class="pend-title">BSM ↔ DF-Stream 통합 여부</div>
+                    <div class="pend-sub">
+                        Benthos Stream Manager와 DF-Stream 병합 또는 분리 운영
+                    </div>
+                </div>
+                <div class="pend-card decision">
+                    <div class="pend-title">OIDC Interaction UI 구현 방식</div>
+                    <div class="pend-sub">
+                        oidc-provider 내장 UI vs Next.js 커스텀 로그인 UI
+                    </div>
+                </div>
+                <div class="pend-card decision">
+                    <div class="pend-title">
+                        Target DB (TimescaleDB) DataSource
+                    </div>
+                    <div class="pend-sub">
+                        df_package 포함 vs 별도 DataSource 분리
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span>DataForge DF-Stream · 통합 진행 보고서 · 2026.04.06</span>
+            <span>Main @유병재 · Sub @안종성</span>
+            <span style="font-family: var(--mono)"
+                >요구사항 v1.7 · 아키텍처 v1.0 · Phase 1 진행 중</span
+            >
+        </footer>
+
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".bar, .tbl-b").forEach((bar) => {
+                    const w = bar.style.width;
+                    bar.style.width = "0";
+                    requestAnimationFrame(() =>
+                        setTimeout(() => {
+                            bar.style.width = w;
+                        }, 200),
+                    );
+                });
+            });
+        </script>
+    </body>
+</html>
