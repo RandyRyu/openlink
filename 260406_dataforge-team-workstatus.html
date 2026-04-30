@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataForge팀 업무현황 2026년 3월</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f0f2f5; color: #333; font-size: 14px; }
+
+  /* 헤더 */
+  .header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 24px 32px; }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .header .sub { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  .header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 3px 14px; font-size: 12px; margin-top: 8px; font-weight: 600; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+  .tab { padding: 10px 20px; cursor: pointer; border-radius: 6px 6px 0 0; font-weight: 600; font-size: 13px; color: #666; background: #e8eaf0; transition: all 0.2s; }
+  .tab.active { background: #2563eb; color: white; border-bottom: 2px solid #2563eb; margin-bottom: -2px; }
+  .tab:hover:not(.active) { background: #d0d4e0; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* 카드 */
+  .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; }
+  .card-title { font-size: 15px; font-weight: 700; color: #1e3a8a; margin-bottom: 14px; border-left: 4px solid #2563eb; padding-left: 10px; }
+
+  /* 그리드 */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  /* 스탯 박스 */
+  .stat-box { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: center; }
+  .stat-box .label { font-size: 12px; color: #888; margin-bottom: 6px; font-weight: 600; }
+  .stat-box .value { font-size: 28px; font-weight: 800; color: #2563eb; }
+  .stat-box .sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .stat-box.green .value { color: #16a34a; }
+  .stat-box.purple .value { color: #7c3aed; }
+  .stat-box.orange .value { color: #d97706; }
+
+  /* 테이블 */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #1e3a8a; color: white; padding: 9px 12px; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tr:hover td { background: #f8f9ff; }
+  tr:last-child td { border-bottom: none; }
+
+  /* 배지 */
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .badge-done { background: #dcfce7; color: #166534; }
+  .badge-progress { background: #dbeafe; color: #1e40af; }
+  .badge-review { background: #fef3c7; color: #92400e; }
+  .badge-hold { background: #f1f5f9; color: #64748b; }
+  .badge-open { background: #f0fdf4; color: #16a34a; }
+  .badge-delay { background: #fef2f2; color: #991b1b; }
+  .badge-plan { background: #ede9fe; color: #5b21b6; }
+
+  /* 진행률 바 */
+  .progress-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 4px; }
+  .progress-label { font-size: 12px; color: #666; margin-top: 3px; }
+  .progress-wrap { margin-bottom: 4px; }
+
+  /* 월별 블록 */
+  .month-block { border-left: 3px solid #2563eb; padding-left: 14px; margin-bottom: 24px; }
+  .month-label { font-size: 14px; font-weight: 800; color: #1e3a8a; margin-bottom: 10px; padding: 4px 10px; background: #eff6ff; display: inline-block; border-radius: 4px; }
+
+  /* KPI 카테고리 행 */
+  .kpi-category { background: #e0e7ff; }
+  .kpi-category td { font-weight: 700; color: #1e40af; padding: 7px 12px; }
+
+  /* 팀원 카드 */
+  .member-card { background: white; border-radius: 8px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .member-name { font-weight: 700; font-size: 14px; color: #1e3a8a; margin-bottom: 3px; }
+  .member-role { font-size: 11px; color: #666; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+
+  /* 섹션 구분 */
+  .section-divider { height: 1px; background: #e5e7eb; margin: 20px 0; }
+
+  /* 하이라이트 박스 */
+  .highlight-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+  .highlight-box .hl-title { font-weight: 700; color: #1e40af; font-size: 13px; margin-bottom: 6px; }
+  .highlight-box p { font-size: 12px; color: #374151; line-height: 1.7; }
+
+  .source-link { font-size: 11px; color: #2563eb; text-decoration: none; }
+  .source-link:hover { text-decoration: underline; }
+  .updated { font-size: 11px; color: #aaa; margin-top: 8px; text-align: right; }
+
+  /* 일정 타임라인 */
+  .schedule-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+  .schedule-date { min-width: 72px; font-size: 12px; font-weight: 700; color: #2563eb; }
+  .schedule-content { flex: 1; font-size: 13px; }
+  .schedule-owner { font-size: 11px; color: #888; margin-top: 2px; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 DataForge팀 업무현황 보고서</h1>
+  <p class="sub">Confluence DPE 스페이스 기반 · vntg.atlassian.net</p>
+  <span class="period-badge">📅 2026년 3월 기준 (2026.03.01 ~ 2026.03.31)</span>
+</div>
+
+<div class="container">
+
+  <!-- 탭 메뉴 -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('overview', this)">📈 전체 현황</div>
+    <div class="tab" onclick="showTab('monthly', this)">📅 월별 작업 내역</div>
+    <div class="tab" onclick="showTab('kpi', this)">🎯 KPI 진행 현황</div>
+    <div class="tab" onclick="showTab('members', this)">👥 팀원별 현황</div>
+  </div>
+
+  <!-- ===== 탭 1: 전체 현황 ===== -->
+  <div id="tab-overview" class="tab-content active">
+
+    <!-- 요약 스탯 -->
+    <div class="grid-4" style="margin-bottom:16px;">
+      <div class="stat-box">
+        <div class="label">3월 신규/진행 작업</div>
+        <div class="value">15</div>
+        <div class="sub">WG요청 + 내부 Task</div>
+      </div>
+      <div class="stat-box green">
+        <div class="label">3월 완료 건수</div>
+        <div class="value">8</div>
+        <div class="sub">완료/검토완료 포함</div>
+      </div>
+      <div class="stat-box orange">
+        <div class="label">Pack 개발 보고</div>
+        <div class="value">2/3차</div>
+        <div class="sub">3차 2026-04-13 예정</div>
+      </div>
+      <div class="stat-box purple">
+        <div class="label">4월 이월 작업</div>
+        <div class="value">7</div>
+        <div class="sub">진행중 + 검토중</div>
+      </div>
+    </div>
+
+    <!-- 3월 하이라이트 -->
+    <div class="highlight-box">
+      <div class="hl-title">🌟 3월 주요 성과 요약</div>
+      <p>
+        ▸ DataForge Pack 2차 CTO 보고 완료 (03.12) — K3s 환경 구축, AI 적용 개발 Task 보고<br>
+        ▸ 기술총괄 대상 DataForge 개발 현황 보고 완료 (03.09~12)<br>
+        ▸ WG-642 창특 가공공장 연속고용화로 온도 데이터 수집 PLC 등록 완료<br>
+        ▸ NiFi DBCP 서비스 커넥션 설정 최적화 가이드 작성 완료<br>
+        ▸ Bacula Item Template화, pgvector 설치 검토 완료<br>
+        ▸ AW 2026 참관 / Zabbix 설명회 완료 (03.03~04)
+      </p>
+    </div>
+
+    <!-- 현재 진행중 주요 업무 -->
+    <div class="card">
+      <div class="card-title">🔄 3월 진행 업무 현황 (2026.03.31 기준)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>상태</th>
+            <th>업무 내용</th>
+            <th>구분</th>
+            <th>담당자</th>
+            <th>시작일</th>
+            <th>목표 완료일</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 완료 -->
+          <tr>
+            <td><span class="badge badge-done">완료</span></td>
+            <td>AW 2026 참관 / Zabbix 설명회</td>
+            <td>내부</td>
+            <td>팀 전체</td>
+            <td>03.03</td>
+            <td>03.04</td>
+            <td>기술총괄 대상</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">완료</span></td>
+            <td>DataForge 개발 현황 기술총괄 보고</td>
+            <td>Pack</td>
+            <td>팀 전체</td>
+            <td>03.09</td>
+            <td>03.12</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">완료</span></td>
+            <td>DF Pack 개발 현황 CTO 보고 (2차)</td>
+            <td>Pack</td>
+            <td>변중환, 유병재</td>
+            <td>03.12</td>
+            <td>03.12</td>
+            <td>K3s 현황, AI 적용 개발 보고</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">완료</span></td>
+            <td>Bacula Item Template화 / pgvector 설치 검토</td>
+            <td>인프라</td>
+            <td>김경립, 안종성</td>
+            <td>03.24</td>
+            <td>03.25</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-done">완료</span></td>
+            <td>NiFi DBCP 서비스 커넥션 설정 최적화 가이드 작성</td>
+            <td>창특</td>
+            <td>안종성</td>
+            <td>03.27</td>
+            <td>03.27</td>
+            <td>-</td>
+          </tr>
+          <!-- 검토중 -->
+          <tr>
+            <td><span class="badge badge-review">검토중</span></td>
+            <td>WG-642 가공공장 연속고용화로 온도 Data 수집</td>
+            <td>창특</td>
+            <td>하민규</td>
+            <td>03.23</td>
+            <td>03.27</td>
+            <td>PLC 등록 완료, 최종 검토 중</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-review">검토중</span></td>
+            <td>IBA-Kepware 통신 장애 해결 테스트 (DCOM 세션 이슈)</td>
+            <td>베스틸</td>
+            <td>김경립, 하민규</td>
+            <td>03.25</td>
+            <td>03.27</td>
+            <td>재발 방지 확인 중</td>
+          </tr>
+          <!-- 진행중(4월 이월) -->
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>DataForge Pack 개발 (수집 Pipeline 자동화 + Web)</td>
+            <td>Pack</td>
+            <td>팀 전체</td>
+            <td>2026-01</td>
+            <td>2026-06</td>
+            <td>4월 3차 CTO 보고 예정 (04.13)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>베스틸 FEMS 서비스 DataForge 내 구축</td>
+            <td>베스틸</td>
+            <td>유병재</td>
+            <td>03.01</td>
+            <td>2026-04</td>
+            <td>소스 분석 → 웹 서비스 변환</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>WG-637 1제강공장 실시간 생산 모니터링 대시보드</td>
+            <td>베스틸</td>
+            <td>유성열</td>
+            <td>03.16</td>
+            <td>2026-04</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>HyperFlex Node3 3번 디스크 교체</td>
+            <td>인프라</td>
+            <td>김경립, 안종성</td>
+            <td>03.17</td>
+            <td>04.01 예정</td>
+            <td>4.1 교체 작업 예정</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>창특 Tag/컬럼 사용 현황 모니터링 개발</td>
+            <td>창특</td>
+            <td>변중환</td>
+            <td>03.20</td>
+            <td>2026-04</td>
+            <td>박의철 요청</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>존 소재 ID 트래킹 BigQuery 테이블 생성</td>
+            <td>DI총괄</td>
+            <td>이재훈(위스)</td>
+            <td>03.11</td>
+            <td>04.09</td>
+            <td>프로시저 생성 후 데이터 확인 중</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>WG-645 대형압연 마킹로봇 데이터 수집</td>
+            <td>창특</td>
+            <td>하민규</td>
+            <td>03.27</td>
+            <td>04.03</td>
+            <td>KEPServerEX 설정 진행</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">태그 등록 대기</span></td>
+            <td>3연주 Stopper Device Fault 미발생 Metabase 달성률 대시보드</td>
+            <td>창특</td>
+            <td>이재훈(위스)</td>
+            <td>03.27</td>
+            <td>2026-04</td>
+            <td>태그 등록 후 개발 진행 예정</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">태그 등록 대기</span></td>
+            <td>합금철 BIN 잔여무게 5KG 달성률 대시보드 생성</td>
+            <td>창특</td>
+            <td>이재훈(위스)</td>
+            <td>03.27</td>
+            <td>2026-04</td>
+            <td>태그 등록 후 개발 진행 예정</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>clct_pg_table_mt 수집 개선 (신규 스키마 자동 반영)</td>
+            <td>수집</td>
+            <td>변중환</td>
+            <td>03.28</td>
+            <td>2026-04</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>탄소발자국 3차년도 과업 범위 확인</td>
+            <td>국책</td>
+            <td>유병재 외</td>
+            <td>03.30</td>
+            <td>2026-04</td>
+            <td>03.30 17시 회의 진행</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4월 예정 일정 & Pack 개발 현황 -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📅 4월 주요 예정 일정</div>
+        <div class="schedule-row">
+          <div class="schedule-date">04.01</div>
+          <div class="schedule-content">
+            3월 운영보고서 작업내용 정리 시작
+            <div class="schedule-owner">팀 전체</div>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-date">04.01</div>
+          <div class="schedule-content">
+            베스틸 HyperFlex Node3 디스크 교체 작업
+            <div class="schedule-owner">김경립, 안종성</div>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-date">04.06</div>
+          <div class="schedule-content">
+            3월 고객 월간 운영보고서 발송
+            <div class="schedule-owner">유병재</div>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-date">04.09~10</div>
+          <div class="schedule-content">
+            26년 상반기 팀 워크샵
+            <div class="schedule-owner">팀 전체</div>
+          </div>
+        </div>
+        <div class="schedule-row" style="border-bottom:none;">
+          <div class="schedule-date">04.13</div>
+          <div class="schedule-content">
+            DataForge Pack 3차 CTO 보고 (백엔드 통합, 프론트 현황)
+            <div class="schedule-owner">변중환, 유병재</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏗️ DataForge Pack 개발 보고 현황</div>
+        <table>
+          <thead>
+            <tr><th>차수</th><th>일정</th><th>주요 내용</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1차</td>
+              <td>2026-01-28</td>
+              <td>개발 계획 및 추진 내역 보고</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>2차</td>
+              <td>2026-03-12</td>
+              <td>K3s 환경 구축, AI 적용 개발 Task</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>3차</td>
+              <td>2026-04-13</td>
+              <td>백엔드 통합, 프론트엔드 구현 현황</td>
+              <td><span class="badge badge-plan">예정</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;">
+          <div style="font-size:12px; color:#666; margin-bottom:6px;">Pack 개발 전체 진행률 (3월 말 기준)</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%; background: linear-gradient(90deg, #2563eb, #60a5fa);"></div></div>
+          <div class="progress-label">약 45% · 수집 Pipeline 자동화, Core 서비스, Web 기본 기능 구현 중</div>
+          <div style="margin-top:10px; font-size:12px; color:#666; margin-bottom:6px;">월간 운영보고서 준비 현황</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:30%; background: linear-gradient(90deg, #16a34a, #4ade80);"></div></div>
+          <div class="progress-label">30% · 3월분 작업내용 정리 중 (4.06 발송 목표)</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-overview -->
+
+  <!-- ===== 탭 2: 월별 작업 내역 ===== -->
+  <div id="tab-monthly" class="tab-content">
+    <div class="card">
+      <div class="card-title">📅 2026년 누적 월별 작업 내역 (3월 기준)</div>
+
+      <!-- 1월 -->
+      <div class="month-block">
+        <div class="month-label">📌 2026년 1월 · 완료 7건</div>
+        <table>
+          <thead>
+            <tr><th>날짜</th><th>구분</th><th>작업 내용</th><th>담당자</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01.05~12</td>
+              <td>내부</td>
+              <td>AI 리터러시 교육 / AI Worker 인증 설명회 참가</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>01.09~</td>
+              <td>베스틸</td>
+              <td>소형압연 IBA 연결 오류 감지 및 알림 처리</td>
+              <td>하민규</td>
+              <td><span class="badge badge-progress">장기진행</span></td>
+            </tr>
+            <tr>
+              <td>01.12</td>
+              <td>내부</td>
+              <td>26년 팀/개인 KPI 수립 계획 수립 시작</td>
+              <td>유병재, 변중환</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>01.14</td>
+              <td>내부</td>
+              <td>2026 H1 VNTG 경영전략회의 참석</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>01.19~23</td>
+              <td>내부</td>
+              <td>26년 DF팀 연간 과제 논의</td>
+              <td>유병재</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>01.28</td>
+              <td>Pack</td>
+              <td>DF Pack 개발 현황 CTO 보고 (1차)</td>
+              <td>변중환, 유병재</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>01.29~30</td>
+              <td>내부</td>
+              <td>CTO 싱크업 미팅 / 샐러리 리뷰</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2월 -->
+      <div class="month-block">
+        <div class="month-label">📌 2026년 2월 · 완료 5건 / 진행 1건</div>
+        <table>
+          <thead>
+            <tr><th>날짜</th><th>구분</th><th>작업 내용</th><th>담당자</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>02.02~</td>
+              <td>내부</td>
+              <td>AI Worker 교육 주간 진행</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>02.05</td>
+              <td>내부</td>
+              <td>군산 월간 회의</td>
+              <td>유병재 외</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>02.09~</td>
+              <td>내부</td>
+              <td>26년 KPI 수립 지시 (2월 말까지 팀/팀원 KPI 작성)</td>
+              <td>유병재, 팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>02.23</td>
+              <td>내부</td>
+              <td>26년 KPI 동일 진행 확정 공지</td>
+              <td>유병재</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>02.23</td>
+              <td>운영</td>
+              <td>창특 격주 회의 (메일 대체)</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>02월</td>
+              <td>Pack</td>
+              <td>DataForge Pack 개발 착수 (Plane 관리 시작)</td>
+              <td>변중환, 팀</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3월 (이번 달 강조) -->
+      <div class="month-block" style="border-left-color: #16a34a;">
+        <div class="month-label" style="background:#f0fdf4; color:#166534;">📌 2026년 3월 · 완료 8건 / 진행중 7건 — 이번 달</div>
+        <table>
+          <thead>
+            <tr><th>날짜</th><th>구분</th><th>작업 내용</th><th>담당자</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>03.03~04</td>
+              <td>내부</td>
+              <td>AW 2026 참관 / Zabbix 설명회 (기술총괄 대상)</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>03.09~12</td>
+              <td>Pack</td>
+              <td>기술총괄 대상 DataForge 개발 현황 보고</td>
+              <td>팀 전체</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>03.11~</td>
+              <td>DI총괄</td>
+              <td>존 소재 ID 트래킹 BigQuery 테이블 생성</td>
+              <td>이재훈(위스)</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.12</td>
+              <td>Pack</td>
+              <td>DF Pack 개발 현황 CTO 보고 (2차): K3s 현황, AI 적용 개발</td>
+              <td>변중환, 유병재</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>03.16~</td>
+              <td>베스틸</td>
+              <td>WG-637 1제강공장 실시간 생산 모니터링 대시보드 개발</td>
+              <td>유성열</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.17~</td>
+              <td>인프라</td>
+              <td>베스틸 HyperFlex Node3 3번 디스크 고장 조치</td>
+              <td>김경립, 안종성</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.20~</td>
+              <td>창특</td>
+              <td>Tag/컬럼 사용 현황 모니터링 개발 요청 (박의철)</td>
+              <td>변중환</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.23</td>
+              <td>창특</td>
+              <td>WG-642 가공공장 연속고용화로 온도 Data 수집 PLC 등록</td>
+              <td>하민규</td>
+              <td><span class="badge badge-review">검토중</span></td>
+            </tr>
+            <tr>
+              <td>03.24~25</td>
+              <td>인프라</td>
+              <td>Bacula Item Template화 / pgvector 설치 검토</td>
+              <td>김경립, 안종성</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>03.25</td>
+              <td>베스틸</td>
+              <td>IBA-Kepware 통신 장애 해결 테스트 (DCOM 세션 이슈)</td>
+              <td>김경립, 하민규</td>
+              <td><span class="badge badge-review">검토중</span></td>
+            </tr>
+            <tr>
+              <td>03.27</td>
+              <td>창특</td>
+              <td>NiFi DBCP 서비스 커넥션 설정 최적화 가이드 작성</td>
+              <td>안종성</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+            <tr>
+              <td>03.27</td>
+              <td>창특</td>
+              <td>WG-645 대형압연 마킹로봇 데이터 수집 요청</td>
+              <td>하민규</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.27</td>
+              <td>창특</td>
+              <td>3연주 Stopper Device Fault 미발생 Metabase 달성률 대시보드</td>
+              <td>이재훈(위스)</td>
+              <td><span class="badge badge-progress">태그 등록 대기</span></td>
+            </tr>
+            <tr>
+              <td>03.27</td>
+              <td>창특</td>
+              <td>합금철 BIN 잔여무게 5KG 달성률 대시보드 생성</td>
+              <td>이재훈(위스)</td>
+              <td><span class="badge badge-progress">태그 등록 대기</span></td>
+            </tr>
+            <tr>
+              <td>03.28</td>
+              <td>수집</td>
+              <td>clct_pg_table_mt 수집 개선 (신규 스키마 자동 반영)</td>
+              <td>변중환</td>
+              <td><span class="badge badge-progress">진행중</span></td>
+            </tr>
+            <tr>
+              <td>03.30</td>
+              <td>국책</td>
+              <td>주간회의 / 탄소발자국 3차년도 과업 범위 확인 회의</td>
+              <td>팀 전체, 유병재</td>
+              <td><span class="badge badge-done">완료</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div><!-- /tab-monthly -->
+
+  <!-- ===== 탭 3: KPI 진행 현황 ===== -->
+  <div id="tab-kpi" class="tab-content">
+
+    <div class="card">
+      <div class="card-title">🎯 26년 DataForge팀 KPI 수립 개요 (3월 기준)</div>
+      <div class="grid-2">
+        <div>
+          <table>
+            <thead><tr><th colspan="2">평가 체계</th></tr></thead>
+            <tbody>
+              <tr><td>과제 수행 평가</td><td><strong>40%</strong> · 기획/실행/결과/기여도</td></tr>
+              <tr><td>개인 역량 평가</td><td><strong>60%</strong> · 기술/수행/협업/리딩</td></tr>
+              <tr><td>역량 세부 배분</td><td>기술(30%), 수행(30%), 협업(20%), 리딩(20%)</td></tr>
+              <tr><td>KPI 담당</td><td>유병재 (Main) · 김성만 (Sub)</td></tr>
+              <tr><td>수립 기간</td><td>2026년 1월 ~ 12월</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="progress-wrap">
+            <div style="font-size:12px; color:#666; margin-bottom:4px;"><strong>26년 KPI 수립 완료율</strong></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:70%; background: linear-gradient(90deg, #16a34a, #4ade80);"></div></div>
+            <div class="progress-label">70% · 과제 발굴 완료, 평가 체계 수립 완료, 이행 계획 진행 중</div>
+          </div>
+          <div class="progress-wrap" style="margin-top:10px;">
+            <div style="font-size:12px; color:#666; margin-bottom:4px;"><strong>26년 KPI 이행 현황 (3월 기준, 연간 대비)</strong></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:25%; background: linear-gradient(90deg, #2563eb, #60a5fa);"></div></div>
+            <div class="progress-label">25% · 연간 1/4 시점 도달 (1~3월 완료)</div>
+          </div>
+          <div class="progress-wrap" style="margin-top:10px;">
+            <div style="font-size:12px; color:#666; margin-bottom:4px;"><strong>3월 월간 목표 달성률</strong></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:78%; background: linear-gradient(90deg, #d97706, #fbbf24);"></div></div>
+            <div class="progress-label">78% · 15건 중 8건 완료 (7건 4월 이월)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 26년 팀 수행 과제별 KPI 진행 현황 (3월 말 기준)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>과제명 (KPI)</th>
+            <th>구분</th>
+            <th>관련 팀원</th>
+            <th>진행률</th>
+            <th>상태</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="kpi-category">
+            <td colspan="7">▶ Package 개발 과제</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>수집 Pipeline 자동화 Pack 구현</td>
+            <td>Pack</td>
+            <td>변중환, 하민규, 이재훈</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:45%; background:#2563eb;"></div></div>
+              <div class="progress-label">45% · 4월 Core 서비스 구현 목표</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>2차 보고 완료, 3차 04.13 예정</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Web Admin 개발 (운영자 관리 기능)</td>
+            <td>Pack</td>
+            <td>변중환, 이지중</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:30%; background:#2563eb;"></div></div>
+              <div class="progress-label">30% · 프론트엔드 기능 구현 중</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>정책 이슈 발생, 조율 중</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Sales Kit 개발</td>
+            <td>Pack</td>
+            <td>유병재</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:10%; background:#94a3b8;"></div></div>
+              <div class="progress-label">10% · Pack 개발 후 착수 예정</div>
+            </td>
+            <td><span class="badge badge-open">OPEN</span></td>
+            <td>Pack 개발 이후 착수</td>
+          </tr>
+
+          <tr class="kpi-category">
+            <td colspan="7">▶ 고객 요구 개발 과제</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>세아베스틸 고객 요청 Task 처리</td>
+            <td>베스틸</td>
+            <td>하민규, 김경립, 유성열</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:60%; background:#16a34a;"></div></div>
+              <div class="progress-label">60% · WG-637, WG-642 등 진행</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>HyperFlex 디스크 교체 포함</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>세아창원특수강 고객 요청 Task 처리</td>
+            <td>창특</td>
+            <td>하민규, 안종성, 이재훈, 변중환</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:55%; background:#16a34a;"></div></div>
+              <div class="progress-label">55% · WG-645, Tag모니터링 진행</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>NiFi DBCP 최적화 가이드 완료</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>월간 운영보고서 제공</td>
+            <td>운영</td>
+            <td>유병재, 하민규, 안종성, 김성만</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:20%; background:#16a34a;"></div></div>
+              <div class="progress-label">20% · 3월분 작성 중 (4.6 발송 목표)</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>4월부터 정기 발행 시작</td>
+          </tr>
+
+          <tr class="kpi-category">
+            <td colspan="7">▶ 추가 프로젝트 과제</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>동국제강 PoC</td>
+            <td>신규</td>
+            <td>변중환, 유병재, 김성만</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:35%; background:#9333ea;"></div></div>
+              <div class="progress-label">35% · 제안설명회 완료</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>2025년 하반기 제안설명회 완료</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>국책과제 탄소발자국</td>
+            <td>국책</td>
+            <td>유병재 외</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:50%; background:#9333ea;"></div></div>
+              <div class="progress-label">50% · 3차년도 과업 범위 확인 중</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>03.30 과업 범위 확인 회의 완료</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>ACM 구동 휠 Feeding 이상상태 예측 모니터링</td>
+            <td>DI총괄</td>
+            <td>유성열, 이재훈</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:30%; background:#f59e0b;"></div></div>
+              <div class="progress-label">30% · IBA 데이터 분석 포함</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>BLM ID 품질 정보 Tracking (존 소재 ID)</td>
+            <td>DI총괄</td>
+            <td>이재훈, 유성열</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:40%; background:#f59e0b;"></div></div>
+              <div class="progress-label">40% · BigQuery 테이블 생성 중</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>프로시저 생성 후 데이터 확인 중</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>자체 AI 개발을 통한 설비 관리 효율화</td>
+            <td>DI총괄</td>
+            <td>팀 전체 (AI Pack 관련)</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:20%; background:#f59e0b;"></div></div>
+              <div class="progress-label">20% · Pack AI 적용 개발과 연계</div>
+            </td>
+            <td><span class="badge badge-progress">진행중</span></td>
+            <td>-</td>
+          </tr>
+
+          <tr class="kpi-category">
+            <td colspan="7">▶ 추가 예상 과제</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>Metabase Upgrade</td>
+            <td>인프라</td>
+            <td>김경립, 안종성</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:5%; background:#94a3b8;"></div></div>
+              <div class="progress-label">검토 중 · 시기 미정</div>
+            </td>
+            <td><span class="badge badge-open">OPEN</span></td>
+            <td>시기 미정</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>국책과제 Physical AI</td>
+            <td>국책</td>
+            <td>미정</td>
+            <td>
+              <div class="progress-bar"><div class="progress-fill" style="width:5%; background:#94a3b8;"></div></div>
+              <div class="progress-label">검토 중 · 시기 미정</div>
+            </td>
+            <td><span class="badge badge-open">예상 과제</span></td>
+            <td>시기 미정</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /tab-kpi -->
+
+  <!-- ===== 탭 4: 팀원별 현황 ===== -->
+  <div id="tab-members" class="tab-content">
+
+    <!-- 팀원 카드 -->
+    <div class="card">
+      <div class="card-title">👥 DataForge팀 구성 및 3월 주요 역할</div>
+      <div class="grid-3">
+
+        <div class="member-card">
+          <div class="member-name">🔷 유병재 <small style="font-weight:400; color:#666;">(팀장)</small></div>
+          <div class="member-role">기획/운영/DF공통 · Pack 총괄 · KPI Main</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>Pack 2차 보고, 베스틸 FEMS 구축, 탄소발자국 3차년도 과업 범위 확인</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>월간보고서 발송 (04.06), Pack 3차 보고, 워크샵</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 2</span>
+            <span class="badge badge-progress">진행 3</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 변중환</div>
+          <div class="member-role">수집 개발 / Pack 개발 리드</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>Pack 2차 보고, clct_pg_table_mt 수집 개선, 창특 Tag/컬럼 현황 모니터링</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>Pack 3차 보고 (04.13), 창특 모니터링 완료</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 2</span>
+            <span class="badge badge-progress">진행 2</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 하민규</div>
+          <div class="member-role">수집 개발/운영 (베스틸/창특 고객 요청)</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>WG-642 온도 수집 PLC 등록, WG-645 마킹로봇 수집, IBA-Kepware 장애 대응</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>WG-645 KEPServerEX 설정 완료</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 2</span>
+            <span class="badge badge-progress">진행 2</span>
+            <span class="badge badge-review">검토 1</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 김경립</div>
+          <div class="member-role">Infra/App 구현/운영</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>HyperFlex Node3 디스크 고장 조치, IBA-Kepware 장애 해결, Bacula Template화</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>04.01 HyperFlex 디스크 교체 작업</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 2</span>
+            <span class="badge badge-progress">진행 1</span>
+            <span class="badge badge-review">검토 1</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 안종성</div>
+          <div class="member-role">Infra/App 구현/운영</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>HyperFlex 디스크 조치, NiFi DBCP 최적화 가이드 작성, Bacula Item Template화, pgvector</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>04.01 HyperFlex 디스크 교체 참여</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 3</span>
+            <span class="badge badge-progress">진행 1</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 이재훈(위스)</div>
+          <div class="member-role">수집 개발/운영 (창특 대시보드)</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>존 소재 ID 트래킹 BigQuery, 합금철 BIN 대시보드, 3연주 Stopper 대시보드</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>BigQuery 테이블 완료 (04.09), 태그 등록 후 대시보드 개발</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 1</span>
+            <span class="badge badge-progress">진행 3</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 유성열</div>
+          <div class="member-role">수집 개발/데이터 분석</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>WG-637 1제강공장 실시간 생산 모니터링 대시보드 개발, 표준 단어/용어 자동화 모듈 기획</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>WG-637 대시보드 완료, DI총괄 과제 진행</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 0</span>
+            <span class="badge badge-progress">진행 2</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 김성만</div>
+          <div class="member-role">운영 / KPI Sub 담당</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>KPI 수립 완료, 월간 운영보고서 구성, GCP 청구 처리 프로세스</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>월간보고서 작업내용 정리, KPI 이행 모니터링</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 1</span>
+            <span class="badge badge-progress">진행 2</span>
+          </div>
+        </div>
+
+        <div class="member-card">
+          <div class="member-name">🔷 이지중</div>
+          <div class="member-role">개발 (Pack 개발 참여)</div>
+          <table style="font-size:12px; width:100%;">
+            <tr><td style="color:#888; width:70px;">3월 주요업무</td><td>DataForge Pack 개발 참여 (Web Admin 프론트엔드)</td></tr>
+            <tr><td style="color:#888;">4월 계획</td><td>Pack 3차 보고 준비, Web Admin 기능 구현 지속</td></tr>
+          </table>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <span class="badge badge-done">완료 0</span>
+            <span class="badge badge-progress">진행 1</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 팀원별 3월 작업 현황 요약 테이블 -->
+    <div class="card">
+      <div class="card-title">📊 팀원별 3월 작업 건수 요약</div>
+      <table>
+        <thead>
+          <tr>
+            <th>팀원</th>
+            <th>파트</th>
+            <th>3월 주요 담당 작업</th>
+            <th>완료</th>
+            <th>진행중</th>
+            <th>검토중</th>
+            <th>합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>유병재</strong> (팀장)</td>
+            <td>기획/운영/총괄</td>
+            <td>Pack 보고(공동), 베스틸 FEMS, 탄소발자국, 운영보고서</td>
+            <td><span class="badge badge-done">2</span></td>
+            <td><span class="badge badge-progress">3</span></td>
+            <td>-</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td><strong>변중환</strong></td>
+            <td>수집/Pack</td>
+            <td>Pack 보고(공동), clct_pg_table_mt, 창특 Tag 모니터링</td>
+            <td><span class="badge badge-done">2</span></td>
+            <td><span class="badge badge-progress">2</span></td>
+            <td>-</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><strong>하민규</strong></td>
+            <td>수집개발</td>
+            <td>WG-642, WG-645, IBA-Kepware 장애 대응</td>
+            <td><span class="badge badge-done">2</span></td>
+            <td><span class="badge badge-progress">1</span></td>
+            <td><span class="badge badge-review">2</span></td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td><strong>김경립</strong></td>
+            <td>인프라</td>
+            <td>HyperFlex 디스크, IBA-Kepware, Bacula</td>
+            <td><span class="badge badge-done">2</span></td>
+            <td><span class="badge badge-progress">1</span></td>
+            <td><span class="badge badge-review">1</span></td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><strong>안종성</strong></td>
+            <td>인프라</td>
+            <td>HyperFlex 디스크, NiFi DBCP 가이드, Bacula, pgvector</td>
+            <td><span class="badge badge-done">3</span></td>
+            <td><span class="badge badge-progress">1</span></td>
+            <td>-</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><strong>이재훈(위스)</strong></td>
+            <td>수집개발</td>
+            <td>존 소재 ID 트래킹, 합금철 BIN, 3연주 Stopper 대시보드</td>
+            <td><span class="badge badge-done">1</span></td>
+            <td><span class="badge badge-progress">3</span></td>
+            <td>-</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><strong>유성열</strong></td>
+            <td>분석/개발</td>
+            <td>WG-637 1제강공장 대시보드, 표준 용어 자동화 기획</td>
+            <td><span class="badge badge-done">0</span></td>
+            <td><span class="badge badge-progress">2</span></td>
+            <td>-</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td><strong>김성만</strong></td>
+            <td>운영/KPI</td>
+            <td>KPI 수립, 운영보고서 구성, GCP 청구</td>
+            <td><span class="badge badge-done">1</span></td>
+            <td><span class="badge badge-progress">2</span></td>
+            <td>-</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><strong>이지중</strong></td>
+            <td>개발</td>
+            <td>Pack 개발 (Web Admin 프론트엔드)</td>
+            <td><span class="badge badge-done">0</span></td>
+            <td><span class="badge badge-progress">1</span></td>
+            <td>-</td>
+            <td>1</td>
+          </tr>
+          <tr style="background:#f8f9ff; font-weight:700;">
+            <td colspan="3" style="text-align:right; padding-right:16px;">합계</td>
+            <td><span class="badge badge-done">13</span></td>
+            <td><span class="badge badge-progress">16</span></td>
+            <td><span class="badge badge-review">3</span></td>
+            <td><strong>32</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px; color:#aaa; margin-top:8px;">※ 공동 작업은 중복 집계됨</p>
+    </div>
+
+  </div><!-- /tab-members -->
+
+</div><!-- /container -->
+
+<div class="container">
+  <p class="updated">
+    📎 데이터 출처: Confluence DataForge팀(DPE) 스페이스 ·
+    <a class="source-link" href="https://vntg.atlassian.net/wiki/spaces/DPE" target="_blank">vntg.atlassian.net</a>
+    · 2026년 3월 31일 기준
+  </p>
+</div>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
