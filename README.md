@@ -12,7 +12,7 @@ open link pages
 
 ### 3. DF 팀 월간 업무현황 
 - **2026.03** — https://randyryu.github.io/openlink/260406_dataforge-team-workstatus.html
-- **2026.04** — https://randyryu.github.io/openlink/260428_dataforge-team-workstatus.html
+- **2026.04** — https://randyryu.github.io/openlink/260430_dataforge-team-workstatus.html
 
 ### 4. 2026.04 장모님칠순 가족여행 
 - https://randyryu.github.io/openlink/260331_hanatour_vietnam_schedule.html 
