@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DF-Stream — 프로젝트 진행 보고서 2026.05.15</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── LIGHT THEME VARIABLES ── */
+:root {
+  --bg:       #f4f6f9;
+  --bg2:      #ffffff;
+  --bg3:      #f0f2f6;
+  --bg4:      #e4e8ef;
+  --border:   #d0d8e4;
+  --border2:  #b0bece;
+  --text:     #1e2a38;
+  --text2:    #4a6070;
+  --text3:    #7a90a4;
+  --accent:   #2478d4;
+  --green:    #0f9e70;
+  --yellow:   #c87c00;
+  --red:      #c83232;
+  --purple:   #6848c8;
+  --orange:   #c84800;
+  --teal:     #0a9090;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans KR', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.75; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg3); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── HEADER ── */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(244,246,249,.97); backdrop-filter: blur(20px);
+  border-bottom: 2px solid var(--border);
+  height: 54px; padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.h-left { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.logo {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: #fff; background: var(--accent);
+  padding: 4px 12px; border-radius: 3px;
+}
+.h-title { font-family: var(--mono); font-size: 12px; color: var(--text2); font-weight: 500; }
+nav { display: flex; overflow-x: auto; flex-shrink: 1; }
+nav a {
+  font-family: var(--mono); font-size: 10px; color: var(--text3);
+  text-decoration: none; padding: 5px 11px;
+  letter-spacing: .07em; text-transform: uppercase;
+  transition: color .2s, background .2s; white-space: nowrap;
+  border-radius: 3px;
+}
+nav a:hover { color: var(--accent); background: rgba(36,120,212,.06); }
+.h-date {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  color: var(--accent); background: rgba(36,120,212,.1);
+  border: 1px solid rgba(36,120,212,.25);
+  padding: 3px 10px; border-radius: 3px; flex-shrink: 0;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 56px 40px 44px; border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #f4f6f9 0%, #edf1f8 100%);
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 65% at 88% 40%, rgba(36,120,212,.09) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 30% at 8% 75%, rgba(15,158,112,.06) 0%, transparent 60%),
+    repeating-linear-gradient(90deg, transparent, transparent 64px, rgba(36,120,212,.04) 64px, rgba(36,120,212,.04) 65px),
+    repeating-linear-gradient(0deg, transparent, transparent 64px, rgba(36,120,212,.04) 64px, rgba(36,120,212,.04) 65px);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--accent); border-radius: 1px; }
+.hero h1 { font-size: 34px; font-weight: 700; color: var(--text); line-height: 1.2; letter-spacing: -.02em; margin-bottom: 10px; }
+.hero h1 em { color: var(--accent); font-style: normal; }
+.hero-sub { font-size: 14px; color: var(--text2); max-width: 620px; margin-bottom: 36px; line-height: 1.8; }
+.stats { display: flex; flex-wrap: wrap; gap: 0; }
+.stat {
+  padding: 16px 24px; border: 1px solid var(--border); border-right: none;
+  background: var(--bg2); min-width: 118px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.stat:first-child { border-radius: 8px 0 0 8px; }
+.stat:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+.stat-v { font-family: var(--mono); font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+.stat-l { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
+
+/* ── SECTIONS ── */
+.section { padding: 44px 40px; border-bottom: 1px solid var(--border); }
+.sec-hd { display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+.sec-num {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; color: #fff;
+  background: var(--accent);
+  padding: 2px 9px; border-radius: 3px;
+}
+.sec-num.green { background: var(--green); }
+.sec-num.orange { background: var(--orange); }
+.sec-num.purple { background: var(--purple); }
+.section h2 { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.sec-sub { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-left: auto; }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+@media(max-width:900px) { .g2,.g3 { grid-template-columns: 1fr; } .g4 { grid-template-columns: 1fr 1fr; } }
+
+/* ── CARD ── */
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px 22px; transition: border-color .2s, box-shadow .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(36,120,212,.1); }
+.card h3 {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.card.accent-top { border-top: 3px solid var(--accent); }
+.card.green-top  { border-top: 3px solid var(--green); }
+.card.orange-top { border-top: 3px solid var(--orange); }
+.card.purple-top { border-top: 3px solid var(--purple); }
+.card.teal-top   { border-top: 3px solid var(--teal); }
+
+/* ── PROGRESS CARD ── */
+.pc {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 22px 26px; margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.pc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 16px; }
+.pc-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pc-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.pc-pct { font-family: var(--mono); font-size: 28px; font-weight: 700; line-height: 1; flex-shrink: 0; }
+.bar-wrap {
+  height: 6px; background: var(--bg4); border-radius: 3px;
+  overflow: hidden; margin-bottom: 18px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.08);
+}
+.bar { height: 100%; border-radius: 3px; position: relative; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
+.c-blue   { background: linear-gradient(90deg, var(--accent) 0%, #4da0ff 100%); }
+.c-green  { background: linear-gradient(90deg, var(--green) 0%, #20c88a 100%); }
+.c-yellow { background: linear-gradient(90deg, var(--yellow) 0%, #e09a00 100%); }
+.c-purple { background: linear-gradient(90deg, var(--purple) 0%, #8868e8 100%); }
+.c-teal   { background: linear-gradient(90deg, var(--teal) 0%, #10b0b0 100%); }
+
+/* ── TAGS ── */
+.tag { display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; border: 1px solid; }
+.t-done   { color: #085c42; border-color: rgba(15,158,112,.4); background: rgba(15,158,112,.12); }
+.t-wip    { color: #7a4e00; border-color: rgba(200,124,0,.4);  background: rgba(200,124,0,.12); }
+.t-todo   { color: var(--text3); border-color: var(--border2); background: var(--bg3); }
+.t-new    { color: #7a2c00; border-color: rgba(200,72,0,.4);   background: rgba(200,72,0,.1); }
+.t-hot    { color: #7a1818; border-color: rgba(200,50,50,.4);  background: rgba(200,50,50,.1); font-weight: 700; }
+.t-bg     { color: #3a2880; border-color: rgba(104,72,200,.4); background: rgba(104,72,200,.1); }
+.t-poc    { color: #085858; border-color: rgba(10,144,144,.4); background: rgba(10,144,144,.1); }
+.t-p0     { color: #085c42; border-color: rgba(15,158,112,.4); background: rgba(15,158,112,.12); font-family: var(--mono); font-size: 10px; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid; }
+.t-p1     { color: #7a4e00; border-color: rgba(200,124,0,.4);  background: rgba(200,124,0,.12); font-family: var(--mono); font-size: 10px; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid; }
+.t-p2     { color: var(--text3); border-color: var(--border2); background: var(--bg3); font-family: var(--mono); font-size: 10px; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid; }
+
+/* ── DOTS ── */
+.item { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: var(--text2); padding: 5px 0; }
+.dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.d-done { background: var(--green); }
+.d-wip  { background: var(--yellow); }
+.d-todo { background: var(--border2); }
+.d-new  { background: var(--orange); }
+.d-poc  { background: var(--teal); }
+.d-hot  { background: var(--red); }
+
+/* ── KV ── */
+.kv { display: flex; flex-direction: column; gap: 10px; }
+.kv-r { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed rgba(208,216,228,.6); }
+.kv-r:last-child { border-bottom: none; }
+.kv-k { color: var(--text3); font-size: 12px; flex-shrink: 0; }
+.kv-v { color: var(--text); text-align: right; font-size: 13px; font-weight: 500; }
+
+/* ── TABLE ── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text2); text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--border); background: var(--bg3); }
+.tbl td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
+.tbl tr:hover td { background: rgba(36,120,212,.03); }
+.tbl td:first-child { color: var(--text); font-weight: 600; }
+.tbl-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; width: 72px; display: inline-block; vertical-align: middle; margin-right: 8px; }
+.tbl-b { height: 100%; border-radius: 2px; }
+
+/* ── CODE ── */
+.code {
+  background: #f8fafc; border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: 14px 18px;
+  font-family: var(--mono); font-size: 12px; color: var(--text2);
+  line-height: 2.0; overflow-x: auto;
+  white-space: pre-wrap; word-break: break-word;
+}
+.hl  { color: var(--accent); font-weight: 600; }
+.hl2 { color: var(--green);  font-weight: 600; }
+.hl3 { color: var(--yellow); font-weight: 600; }
+.hl4 { color: var(--orange); font-weight: 600; }
+.hl5 { color: var(--teal);   font-weight: 600; }
+.dim { color: var(--text3); }
+
+/* ── TECH BADGE ── */
+.tb { display: inline-block; font-family: var(--mono); font-size: 11px; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; margin: 2px; font-weight: 500; }
+
+/* ── PH ROW ── */
+.ph-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.ph-row:last-child { border-bottom: none; }
+.ph-num { font-family: var(--mono); font-size: 10px; color: var(--text3); width: 68px; flex-shrink: 0; font-weight: 600; }
+.ph-name { color: var(--text); font-weight: 600; flex: 1; min-width: 100px; }
+.ph-desc { color: var(--text3); font-size: 12px; flex: 2; }
+
+/* ── CHANGE LOG ── */
+.chg-list { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 0 24px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.chg-row { display: grid; grid-template-columns: 170px 1fr; border-bottom: 1px solid var(--border); }
+.chg-row:last-child { border-bottom: none; }
+.chg-k { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; padding: 14px 20px 14px 0; border-right: 2px solid var(--border); }
+.chg-v { padding: 14px 0 14px 20px; font-size: 13px; color: var(--text2); }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.f-old { font-family: var(--mono); font-size: 11px; color: var(--red); background: rgba(200,50,50,.08); border: 1px solid rgba(200,50,50,.25); padding: 2px 8px; border-radius: 4px; text-decoration: line-through; opacity: .75; }
+.f-new { font-family: var(--mono); font-size: 11px; color: var(--green); background: rgba(15,158,112,.1); border: 1px solid rgba(15,158,112,.35); padding: 2px 8px; border-radius: 4px; }
+.f-add { font-family: var(--mono); font-size: 11px; color: var(--orange); background: rgba(200,72,0,.08); border: 1px solid rgba(200,72,0,.28); padding: 2px 8px; border-radius: 4px; }
+.f-poc { font-family: var(--mono); font-size: 11px; color: var(--teal); background: rgba(10,144,144,.08); border: 1px solid rgba(10,144,144,.3); padding: 2px 8px; border-radius: 4px; }
+.f-arr { color: var(--text3); font-size: 12px; }
+
+/* ── PENDING ── */
+.pend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); gap: 10px; }
+.pend-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 13px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.pend-card.critical { border-left-color: var(--red);   background: rgba(200,50,50,.03); }
+.pend-card.new      { border-left-color: var(--orange); }
+.pend-card.decision { border-left-color: var(--purple); }
+.pend-card.done     { border-left-color: var(--green);  opacity: .8; }
+.pend-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.pend-sub   { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+/* ── BADGES ── */
+.nbadge { display: inline-block; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--orange); background: rgba(200,72,0,.1); border: 1px solid rgba(200,72,0,.3); padding: 1px 6px; border-radius: 3px; vertical-align: middle; margin-left: 5px; }
+.cbadge { display: inline-block; font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--green); background: rgba(15,158,112,.1); border: 1px solid rgba(15,158,112,.3); padding: 1px 6px; border-radius: 3px; vertical-align: middle; margin-left: 5px; letter-spacing: .06em; text-transform: uppercase; }
+.pocbadge { display: inline-block; font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--teal); background: rgba(10,144,144,.1); border: 1px solid rgba(10,144,144,.3); padding: 1px 6px; border-radius: 3px; vertical-align: middle; margin-left: 5px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ── TIMELINE ── */
+.tl { display: flex; overflow-x: auto; padding-bottom: 4px; }
+.tl-ph { flex: 1; min-width: 148px; background: var(--bg2); border: 1px solid var(--border); border-right: none; padding: 16px 16px; }
+.tl-ph:first-child { border-radius: 8px 0 0 8px; }
+.tl-ph:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+.tl-ph.active { background: rgba(200,124,0,.04); border-color: rgba(200,124,0,.4); }
+.tl-ph.done   { background: rgba(15,158,112,.04); border-color: rgba(15,158,112,.35); }
+.tl-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; }
+.tl-name  { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.tl-date  { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 10px; }
+.tl-item  { font-size: 11px; color: var(--text2); padding: 2px 0; }
+
+/* ── ACHIEVEMENT BOX ── */
+.achieve {
+  background: linear-gradient(135deg, rgba(15,158,112,.08) 0%, rgba(15,158,112,.04) 100%);
+  border: 1px solid rgba(15,158,112,.3); border-radius: 8px;
+  padding: 20px 26px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.achieve-badge { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.achieve-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.achieve-desc  { font-size: 12px; color: var(--text2); }
+.achieve-pct   { font-family: var(--mono); font-size: 44px; font-weight: 700; color: var(--green); line-height: 1; }
+
+/* ── PRINCIPLE BOX ── */
+.principle {
+  background: linear-gradient(135deg, rgba(36,120,212,.06) 0%, rgba(36,120,212,.02) 100%);
+  border: 1px solid rgba(36,120,212,.2); border-radius: 8px;
+  padding: 18px 22px; margin-bottom: 14px;
+}
+.principle h4 { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+
+/* ── LIFECYCLE STATES ── */
+.lc-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.lc-state { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px; border: 1px solid; flex-shrink: 0; min-width: 100px; text-align: center; }
+.lc-arr { color: var(--text3); font-size: 12px; }
+.lc-desc { font-size: 11px; color: var(--text3); }
+
+/* ── SECTION DIVIDER ── */
+.sec-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 20px 0; }
+
+/* ── DECISION TABLE ── */
+.dec-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dec-table th { font-family: var(--mono); font-size: 10px; color: var(--text2); text-align: left; padding: 9px 12px; border-bottom: 2px solid var(--border); background: var(--bg3); letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.dec-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+.dec-table tr:hover td { background: rgba(36,120,212,.03); }
+.dec-table tr.phase1 td { background: rgba(200,50,50,.025); }
+
+/* ── FOOTER ── */
+footer { padding: 28px 40px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--text3); border-top: 2px solid var(--border); background: var(--bg3); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.section { animation: fadeUp .5s ease both; }
+.section:nth-child(1)  { animation-delay: .04s; }
+.section:nth-child(2)  { animation-delay: .08s; }
+.section:nth-child(3)  { animation-delay: .12s; }
+.section:nth-child(4)  { animation-delay: .16s; }
+.section:nth-child(5)  { animation-delay: .20s; }
+.section:nth-child(6)  { animation-delay: .24s; }
+.section:nth-child(7)  { animation-delay: .28s; }
+.section:nth-child(8)  { animation-delay: .32s; }
+.section:nth-child(9)  { animation-delay: .36s; }
+.section:nth-child(10) { animation-delay: .40s; }
+.section:nth-child(11) { animation-delay: .44s; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="h-left">
+    <span class="logo">DataForge</span>
+    <span class="h-title">DF-Stream · 프로젝트 진행 보고서</span>
+  </div>
+  <nav>
+    <a href="#overview">개요</a>
+    <a href="#evolution">변경이력</a>
+    <a href="#arch-guide">아키텍처 가이드</a>
+    <a href="#arch">아키텍처</a>
+    <a href="#policy">개발정책</a>
+    <a href="#progress">진행현황</a>
+    <a href="#schedule">일정</a>
+    <a href="#decisions">의사결정</a>
+    <a href="#pending">미완항목</a>
+  </nav>
+  <span class="h-date">2026.05.15</span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">2026년 5월 15일 기준 · 발표용 보고서</div>
+  <h1>DataForge <em>DF-Stream</em><br>외부 제조업 Edge 서비스</h1>
+  <p class="hero-sub">
+    OPC-UA 실시간 수집 · MES/ERP/L2 운영 데이터 파이프라인 · 통합 인증(OIDC) · 이메일 알림을 통합 제공하는<br>
+    외부 제조업 고객사 설치형 패키지 플랫폼. 요구사항 v1.7 · 아키텍처 v1.0 확정.
+  </p>
+  <div class="stats">
+    <div class="stat"><div class="stat-v" style="color:var(--accent)">~78%</div><div class="stat-l">전체 진행률</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--green)">100%</div><div class="stat-l">BSM v1.0</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--accent)">v1.7</div><div class="stat-l">요구사항</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--accent)">v1.0</div><div class="stat-l">아키텍처</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--teal)">2건</div><div class="stat-l">POC 완료</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--text2)">15건</div><div class="stat-l">미결 의사결정</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 01. 프로젝트 개요 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="overview">
+  <div class="sec-hd"><span class="sec-num">01</span><h2>프로젝트 개요</h2></div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card accent-top">
+      <h3>기본 정보</h3>
+      <div class="kv">
+        <div class="kv-r"><span class="kv-k">프로젝트명</span><span class="kv-v">DataForge Package (DF-Stream)</span></div>
+        <div class="kv-r"><span class="kv-k">보고 기준일</span><span class="kv-v" style="color:var(--accent)">2026-05-15</span></div>
+        <div class="kv-r"><span class="kv-k">요구사항</span><span class="kv-v">v1.7 (2026-03-11 확정)</span></div>
+        <div class="kv-r"><span class="kv-k">아키텍처</span><span class="kv-v">v1.0 (2026-03-11 확정)</span></div>
+        <div class="kv-r"><span class="kv-k">아키텍처 가이드</span><span class="kv-v" style="color:var(--teal)">신규 (2026-04-28)</span></div>
+        <div class="kv-r"><span class="kv-k">BSM v1.0</span><span class="kv-v" style="color:var(--green)">✓ 완료 (2026-03-31)</span></div>
+        <div class="kv-r"><span class="kv-k">DFSTREAM-336 POC</span><span class="kv-v" style="color:var(--teal)">✓ 완료 (2026-04-22)</span></div>
+        <div class="kv-r"><span class="kv-k">DFSTREAM-339 POC</span><span class="kv-v" style="color:var(--teal)">✓ 완료 (2026-04-22)</span></div>
+        <div class="kv-r"><span class="kv-k">현재 Phase</span><span class="kv-v" style="color:var(--yellow)">Phase 1 — 진행 중</span></div>
+        <div class="kv-r"><span class="kv-k">Main / Sub</span><span class="kv-v">@유병재 / @김성만</span></div>
+        <div class="kv-r"><span class="kv-k">프로젝트 관리</span><span class="kv-v">Plane.so (workspace: df / BSM)</span></div>
+      </div>
+    </div>
+    <div class="card green-top">
+      <h3>4개 서비스 구성 (확정)</h3>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--accent)">apps/api<br><span style="color:var(--text3)">:3001</span></span>
+        <div><div class="ph-name">NestJS API</div><div style="font-size:11px;color:var(--text3)">스트림·태그·연결·운영 파이프라인 관리. 12개 모듈.</div></div>
+      </div>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--orange)">apps/auth<br><span style="color:var(--text3)">:3002</span></span>
+        <div><div class="ph-name">NestJS Auth <span class="nbadge">분리</span></div><div style="font-size:11px;color:var(--text3)">OIDC Provider + Multi Auth (4종) + RBAC. apps/api와 독립 분리.</div></div>
+      </div>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--green)">apps/web<br><span style="color:var(--text3)">:3000</span></span>
+        <div><div class="ph-name">Next.js Web</div><div style="font-size:11px;color:var(--text3)">Stream Wizard / 관리 UI / 대시보드. shadcn/ui 90+.</div></div>
+      </div>
+      <div class="ph-row" style="border:none">
+        <span class="ph-num" style="color:var(--purple)">Listmonk<br><span style="color:var(--text3)">:9000</span></span>
+        <div><div class="ph-name">이메일 서비스 <span class="nbadge">신규</span></div><div style="font-size:11px;color:var(--text3)">Self-hosted 트랜잭션 메일 + Subscriber Sync. Go 기반.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>사용자 역할 (4종 확정)</h3>
+    <div class="g4" style="margin-top:4px; gap:14px">
+      <div><div class="t-p0" style="margin-bottom:9px">현장 운영자</div><div style="font-size:12px;color:var(--text2);margin-top:6px">Stream Wizard로 수집 파이프라인 구성·배포. 스트림 시작·중지·삭제 제어.</div></div>
+      <div><div class="t-p0" style="margin-bottom:9px">관리자 (Admin)</div><div style="font-size:12px;color:var(--text2);margin-top:6px">사용자·권한·연결 관리. 시스템 모니터링. Drift Queue 해결.</div></div>
+      <div><div class="t-p1" style="margin-bottom:9px">데이터 엔지니어</div><div style="font-size:12px;color:var(--text2);margin-top:6px">Bloblang 파이프라인 작성·테스트. Avro Schema 관리. DDL 파서 활용.</div></div>
+      <div><div class="t-p1" style="margin-bottom:9px">데이터 분석가</div><div style="font-size:12px;color:var(--text2);margin-top:6px">Trino 데이터 조회. 데이터 카탈로그 열람 (Phase 3 예정).</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 02. 2월 이후 주요 변경 이력 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="evolution">
+  <div class="sec-hd"><span class="sec-num">02</span><h2>2월 이후 주요 변경 이력</h2><span class="sec-sub">설계 확정 · 구현 방향 전환 · 신규 기능 추가</span></div>
+
+  <div class="chg-list">
+    <div class="chg-row">
+      <div class="chg-k">인증 시스템</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">Keycloak</span><span class="f-arr">→</span><span class="f-old">Zitadel</span><span class="f-arr">→</span><span class="f-new">oidc-provider</span><span class="f-arr">→</span><span class="f-add">apps/auth 독립 NestJS 앱 (v1.5)</span></div>
+        <div style="font-size:12px;color:var(--text3)">nest-oidc-provider 기반 OIDC Provider를 <strong style="color:var(--text2)">apps/auth (Port 3002)</strong>로 독립 분리. Multi Auth Strategy 4종 확정: Local / Google OIDC / LDAP·AD / 외부 OIDC IdP. RS256 JWT, JWKS 공개 엔드포인트.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">수집 엔진</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">NiFi 폐기</span><span class="f-arr">→</span><span class="f-new">Benthos-UMH + 4 Processors 확정</span></div>
+        <div style="font-size:12px;color:var(--text3)">OPC-UA 네이티브 수집. 4 Processors 표준화(except_system_nodes → filter_bad_quality → bool_to_int → opcua_schema_registry). 소형압연 892태그 · 일 2,500만 건 실운영 검증 완료.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">Kafka 운영</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">ZooKeeper</span><span class="f-arr">→</span><span class="f-new">KRaft 단독 운영 (Kafka 4.x)</span></div>
+        <div style="font-size:12px;color:var(--text3)">ZooKeeper 의존성 완전 제거. KRaft 3 Broker HA 구성. RF=3, Min ISR=2, acks=all 정책 확정.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">KEPServer 제어</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">KEP = SSoT, DB = 미러</span><span class="f-arr">→</span><span class="f-poc">DF-Stream이 KEP 유일 제어 창구 (DFSTREAM-336, 4/22)</span></div>
+        <div style="font-size:12px;color:var(--text3)">Tag 생성 = KEP 노드 생성 (2-phase all-or-nothing). DB 우선 저장 후 KEP Push. KEP 실패 시 DB 롤백 + PUSH_FAILED 기록. ownership 기반 Strangler Fig 패턴으로 기존 현장 보존. T1~T6 머지 완료(4/22).</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">Stream Wizard</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">단일 4단계 경로</span><span class="f-arr">→</span><span class="f-add">Quick Deploy (3단계) + Advanced Deploy (4단계)</span></div>
+        <div style="font-size:12px;color:var(--text3)"><strong style="color:var(--text2)">Quick Deploy</strong>: 공장 선택 → OPC UA 노드 브라우저 → 미리보기+배포 (3단계 간소화). <strong style="color:var(--text2)">Advanced Deploy</strong>: INPUT→OUTPUT→PIPELINE→DEPLOY 기존 4단계. 두 경로 모두 동일한 6단계 공통 오케스트레이션 후 완료.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">DB 구조</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">단일 DB</span><span class="f-arr">→</span><span class="f-new">df_package (47 테이블) + df_app (12 테이블)</span></div>
+        <div style="font-size:12px;color:var(--text3)">Kubernetes desired state → reconcile 패턴. df_package는 인프라 마스터 + 표준 사전(data_standard) 포함 47개 테이블 확정. df_app은 Phase 1 기준 12개 테이블. Cross-Schema FK 없이 uid loose reference.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">Equipment 계층</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-poc">ISA-95 기반 ReactFlow 다이어그램 (DFSTREAM-339, 4/22)</span></div>
+        <div style="font-size:12px;color:var(--text3)">Equipment = 물리 장비가 아닌 추상 그룹 (ISA-95 Work Unit). /standard-data/equipments 페이지가 @xyflow/react + dagre 자동 레이아웃 관계 다이어그램으로 개편. standard_term_uid FK 필수 강제.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">운영 데이터 파이프라인</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-old">Python/FastAPI 별도</span><span class="f-arr">→</span><span class="f-add">NestJS apps/api 통합 (v1.6)</span></div>
+        <div style="font-size:12px;color:var(--text3)">MES/ERP/L2 DDL 입력 → 6단계 자동 파이프라인(DDL→PostgreSQL→Avro→SR→Kafka Connect→Benthos→TimescaleDB). DDL Parser (Oracle/MySQL/PostgreSQL). Compensating Transaction 롤백 지원.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">이메일 서비스</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-add">Listmonk Self-hosted 추가 (v1.7)</span></div>
+        <div style="font-size:12px;color:var(--text3)">Self-hosted 트랜잭션 이메일(Go). users ↔ Listmonk Subscriber 동기화(실시간 + Cron). apps/auth (가입·잠금 알림) + apps/api (파이프라인 알림) 양쪽 연동.</div>
+      </div>
+    </div>
+    <div class="chg-row">
+      <div class="chg-k">표준 사전 체계</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-add">단어→용어→도메인 3계층 의미론 SSoT 확립</span></div>
+        <div style="font-size:12px;color:var(--text3)">모든 명칭·정의의 원본은 data_standard(표준 사전). 각 엔티티는 standard_term_uid FK로 사전 참조. factory·equipment·device·tag 모두 적용. ISA-95 Class/Instance 구분. AI 이상탐지 기준값 자동 도출 기반.</div>
+      </div>
+    </div>
+    <div class="chg-row" style="border:none">
+      <div class="chg-k">Drift Detection</div>
+      <div class="chg-v">
+        <div class="flow"><span class="f-poc">5분 Cron 동기화 설계 완료 (DFSTREAM-338)</span></div>
+        <div style="font-size:12px;color:var(--text3)">pg_advisory_lock 기반 중복 실행 방지. DB tag_mt vs KEP 트리 비교 → MISSING_IN_DF / MISSING_IN_KEP / RENAMED 이벤트 큐. /admin/drift-queue에서 관리자 수동 해결(ACCEPT/REJECT/IGNORE/RENAMED). UI 구현 예정.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 03. 아키텍처 가이드 핵심 (NEW) -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="arch-guide">
+  <div class="sec-hd"><span class="sec-num orange">03</span><h2>시스템 아키텍처 가이드 <span class="nbadge">NEW 2026-04-28</span></h2><span class="sec-sub">601KB · 아키텍처 설계의 종합 레퍼런스</span></div>
+
+  <!-- 두 SSoT 원칙 -->
+  <div class="g2" style="margin-bottom:14px">
+    <div class="principle">
+      <h4>원칙 1 — 인프라 SSoT</h4>
+      <div style="font-size:13px;color:var(--text2)">모든 파이프라인 설정의 원본은 <strong style="color:var(--accent)">DF-Stream DB</strong>에 있다. Benthos·Kafka·SR은 DB 내용을 반영한 결과물. 직접 조작 금지. DB → SR → Benthos → KafkaConnect 순 6단계 오케스트레이션 필수.</div>
+    </div>
+    <div class="principle">
+      <h4>원칙 2 — 의미론 SSoT</h4>
+      <div style="font-size:13px;color:var(--text2)">모든 데이터의 정의·명칭 원본은 <strong style="color:var(--accent)">표준 사전(data_standard)</strong>에 있다. 각 엔티티는 standard_term_uid FK로 사전 참조. 사전에 고유명사 직접 등록 금지.</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <!-- 1:1:1:1 정책 -->
+    <div class="card orange-top">
+      <h3>1:1:1:1 정책 — 공장 단위 파이프라인 격리</h3>
+      <div class="code" style="font-size:11.5px; border-left-color:var(--orange)">
+<span class="dim">공장(Factory)  </span><span class="f-arr"> 1:1 </span><span class="hl2">Stream(Benthos Pipeline)</span>
+<span class="dim">Stream         </span><span class="f-arr"> 1:1 </span><span class="hl3">Kafka Topic</span>
+<span class="dim">Kafka Topic    </span><span class="f-arr"> 1:1 </span><span class="hl4">Connector (JDBC Sink)</span>
+<span class="dim">Connector      </span><span class="f-arr"> 1:1 </span><span class="hl5">DB Table (tag_rt)</span>
+
+<span class="dim">예: changwon_srl 공장</span>
+<span class="dim">공장      : </span><span class="hl5">changwon_srl</span>
+<span class="dim">Stream    : </span><span class="hl2">changwon-srl-kepserver1-01</span>
+<span class="dim">Topic     : </span><span class="hl3">css.changwon_srl.tag</span>
+<span class="dim">Connector : </span><span class="hl4">css.changwon_srl.tag.sink</span>
+<span class="dim">DB Table  : </span><span class="hl">changwon_srl.tag_rt</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px">한 공장 장애가 다른 공장에 영향 없음. 독립 운영·장애 추적·스키마 분리 보장.</div>
+    </div>
+    <!-- Tag Lifecycle -->
+    <div class="card teal-top">
+      <h3>DFSTREAM-336 POC — Tag Lifecycle 상태 전이 (4/22 완료)</h3>
+      <div class="lc-row">
+        <span class="lc-state" style="color:var(--text3);border-color:var(--border2);background:var(--bg3)">DRAFT</span>
+        <span class="lc-arr">→</span>
+        <span class="lc-desc">address 없이 생성 — 관리자가 이후 수동 Activate</span>
+      </div>
+      <div class="lc-row">
+        <span class="lc-state" style="color:var(--yellow);border-color:rgba(200,124,0,.35);background:rgba(200,124,0,.08)">PENDING_PUSH</span>
+        <span class="lc-arr">→</span>
+        <span class="lc-desc">address 있는 생성 요청 — KEP push 대기 중</span>
+      </div>
+      <div class="lc-row">
+        <span class="lc-state" style="color:var(--green);border-color:rgba(15,158,112,.35);background:rgba(15,158,112,.09)">ACTIVE</span>
+        <span class="lc-arr">↔</span>
+        <span class="lc-desc">KEP push 성공 — retry-push로 복구 가능</span>
+      </div>
+      <div class="lc-row">
+        <span class="lc-state" style="color:var(--red);border-color:rgba(200,50,50,.35);background:rgba(200,50,50,.08)">PUSH_FAILED</span>
+        <span class="lc-arr">→</span>
+        <span class="lc-desc">KEP push 실패 — DB 행 유지 + 에러 상세 기록</span>
+      </div>
+      <div class="lc-row" style="margin-bottom:0">
+        <span class="lc-state" style="color:var(--purple);border-color:rgba(104,72,200,.35);background:rgba(104,72,200,.08)">ORPHANED</span>
+        <span class="lc-arr">→</span>
+        <span class="lc-desc">KEP에서 삭제됨 — Drift Detection 자동 감지</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px">ownership: LEGACY / DF_STREAM_OWNED / KEP_OWNED / SHARED</div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-bottom:14px">
+    <!-- Benthos 4 Processors -->
+    <div class="card">
+      <h3>Benthos 4 Processors (표준화 확정)</h3>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--accent)">① except_system_nodes</span>
+        <span class="ph-desc">_* · ns=0;* · nodeid i=* 필터링</span>
+      </div>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--accent)">② filter_bad_quality</span>
+        <span class="ph-desc">statuscode !contains 'Good' → drop</span>
+      </div>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--accent)">③ bool_to_int</span>
+        <span class="ph-desc">Boolean 값 → INT 변환</span>
+      </div>
+      <div class="ph-row" style="border:none">
+        <span class="ph-num" style="color:var(--accent)">④ opcua_schema_registry</span>
+        <span class="ph-desc">schema_registry_encode (Avro 직렬화)</span>
+      </div>
+    </div>
+    <!-- 표준 사전 -->
+    <div class="card">
+      <h3>표준 사전 — 3계층 구조</h3>
+      <div class="code" style="font-size:11px; border-left-color:var(--purple)">
+<span class="hl3">① 단어 (Word)</span>
+   온도, 압력, 모터, 전류, 설정…
+   ↓ 조합
+
+<span class="hl2">② 용어 (Term)</span>
+   온도 / 모터_전류 / 온도_설정값
+   ↓ 규칙 부여
+
+<span style="color:var(--accent); font-weight:600">③ 도메인 (Domain)</span>
+   온도_도메인 : FLOAT · ℃ · -50~2000
+   압력_도메인 : FLOAT · MPa · 0~100
+
+<span class="dim">→ AI 이상탐지 기준값 자동 도출</span>
+      </div>
+    </div>
+    <!-- 자산 대장 현황 -->
+    <div class="card">
+      <h3>자산 대장 Registry 현황</h3>
+      <div class="kv">
+        <div class="kv-r"><span class="kv-k">공장 (factory)</span><span class="kv-v" style="color:var(--green);font-family:var(--mono)">18건</span></div>
+        <div class="kv-r"><span class="kv-k">설비 (equipment)</span><span class="kv-v" style="color:var(--green);font-family:var(--mono)">1,433건</span></div>
+        <div class="kv-r"><span class="kv-k">장치 (device)</span><span class="kv-v" style="color:var(--green);font-family:var(--mono)">8,407건</span></div>
+        <div class="kv-r"><span class="kv-k">조립품 (component)</span><span class="kv-v" style="color:var(--green);font-family:var(--mono)">51,527건</span></div>
+        <div class="kv-r"><span class="kv-k">MEASUREMENT 도메인</span><span class="kv-v" style="color:var(--accent);font-family:var(--mono)">54건+</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:12px">사전 카테고리: measurement · action · state · value_type · equipment_class · device_class 등. ISA-95 Class/Instance 구분.</div>
+    </div>
+  </div>
+
+  <!-- 태그 표준명 4축 -->
+  <div class="card">
+    <h3>태그 표준명 4축 분류 — 자동 생성 규칙</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="flex:1;min-width:180px;background:rgba(36,120,212,.06);border:1px solid rgba(36,120,212,.2);border-radius:6px;padding:12px 14px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">축 1 · 센싱 종류</div>
+        <div style="font-size:12px;color:var(--text2)">current · temperature · pressure · flow · rpm · voltage · torque · vibration…</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:rgba(200,124,0,.06);border:1px solid rgba(200,124,0,.2);border-radius:6px;padding:12px 14px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--yellow);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">축 2 · 측정값 유형</div>
+        <div style="font-size:12px;color:var(--text2)">act · set · usl · lsl · ucl · lcl · check · target · result…</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:rgba(15,158,112,.06);border:1px solid rgba(15,158,112,.2);border-radius:6px;padding:12px 14px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">축 3 · 동작 유형</div>
+        <div style="font-size:12px;color:var(--text2)">forward · backward · opening · closing · updown · shifting…</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:rgba(104,72,200,.06);border:1px solid rgba(104,72,200,.2);border-radius:6px;padding:12px 14px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--purple);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">축 4 · 상태 유형</div>
+        <div style="font-size:12px;color:var(--text2)">on · off · ready · complete · alarm · fault · emergency…</div>
+      </div>
+    </div>
+    <div class="code" style="font-size:11.5px">
+<span class="dim">패턴: {설비ID}-{센싱종류}-{측정값유형} 또는 {설비ID}-{동작유형} 또는 {설비ID}-{상태유형}</span>
+
+<span class="dim">tag_cd : </span><span class="hl2">changwon_srl_eaf_a01_plc01_temperature_pv</span>    <span class="dim">(lowercase, 자동 생성, 수정 불가)</span>
+<span class="dim">tag_nm : </span><span class="hl3">CHANGWON_SRL_EAF_A01_PLC01_TEMPERATURE_PV</span>  <span class="dim">(UPPERCASE, 자동 생성, 수정 가능)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 04. 시스템 아키텍처 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="arch">
+  <div class="sec-hd"><span class="sec-num">04</span><h2>시스템 아키텍처 <span class="cbadge">v1.0 확정</span></h2></div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card accent-top">
+      <h3>기술 스택</h3>
+      <div class="item"><span class="dot d-done"></span><span>Backend: <span class="tb">NestJS 11</span> <span class="tb">TypeORM</span> <span class="tb">PostgreSQL 17</span></span></div>
+      <div class="item"><span class="dot d-done"></span><span>Frontend: <span class="tb">Next.js 16</span> <span class="tb">React 19</span> <span class="tb">shadcn/ui 90+</span> <span class="tb">Tailwind</span></span></div>
+      <div class="item"><span class="dot d-done"></span><span>폼/쿼리: <span class="tb">RHF + Zod</span> <span class="tb">TanStack Query/Table</span></span></div>
+      <div class="item"><span class="dot d-done"></span><span>시각화: <span class="tb">ECharts</span> <span class="tb">Recharts</span> <span class="tb">@xyflow/react</span> <span class="tb">dagre</span></span></div>
+      <div class="item"><span class="dot d-done"></span><span>수집: <span class="tb">Benthos-UMH</span> OPC-UA + Avro + 4 Processors</span></div>
+      <div class="item"><span class="dot d-done"></span><span>메시징: <span class="tb">Kafka KRaft 4.x</span> 3+ Broker + Schema Registry</span></div>
+      <div class="item"><span class="dot d-done"></span><span>캐싱: <span class="tb">Valkey</span> / 모노레포: <span class="tb">pnpm</span> + <span class="tb">Turborepo</span></span></div>
+      <div class="item"><span class="dot d-new"></span><span>인증: <span class="tb">apps/auth</span> + <span class="tb">nest-oidc-provider</span></span></div>
+      <div class="item"><span class="dot d-new"></span><span>이메일: <span class="tb">Listmonk</span> Self-hosted (Docker Compose)</span></div>
+    </div>
+    <div class="card green-top">
+      <h3>전체 데이터 흐름</h3>
+      <div class="code">
+<span class="hl4">PLC / 설비</span>
+<span class="dim">   │  OPC-UA · Basic256Sha256</span>
+   ↓
+<span class="hl">KEPServerEX</span>   <span class="dim">Config API + OPC UA Server (:4840)</span>
+<span class="dim">   │  HTTP API — DF-Stream이 유일한 제어 창구</span>
+   ↓
+<span class="hl">Benthos-UMH</span>  <span class="dim">:4195 · 4 Processors · Avro 직렬화</span>
+<span class="dim">   │  Schema Registry (BACKWARD_TRANSITIVE)</span>
+   ↓
+<span class="hl">Kafka KRaft</span>  <span class="dim">RF=3 · ISR=2 · acks=all · DLQ</span>
+<span class="dim">   │  JDBC Sink UPSERT (PK: asset_id + tag_id + ts)</span>
+   ↓
+<span class="hl2">TimescaleDB</span>  <span class="dim">{schema}.tag_rt · 일 2,500만 건</span>
+
+<span class="hl3">MES / ERP / L2</span>
+<span class="dim">   │  DDL 입력</span>
+   ↓
+<span class="dim">ODP 6단계 Auto-Generator</span>
+   ↓
+<span class="hl2">TimescaleDB / PostgreSQL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>DB 이중 DataSource (Desired State → Reconcile)</h3>
+      <div class="ph-row">
+        <span class="ph-num" style="color:var(--accent)">df_package<br><span style="color:var(--text3)">47 테이블</span></span>
+        <div><div class="ph-name">READ ONLY — 인프라 마스터 + 표준 사전</div><div style="font-size:11px;color:var(--text3)">OPC 서버·노드, Kafka 클러스터·토픽, 공장·설비·기기, data_standard(표준 사전). Ansible/Terraform 전용 관리.</div></div>
+      </div>
+      <div class="ph-row" style="border:none">
+        <span class="ph-num" style="color:var(--green)">df_app<br><span style="color:var(--text3)">12 테이블</span></span>
+        <div><div class="ph-name">READ/WRITE — 운영 데이터 (Phase 1)</div><div style="font-size:11px;color:var(--text3)">users, streams, connections, RBAC, OIDC sessions, stream_logs. Cross-Schema = uid loose reference.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>DB 테이블 접미어 (확정)</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--accent);font-family:var(--mono);width:30px">_mt</span><span class="ph-desc">Master — 핵심 기준 정보</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--yellow);font-family:var(--mono);width:30px">_dt</span><span class="ph-desc">Detail — 마스터 1:N 속성</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--teal);font-family:var(--mono);width:30px">_rt</span><span class="ph-desc">Raw — 수집 시계열 원천</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--green);font-family:var(--mono);width:30px">_tt</span><span class="ph-desc">Transaction — 업무/상태 변환</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--purple);font-family:var(--mono);width:30px">_ht</span><span class="ph-desc">History — 변경 이력 로그</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="ph-num" style="color:var(--orange);font-family:var(--mono);width:30px">_st</span><span class="ph-desc">Statistics — 분석 집계</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:none"><span class="ph-num" style="color:var(--text3);font-family:var(--mono);width:30px">_ct</span><span class="ph-desc">Code — 공통 코드/카테고리</span></div>
+        <div class="ph-row" style="padding:8px 0;border-bottom:none"><span class="ph-num" style="color:var(--text3);font-family:var(--mono);width:30px">_jt</span><span class="ph-desc">Join — M:N 교차 테이블</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 05. 개발 정책 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="policy">
+  <div class="sec-hd"><span class="sec-num green">05</span><h2>개발 정책 <span class="cbadge">확정</span></h2></div>
+  <div class="g3">
+    <div class="card">
+      <h3>OPC-UA 수집 Class</h3>
+      <div class="ph-row"><span class="ph-num" style="color:var(--accent)">Class A</span><span class="ph-name">제어·알람·급변</span><span class="ph-desc">100ms~500ms · Subscribe</span></div>
+      <div class="ph-row"><span class="ph-num" style="color:var(--yellow)">Class B</span><span class="ph-name">트렌드·품질</span><span class="ph-desc">1s~5s · Subscribe/Poll</span></div>
+      <div class="ph-row" style="border:none"><span class="ph-num" style="color:var(--text3)">Class C</span><span class="ph-name">마스터·환경</span><span class="ph-desc">10s~1min · Poll</span></div>
+      <div class="sec-divider"></div>
+      <div class="item"><span class="dot d-done"></span>Basic256Sha256 / Sign &amp; Encrypt</div>
+      <div class="item"><span class="dot d-done"></span>Service Account Authentication</div>
+      <div class="item"><span class="dot d-done"></span>노드 경로: [Site].[Area].[Line].[AssetID]</div>
+    </div>
+    <div class="card">
+      <h3>Kafka 클러스터 정책</h3>
+      <div class="item"><span class="dot d-done"></span>KRaft 3 Broker (HA, Split-brain 방지)</div>
+      <div class="item"><span class="dot d-done"></span>Auto Create Topics Disabled</div>
+      <div class="item"><span class="dot d-done"></span>Retention: 7일 / 50GB · RF=3 · Min ISR=2 · acks=all</div>
+      <div class="item"><span class="dot d-done"></span>압축: snappy 기본 / gzip·lz4·zstd 선택</div>
+      <div class="item"><span class="dot d-done"></span>Schema Registry: BACKWARD_TRANSITIVE</div>
+      <div class="item"><span class="dot d-done"></span>Kafka Connect UPSERT (PK: asset_id, timestamp)</div>
+      <div class="item"><span class="dot d-done"></span>DLQ: errors.tolerance=all → {topic}.error</div>
+    </div>
+    <div class="card">
+      <h3>보안 · 네이밍 정책</h3>
+      <div class="item"><span class="dot d-done"></span>JWT RS256 · Access 15분 / Refresh 7일</div>
+      <div class="item"><span class="dot d-done"></span>RBAC: admin &gt; operator &gt; viewer</div>
+      <div class="item"><span class="dot d-done"></span>로그인 실패 5회 → 계정 잠금</div>
+      <div class="item"><span class="dot d-done"></span>AUTH_ALLOWED_DOMAINS 도메인 화이트리스트</div>
+      <div class="sec-divider"></div>
+      <div class="item"><span class="dot d-done"></span>Kafka Topic: css.{bp}-{factory}.{src}-{dataset}</div>
+      <div class="item"><span class="dot d-done"></span>DB Table: {src}_{dataset}_tt</div>
+      <div class="item"><span class="dot d-done"></span>OPC Channel: [bp]_[factory]_[seq 2자리]</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 06. 현재 구현 현황 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="progress">
+  <div class="sec-hd"><span class="sec-num">06</span><h2>현재 구현 현황</h2></div>
+
+  <!-- BSM 완료 highlight -->
+  <div class="achieve" style="margin-bottom:14px">
+    <div>
+      <div class="achieve-badge">✓ COMPLETED — BSM v1.0 (2026-03-31)</div>
+      <div class="achieve-title">Benthos Stream Manager v1.0 — 18/18 Tasks 완료</div>
+      <div class="achieve-desc">Payload CMS 3.69 + Next.js 15.4 + React 19 + node-opcua. Stream Wizard 4단계, Pipeline Editor, KEP/Kafka/SR Manager, MSW v2 mock handler 62개 전체 완성.</div>
+    </div>
+    <div class="achieve-pct">100%</div>
+  </div>
+
+  <div class="pc">
+    <div class="pc-top">
+      <div><div class="pc-title">요구사항 정의 <span class="cbadge">v1.7 확정</span></div><div class="pc-sub">2월 v1.0 기준 7단계 업데이트 완료 — ODP·Listmonk·Multi Auth 추가</div></div>
+      <div class="pc-pct" style="color:var(--accent)">90%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-blue" style="width:90%"></div></div>
+    <div class="g2">
+      <div>
+        <div class="item"><span class="dot d-done"></span>AUTH/USER/SW/STR/CONN/OPC — P0 전체 정의 완료</div>
+        <div class="item"><span class="dot d-done"></span>apps/auth 독립 + OIDC + Multi Auth 4종 (v1.5)</div>
+        <div class="item"><span class="dot d-done"></span>Operational Data Pipeline 6단계 (v1.6)</div>
+        <div class="item"><span class="dot d-done"></span>Listmonk 이메일 + Subscriber Sync (v1.7)</div>
+      </div>
+      <div>
+        <div class="item"><span class="dot d-todo"></span>P1: user_roles 연동 구현</div>
+        <div class="item"><span class="dot d-todo"></span>P2: RBAC 전체 · OIDC Provider (AUTH-006~012)</div>
+        <div class="item"><span class="dot d-todo"></span>P2: DDL Parser · Auto-Generator 구현</div>
+        <div class="item"><span class="dot d-todo"></span>P3: 데이터 카탈로그 · Trino 접근 로그</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc">
+    <div class="pc-top">
+      <div><div class="pc-title">아키텍처 설계 <span class="cbadge">v1.0 확정</span> <span class="pocbadge">가이드 4/28</span></div><div class="pc-sub">2026-03-11 공식 릴리즈 + 아키텍처 가이드 2026-04-28 신규 작성</div></div>
+      <div class="pc-pct" style="color:var(--accent)">92%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-blue" style="width:92%"></div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px">
+      <div class="item"><span class="dot d-done"></span>전체 시스템 다이어그램 + 아키텍처 가이드 완성</div>
+      <div class="item"><span class="dot d-done"></span>df_package 47테이블 ERD 확정</div>
+      <div class="item"><span class="dot d-done"></span>표준 사전 3계층 구조 설계 완료</div>
+      <div class="item"><span class="dot d-done"></span>1:1:1:1 정책 확정</div>
+      <div class="item"><span class="dot d-poc"></span>DFSTREAM-336 Tag Lifecycle (4/22)</div>
+      <div class="item"><span class="dot d-poc"></span>DFSTREAM-339 Equipment 다이어그램 (4/22)</div>
+      <div class="item"><span class="dot d-done"></span>Quick / Advanced Deploy 2경로 확정</div>
+      <div class="item"><span class="dot d-done"></span>Drift Detection 설계 완료</div>
+      <div class="item"><span class="dot d-todo"></span>ODP TypeORM 엔티티 정의 미완</div>
+    </div>
+  </div>
+
+  <div class="pc">
+    <div class="pc-top">
+      <div><div class="pc-title">인프라 구성</div><div class="pc-sub">K3s Kubernetes 39개 파드 목표</div></div>
+      <div class="pc-pct" style="color:var(--yellow)">68%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-yellow" style="width:68%"></div></div>
+    <div class="g2">
+      <div>
+        <div class="item"><span class="dot d-done"></span>Kafka KRaft 4.2 (ZooKeeper 완전 제거)</div>
+        <div class="item"><span class="dot d-done"></span>PostgreSQL 17.6 + Pgpool 4.6.3 클러스터</div>
+        <div class="item"><span class="dot d-done"></span>TimescaleDB SSD 이관 · 일 2,500만 건 검증</div>
+        <div class="item"><span class="dot d-done"></span>K3s + Headlamp · NFS · Docker Registry</div>
+      </div>
+      <div>
+        <div class="item"><span class="dot d-wip"></span>Fluentd · GitLab CI/CD 테스트 중</div>
+        <div class="item"><span class="dot d-todo"></span>ArgoCD + Image Updater · Kaniko · Helm</div>
+        <div class="item"><span class="dot d-todo"></span>Listmonk Docker Compose (Phase 2-D)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc">
+    <div class="pc-top">
+      <div><div class="pc-title">수집 서비스 — BSM</div><div class="pc-sub">BSM v1.0 완료 · 892태그 · 일 2,500만 건 실운영 중</div></div>
+      <div class="pc-pct" style="color:var(--green)">85%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-green" style="width:85%"></div></div>
+    <div class="g2">
+      <div>
+        <div class="item"><span class="dot d-done"></span>BSM v1.0 — 18/18 Tasks 완료 (2026-03-31)</div>
+        <div class="item"><span class="dot d-done"></span>Stream Wizard 4단계 · Pipeline Editor 완성</div>
+        <div class="item"><span class="dot d-done"></span>KEP Tag Browser · Kafka Manager · SR Manager</div>
+        <div class="item"><span class="dot d-poc"></span>DFSTREAM-336 — DF-Stream이 KEP 제어 창구 (4/22)</div>
+        <div class="item"><span class="dot d-poc"></span>DFSTREAM-339 — Equipment ReactFlow 다이어그램 (4/22)</div>
+      </div>
+      <div>
+        <div class="item"><span class="dot d-todo"></span>Drift Detection /admin/drift-queue UI</div>
+        <div class="item"><span class="dot d-todo"></span>고부하 / 장기 안정성 테스트</div>
+        <div class="item"><span class="dot d-todo"></span>BSM ↔ DF-Stream 통합 의사결정</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pc">
+    <div class="pc-top">
+      <div><div class="pc-title">DF-Stream 서비스 개발 <span style="font-size:12px;font-weight:400;color:var(--yellow)">— Phase 1 진행 중</span></div><div class="pc-sub">NestJS API + Next.js Web · Stream Wizard/Manager 구현 중</div></div>
+      <div class="pc-pct" style="color:var(--yellow)">50%</div>
+    </div>
+    <div class="bar-wrap"><div class="bar c-yellow" style="width:50%"></div></div>
+    <div class="g2">
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--green);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">구현 완료</div>
+        <div class="item"><span class="dot d-done"></span>API 기본 구조 (NestJS 12모듈, TypeORM 2 DataSource)</div>
+        <div class="item"><span class="dot d-done"></span>Web 기본 구조 (Next.js App Router, shadcn/ui 90+)</div>
+        <div class="item"><span class="dot d-done"></span>MSW v2 mock handler 62개</div>
+        <div class="item"><span class="dot d-done"></span>기본 페이지 구조 전체</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--yellow);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Phase 1 진행 중 (planned)</div>
+        <div class="item"><span class="dot d-wip"></span>Stream API — deploy / start / stop / delete</div>
+        <div class="item"><span class="dot d-wip"></span>Quick Deploy + Advanced Wizard UI</div>
+        <div class="item"><span class="dot d-wip"></span>Streams Manager UI</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:600">Phase 2~3 (backlog)</div>
+        <div class="item"><span class="dot d-todo"></span>apps/auth + OIDC + Multi Auth (Phase 2-A/B)</div>
+        <div class="item"><span class="dot d-todo"></span>Operational Pipeline (Phase 2-C)</div>
+        <div class="item"><span class="dot d-todo"></span>Listmonk 이메일 (Phase 2-D)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 07. 전체 진행률 요약 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="sec-hd"><span class="sec-num">07</span><h2>전체 진행률 요약</h2></div>
+  <table class="tbl">
+    <thead>
+      <tr><th>단계</th><th>목표</th><th>진행률</th><th>현재 상태</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>기안</td>
+        <td style="color:var(--text2)">목적·목표·전략·일정</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-green" style="width:95%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--green);font-weight:700">95%</span></td>
+        <td style="color:var(--text3);font-size:12px">완료조건 세부 기준 미확정</td>
+      </tr>
+      <tr>
+        <td>요구사항</td>
+        <td style="color:var(--text2)">기능/비기능 v1.7</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-blue" style="width:90%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700">90%</span></td>
+        <td style="color:var(--text3);font-size:12px">P2/P3 RBAC·OIDC·카탈로그 미구현</td>
+      </tr>
+      <tr>
+        <td>아키텍처</td>
+        <td style="color:var(--text2)">v1.0 확정 + 가이드</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-blue" style="width:92%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700">92%</span></td>
+        <td style="color:var(--text3);font-size:12px">가이드 4/28 완성. ODP 엔티티 미완</td>
+      </tr>
+      <tr>
+        <td>인프라</td>
+        <td style="color:var(--text2)">K8s 서비스 구축</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-yellow" style="width:68%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--yellow);font-weight:700">68%</span></td>
+        <td style="color:var(--text3);font-size:12px">핵심 완료. Fluentd·CI/CD·ArgoCD 미완</td>
+      </tr>
+      <tr>
+        <td>수집 서비스</td>
+        <td style="color:var(--text2)">BSM + OPC→Kafka→DB</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-green" style="width:85%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--green);font-weight:700">85%</span></td>
+        <td style="color:var(--text3);font-size:12px">DFSTREAM-336·339 POC 완료. Drift UI 미완</td>
+      </tr>
+      <tr>
+        <td>DF-Stream 서비스</td>
+        <td style="color:var(--text2)">API + Web</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-yellow" style="width:50%"></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--yellow);font-weight:700">50%</span></td>
+        <td style="color:var(--text3);font-size:12px">기본 구조 완성. Stream API·Wizard UI 진행 중</td>
+      </tr>
+      <tr style="background:rgba(36,120,212,.04)">
+        <td style="font-weight:700;font-size:15px">전체</td>
+        <td style="color:var(--text2)">DataForge Package</td>
+        <td><div class="tbl-bar"><div class="tbl-b c-blue" style="width:78%"></div></div><span style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)">~78%</span></td>
+        <td style="color:var(--text3);font-size:12px">4월 POC 완료 · 아키텍처 가이드로 4% 상향</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 08. Phase 일정 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="schedule">
+  <div class="sec-hd"><span class="sec-num">08</span><h2>Phase 일정</h2></div>
+
+  <div class="tl" style="margin-bottom:20px">
+    <div class="tl-ph done">
+      <div class="tl-label" style="color:var(--green)">✓ BSM v1.0</div>
+      <div class="tl-name" style="color:var(--green)">Benthos Stream Manager</div>
+      <div class="tl-date">03/01 ~ 03/31</div>
+      <div class="tl-item" style="color:var(--green)">✓ 18/18 완료 (100%)</div>
+      <div class="tl-item" style="color:var(--green)">✓ MSW mock 62개</div>
+      <div class="tl-item" style="color:var(--green)">✓ DFSTREAM-336 POC</div>
+      <div class="tl-item" style="color:var(--green)">✓ DFSTREAM-339 POC</div>
+    </div>
+    <div class="tl-ph active">
+      <div class="tl-label" style="color:var(--yellow)">▶ Phase 1 (진행 중)</div>
+      <div class="tl-name" style="color:var(--yellow)">수집 파이프라인</div>
+      <div class="tl-date">03/11 ~</div>
+      <div class="tl-item" style="color:var(--green)">✓ 기본 앱 구조</div>
+      <div class="tl-item" style="color:var(--yellow)">→ Stream API</div>
+      <div class="tl-item" style="color:var(--yellow)">→ Quick/Advanced Wizard</div>
+      <div class="tl-item" style="color:var(--yellow)">→ Streams Manager</div>
+    </div>
+    <div class="tl-ph">
+      <div class="tl-label">Phase 2-A</div>
+      <div class="tl-name">apps/auth + Google</div>
+      <div class="tl-date">예정</div>
+      <div class="tl-item">• apps/auth NestJS 분리</div>
+      <div class="tl-item">• OIDC Provider 구현</div>
+      <div class="tl-item">• Google OIDC 연동</div>
+      <div class="tl-item">• RBAC 기본 구현</div>
+    </div>
+    <div class="tl-ph">
+      <div class="tl-label">Phase 2-B</div>
+      <div class="tl-name">Multi Auth</div>
+      <div class="tl-date">예정</div>
+      <div class="tl-item">• LDAP / Active Directory</div>
+      <div class="tl-item">• Local 인증</div>
+      <div class="tl-item">• 외부 OIDC IdP</div>
+      <div class="tl-item">• Trino RBAC 연동</div>
+    </div>
+    <div class="tl-ph">
+      <div class="tl-label">Phase 2-C</div>
+      <div class="tl-name">Operational Pipeline</div>
+      <div class="tl-date">예정</div>
+      <div class="tl-item">• DDL Parser 3종</div>
+      <div class="tl-item">• 6단계 Auto-Generator</div>
+      <div class="tl-item">• Deploy/Undeploy/Upgrade</div>
+    </div>
+    <div class="tl-ph">
+      <div class="tl-label">Phase 2-D</div>
+      <div class="tl-name">Listmonk 이메일</div>
+      <div class="tl-date">예정</div>
+      <div class="tl-item">• Docker Compose</div>
+      <div class="tl-item">• NestJS HttpModule</div>
+      <div class="tl-item">• Subscriber Sync Cron</div>
+    </div>
+    <div class="tl-ph" style="border-right:1px solid var(--border);border-radius:0 8px 8px 0;border-top:3px solid var(--purple)">
+      <div class="tl-label">Phase 3</div>
+      <div class="tl-name" style="color:var(--purple)">데이터 카탈로그</div>
+      <div class="tl-date">예정</div>
+      <div class="tl-item">• catalog_items</div>
+      <div class="tl-item">• data_lineage</div>
+      <div class="tl-item">• Trino + 품질 규칙</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Plane.so 워크아이템 현황 (2026-05-15 기준)</h3>
+    <div class="g2" style="margin-top:8px">
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--green);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Completed</div>
+        <div class="item"><span class="dot d-done"></span>MSW v2 mock handler 62개</div>
+        <div class="item"><span class="dot d-done"></span>Next.js 기본 앱 구조 / 기본 UI</div>
+        <div class="item"><span class="dot d-done"></span>BSM v1.0 Cycle — 18/18 Tasks (03/01~03/31)</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--yellow);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Planned / Backlog</div>
+        <div class="item"><span class="dot d-wip"></span>스트림 배포·제어 API — planned</div>
+        <div class="item"><span class="dot d-wip"></span>Stream Wizard &amp; Manager UI — planned</div>
+        <div class="item"><span class="dot d-wip"></span>Phase 2: Docker Compose / CI-CD — planned</div>
+        <div class="item"><span class="dot d-todo"></span>OIDC Provider &amp; RBAC — backlog</div>
+        <div class="item"><span class="dot d-todo"></span>Operational Data Pipeline — backlog</div>
+        <div class="item"><span class="dot d-todo"></span>Listmonk 이메일 / 데이터 카탈로그 — backlog</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 09. 핵심 의사결정 미완 15건 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="decisions">
+  <div class="sec-hd"><span class="sec-num purple">09</span><h2>핵심 의사결정 미완 항목 <span style="color:var(--yellow)">15건</span></h2></div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:18px">요구사항 v1.7 §8 오픈 이슈. <strong style="color:var(--text)">각 Phase 착수 전 반드시 해결 필요.</strong></p>
+  <table class="dec-table">
+    <thead><tr><th>#</th><th>이슈</th><th>선택지</th><th>연관</th><th>해결 시기</th></tr></thead>
+    <tbody>
+      <tr class="phase1"><td style="font-family:var(--mono);color:var(--red);font-weight:700">#1</td><td style="font-weight:700">Kafka 토픽 생성 방식</td><td>REST Proxy 직접 생성 vs 기존 토픽 재사용</td><td><span class="t-p1">SW2-004</span></td><td><span class="tag t-wip">Phase 1</span></td></tr>
+      <tr class="phase1"><td style="font-family:var(--mono);color:var(--red);font-weight:700">#2</td><td style="font-weight:700">node_group 계층 구조</td><td>계층 유지 vs 단순화 (node_group 제거)</td><td><span class="t-p1">SW1-006</span></td><td><span class="tag t-wip">Phase 1</span></td></tr>
+      <tr class="phase1"><td style="font-family:var(--mono);color:var(--red);font-weight:700">#3</td><td style="font-weight:700">스트림 헬스체크 방식</td><td>Cron 주기 폴링 vs 배포 상태 기반</td><td><span class="t-p2">NFR-REL-002</span></td><td><span class="tag t-wip">Phase 1</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#4</td><td>OIDC PostgreSQL Adapter</td><td>세션/토큰 저장 테이블 구현 방식</td><td><span class="t-p2">AUTH-006,008</span></td><td><span class="tag t-todo">Phase 2-A</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#5</td><td>df_app 테이블 생성 주체</td><td>NestJS 자동 생성 vs 수동 DDL</td><td><span class="t-p2">아키텍처</span></td><td><span class="tag t-todo">Phase 2-A</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#6</td><td>Trino RBAC 구현</td><td>JWT claims → WHERE 필터 vs OPA/File-based</td><td><span class="t-p2">RBAC-005</span></td><td><span class="tag t-todo">Phase 2-B</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#7</td><td>organizations 테이블</td><td>business_place 컬럼 → 별도 테이블 마이그레이션</td><td><span class="t-p2">ORG-001</span></td><td><span class="tag t-todo">Phase 2-A</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#8</td><td>OIDC 로그인 UI</td><td>oidc-provider 내장 UI vs Next.js 커스텀</td><td><span class="t-p2">AUTH-006</span></td><td><span class="tag t-todo">Phase 2-A</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#9</td><td>LDAP 신규 사용자 프로비저닝</td><td>최초 로그인 시 자동 생성 + DEFAULT_ROLE</td><td><span class="t-p2">AUTH-010</span></td><td><span class="tag t-todo">Phase 2-B</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#10</td><td>인증 전환 시 password_hash</td><td>Local → LDAP/Google 전환 시 NULL 처리</td><td><span class="t-p2">USER-008</span></td><td><span class="tag t-todo">Phase 2-B</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#11</td><td>DDL Parser Oracle 복합 PK</td><td>복합 PK + 인라인 인덱스 처리 방식</td><td><span class="t-p1">ODP-001~006</span></td><td><span class="tag t-todo">Phase 2-C</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#12</td><td>Target DB DataSource 설계</td><td>TimescaleDB: df_package 포함 vs 별도</td><td><span class="t-p1">ODP-011</span></td><td><span class="tag t-todo">Phase 2-C</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#13</td><td>Python FastAPI 통합 방식</td><td>NestJS 통합 확정 — 상세 구조 결정 필요</td><td><span class="t-p1">Phase 2-C</span></td><td><span class="tag t-todo">Phase 2-C</span></td></tr>
+      <tr><td style="font-family:var(--mono);color:var(--text3)">#14</td><td>mail 패키지 구조</td><td>apps/api·auth 각자 import vs packages/mail 공유</td><td><span class="t-p1">MAIL-030</span></td><td><span class="tag t-todo">Phase 2-D</span></td></tr>
+      <tr style="border-bottom:none"><td style="font-family:var(--mono);color:var(--text3);border:none">#15</td><td style="border:none">알림 구독 정책</td><td>역할 기반 기본값 vs 파이프라인별 opt-in</td><td><span class="t-p2">MAIL 연관</span></td><td><span class="tag t-todo">Phase 2-D</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 10. 미완 항목 -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="pending">
+  <div class="sec-hd"><span class="sec-num">10</span><h2>미완 항목 전체</h2></div>
+
+  <div style="font-size:10px;font-family:var(--mono);color:var(--yellow);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">🟡 Phase 1 — 진행 중 (planned)</div>
+  <div class="pend-grid" style="margin-bottom:16px">
+    <div class="pend-card critical"><div class="pend-title">Stream API 완성</div><div class="pend-sub">StreamsService.deploy() 9단계 + start/stop/delete</div></div>
+    <div class="pend-card critical"><div class="pend-title">Quick Deploy + Advanced Wizard UI</div><div class="pend-sub">3단계 Quick / 4단계 Advanced 2경로 폼 구현</div></div>
+    <div class="pend-card critical"><div class="pend-title">Streams Manager UI</div><div class="pend-sub">목록·상세·로그·시작/중지 뷰</div></div>
+    <div class="pend-card"><div class="pend-title">의사결정 #1~3 해결</div><div class="pend-sub">Kafka 토픽 생성 / node_group / 헬스체크</div></div>
+    <div class="pend-card"><div class="pend-title">Phase 2 선행 Docker Compose</div><div class="pend-sub">Phase 2-A 착수 전 로컬 개발 환경 구성</div></div>
+  </div>
+
+  <div style="font-size:10px;font-family:var(--mono);color:var(--teal);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">🩵 POC 완료 → 풀 구현 필요</div>
+  <div class="pend-grid" style="margin-bottom:16px">
+    <div class="pend-card done"><div class="pend-title">✓ DFSTREAM-336 POC (4/22)</div><div class="pend-sub">→ 풀 구현: Tag 2-phase 전체 경로 + Retry Push UI</div></div>
+    <div class="pend-card done"><div class="pend-title">✓ DFSTREAM-339 Equipment (4/22)</div><div class="pend-sub">→ 풀 구현: standard_term_uid 필수 강제 + 순환 참조 차단</div></div>
+    <div class="pend-card new"><div class="pend-title">Drift Detection UI</div><div class="pend-sub">/admin/drift-queue — ACCEPT/REJECT/IGNORE/RENAMED</div></div>
+  </div>
+
+  <div style="font-size:10px;font-family:var(--mono);color:var(--orange);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">🟠 Phase 2 착수 전</div>
+  <div class="pend-grid" style="margin-bottom:16px">
+    <div class="pend-card new"><div class="pend-title">apps/auth NestJS 앱 구성</div><div class="pend-sub">OIDC Provider + RS256 + PostgreSQL Adapter (Phase 2-A)</div></div>
+    <div class="pend-card new"><div class="pend-title">Google OIDC / LDAP 인증 구현</div><div class="pend-sub">Multi Auth Strategy 4종 (Phase 2-A/B)</div></div>
+    <div class="pend-card new"><div class="pend-title">Operational Data Pipeline 구현</div><div class="pend-sub">DDL Parser + 6단계 Auto-Generator (Phase 2-C)</div></div>
+    <div class="pend-card new"><div class="pend-title">Listmonk 이메일 서비스 연동</div><div class="pend-sub">Docker Compose + Subscriber Sync Cron (Phase 2-D)</div></div>
+    <div class="pend-card"><div class="pend-title">Fluentd + GitLab CI/CD</div><div class="pend-sub">Kaniko + Harbor + ArgoCD + Image Updater</div></div>
+    <div class="pend-card"><div class="pend-title">RBAC + Next.js 페이지 권한</div><div class="pend-sub">역할 기반 라우팅 가드 (RBAC-006)</div></div>
+  </div>
+
+  <div style="font-size:10px;font-family:var(--mono);color:var(--purple);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">🟣 Phase 3</div>
+  <div class="pend-grid" style="margin-bottom:16px">
+    <div class="pend-card" style="border-left-color:var(--purple)"><div class="pend-title">데이터 카탈로그 구현</div><div class="pend-sub">catalog_items, data_lineage, quality_rules</div></div>
+    <div class="pend-card" style="border-left-color:var(--purple)"><div class="pend-title">Trino 쿼리 연동 + 접근 로그</div><div class="pend-sub">data_access_logs, retention_policies</div></div>
+    <div class="pend-card" style="border-left-color:var(--purple)"><div class="pend-title">통합 테스트 수행</div><div class="pend-sub">DataForge 서비스 완료 조건 달성</div></div>
+    <div class="pend-card" style="border-left-color:var(--purple)"><div class="pend-title">고부하 / 장기 안정성 테스트</div><div class="pend-sub">수집 서비스 · 스트림 배포 부하 검증</div></div>
+  </div>
+
+  <div style="font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">⚪ 아키텍처 의사결정 (시기 미정)</div>
+  <div class="pend-grid">
+    <div class="pend-card decision"><div class="pend-title">BSM ↔ DF-Stream 통합 여부</div><div class="pend-sub">Benthos Stream Manager 병합 또는 분리 운영</div></div>
+    <div class="pend-card decision"><div class="pend-title">OIDC Interaction UI 구현 방식</div><div class="pend-sub">oidc-provider 내장 UI vs Next.js 커스텀 로그인</div></div>
+    <div class="pend-card decision"><div class="pend-title">TimescaleDB DataSource 설계</div><div class="pend-sub">df_package 포함 vs 별도 DataSource 분리</div></div>
+  </div>
+</section>
+
+<footer>
+  <span>DataForge DF-Stream · 프로젝트 진행 보고서 · 2026.05.15</span>
+  <span style="color:var(--teal);font-weight:700">DFSTREAM-336·339 POC 완료 (4/22) · 아키텍처 가이드 (4/28)</span>
+  <span>요구사항 v1.7 · 아키텍처 v1.0 · Phase 1 진행 중</span>
+</footer>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.bar, .tbl-b').forEach(b => {
+    const w = b.style.width;
+    b.style.width = '0';
+    requestAnimationFrame(() => setTimeout(() => { b.style.width = w; }, 200));
+  });
+});
+</script>
+</body>
+</html>
