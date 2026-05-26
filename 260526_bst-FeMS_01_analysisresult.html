@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeMS 시스템 분석 뷰어</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Top header ─────────────────────────────────────────── */
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 52px;
+  min-height: 52px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f0f6fc;
+  letter-spacing: -0.01em;
+}
+
+.topbar-subtitle {
+  font-size: 12px;
+  color: #8b949e;
+  margin-left: 2px;
+}
+
+.topbar-badge {
+  margin-left: auto;
+  background: rgba(56, 139, 253, 0.15);
+  color: #58a6ff;
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+#layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+#sidebar {
+  width: 228px;
+  min-width: 228px;
+  background: #0d1117;
+  border-right: 1px solid #21262d;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-section-label {
+  padding: 16px 16px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 16px;
+  cursor: pointer;
+  color: #8b949e;
+  font-size: 13px;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  margin: 1px 8px 1px 0;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.tab:hover {
+  background: #161b22;
+  color: #c9d1d9;
+}
+
+.tab.active {
+  background: rgba(31, 111, 235, 0.12);
+  color: #58a6ff;
+  border-left-color: #1f6feb;
+}
+
+.tab-icon { font-size: 15px; flex-shrink: 0; }
+.tab-label { line-height: 1.3; }
+
+/* ── Content area ────────────────────────────────────────── */
+#content-wrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-header {
+  padding: 10px 32px;
+  background: #161b22;
+  border-bottom: 1px solid #21262d;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#header-icon { font-size: 17px; }
+#header-title { font-size: 15px; font-weight: 600; color: #f0f6fc; }
+
+#content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 36px 48px 60px;
+}
+
+/* ── Markdown content ────────────────────────────────────── */
+#content h1 {
+  font-size: 1.9em;
+  font-weight: 700;
+  color: #f0f6fc;
+  border-bottom: 1px solid #21262d;
+  padding-bottom: 0.35em;
+  margin: 0 0 1em;
+}
+
+#content h2 {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #f0f6fc;
+  border-bottom: 1px solid #21262d;
+  padding-bottom: 0.25em;
+  margin: 2em 0 0.8em;
+}
+
+#content h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+  color: #e6edf3;
+  margin: 1.6em 0 0.5em;
+}
+
+#content h4 {
+  font-size: 1em;
+  font-weight: 600;
+  color: #e6edf3;
+  margin: 1.2em 0 0.4em;
+}
+
+#content p { margin-bottom: 0.85em; color: #c9d1d9; }
+
+#content a { color: #58a6ff; text-decoration: none; }
+#content a:hover { text-decoration: underline; }
+
+#content ul, #content ol {
+  padding-left: 1.8em;
+  margin-bottom: 0.8em;
+}
+#content li { margin-bottom: 0.25em; }
+
+#content hr {
+  border: none;
+  border-top: 1px solid #21262d;
+  margin: 2em 0;
+}
+
+#content blockquote {
+  border-left: 3px solid #1f6feb;
+  margin: 1em 0;
+  padding: 0.6em 1em;
+  background: rgba(31, 111, 235, 0.07);
+  color: #8b949e;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+
+#content strong { color: #e6edf3; }
+
+/* Inline code */
+#content :not(pre) > code {
+  background: #2d333b;
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.82em;
+  color: #e6edf3;
+  white-space: nowrap;
+}
+
+/* Code blocks */
+#content pre {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+#content pre code {
+  background: none !important;
+  padding: 0;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.82em;
+  color: #c9d1d9;
+  white-space: pre;
+}
+
+/* Tables */
+#content .table-wrap { overflow-x: auto; margin: 1em 0; }
+
+#content table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.88em;
+}
+
+#content table th {
+  background: #161b22;
+  color: #f0f6fc;
+  padding: 8px 14px;
+  text-align: left;
+  border: 1px solid #30363d;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#content table td {
+  padding: 7px 14px;
+  border: 1px solid #21262d;
+  color: #c9d1d9;
+  vertical-align: top;
+}
+
+#content table tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* Mermaid diagrams */
+.mermaid-wrap {
+  margin: 2em 0;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 28px 24px;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.mermaid-wrap svg { max-width: 100%; height: auto; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="logo">⚡</span>
+  <span class="topbar-title">FeMS 시스템 분석</span>
+  <span class="topbar-subtitle">세아베스틸 (SEAH BESTEEL)</span>
+  <span class="topbar-badge">분석 v1.0 · 2025.05</span>
+</div>
+
+<div id="layout">
+  <nav id="sidebar" aria-label="문서 탐색">
+    <div class="sidebar-section-label">분석 문서</div>
+    <div class="tab" id="tab-overview" onclick="switchTab('overview')" role="tab" aria-label="개요"><span class="tab-icon">📋</span><span class="tab-label">개요</span></div>
+    <div class="tab" id="tab-docs" onclick="switchTab('docs')" role="tab" aria-label="문서 분석"><span class="tab-icon">📄</span><span class="tab-label">문서 분석</span></div>
+    <div class="tab" id="tab-backend" onclick="switchTab('backend')" role="tab" aria-label="백엔드 분석"><span class="tab-icon">🐍</span><span class="tab-label">백엔드 분석</span></div>
+    <div class="tab" id="tab-frontend" onclick="switchTab('frontend')" role="tab" aria-label="프론트엔드"><span class="tab-icon">🌐</span><span class="tab-label">프론트엔드</span></div>
+    <div class="tab" id="tab-flow" onclick="switchTab('flow')" role="tab" aria-label="데이터 흐름"><span class="tab-icon">📊</span><span class="tab-label">데이터 흐름</span></div>
+    <div class="tab" id="tab-db" onclick="switchTab('db')" role="tab" aria-label="DB 스키마"><span class="tab-icon">🗄️</span><span class="tab-label">DB 스키마</span></div>
+    <div class="tab" id="tab-new_sys" onclick="switchTab('new_sys')" role="tab" aria-label="신규 요구사항"><span class="tab-icon">🚀</span><span class="tab-label">신규 요구사항</span></div>
+  </nav>
+
+  <div id="content-wrapper">
+    <div class="content-header">
+      <span id="header-icon"></span>
+      <span id="header-title"></span>
+    </div>
+    <div id="content" role="main" aria-live="polite"></div>
+  </div>
+</div>
+
+<script>
+
+// ── Data ──────────────────────────────────────────────────
+const DOCS = {"overview":{"title":"📋 개요","title_plain":"개요","icon":"📋","content":"# bst_FeMS 프로젝트 분석 개요\n\n## 프로젝트 목적\n\n세아베스틸(SEAH BESTEEL) 공장의 에너지 관리 시스템(FeMS: Factory Energy Management System).\nModbus RTU/TCP 프로토콜을 통해 공장 내 각종 에너지 계측 장비(전력량계, 가스 보정기 등)에서 데이터를 수집하고,\n이를 가공·저장하여 에너지 사용 현황을 모니터링·분석·리포팅하는 시스템.\n\n## 시스템 구성 요약\n\n```mermaid\nflowchart TD\n    subgraph field[\"🏭 현장 계측 장비\"]\n        GAS[\"가스 보정기<br/>JB · EL\"]\n        POWER[\"전력량계<br/>LS · MI · VI · ECO\"]\n        PLC[\"OPC-UA 장비<br/>Autobase · Citech\"]\n    end\n\n    subgraph collect[\"📡 수집 서버 (Python)\"]\n        COL1[\"mm_00_collect.py<br/>Modbus → Kafka\"]\n        COL2[\"mm_Autobase.py<br/>OPC-UA 수집\"]\n    end\n\n    subgraph middleware[\"⚙️ 미들웨어\"]\n        KAFKA[(\"Apache Kafka<br/>메시지 브로커\")]\n        MONGO[(\"MongoDB<br/>원시 데이터\")]\n        MYSQL[(\"MySQL/MariaDB<br/>설정 · 로그\")]\n        ORACLE[(\"Oracle DB<br/>마스터 · 집계\")]\n    end\n\n    subgraph process[\"🔄 처리 서버 (Python)\"]\n        P1[\"mm_16_1m_use.py<br/>1분 사용량\"]\n        P2[\"mm_17_vtag_1m.py<br/>가상 태그\"]\n        P3[\"mm_11_summary.py<br/>15분/시간/일/월 집계\"]\n        P4[\"mm_25_heat.py<br/>열량 계산\"]\n        P5[\"mm_04_peak.py<br/>피크 관리\"]\n    end\n\n    subgraph web[\"🌐 웹 서비스 (Java)\"]\n        SPRING[\"Spring MVC + MyBatis<br/>amCharts · jqGrid\"]\n    end\n\n    USER[\"👤 사용자\"]\n\n    field -->|\"Modbus RTU/TCP<br/>OPC-UA\"| collect\n    collect -->|\"Kafka 메시지\"| KAFKA\n    KAFKA --> MONGO\n    MONGO --> process\n    process --> ORACLE\n    ORACLE -->|\"MyBatis 조회\"| SPRING\n    SPRING -->|\"HTTP/JSON\"| USER\n```\n\n## 디렉토리 구조\n\n```text\nbst_FeMS/\n├── docs_org/          # 기존 설계 문서 (pptx, xlsx)\n├── src_backend/       # Python 수집·처리 스크립트\n├── src_frontend/      # Java Spring MVC 웹 애플리케이션\n│   └── FEMS_SEAH/\n│       ├── src/       # Java 소스 (Spring MVC)\n│       └── WebContent/\n│           ├── WEB-INF/jsp/   # JSP 뷰\n│           └── resources/     # JS, CSS, 라이브러리\n└── analysis/          # 본 분석 문서 모음\n```\n\n## 사용 기술 스택 (기존)\n\n| 계층 | 기술 |\n|------|------|\n| 수집 | Python 3.6, Modbus RTU/TCP, OPC-UA |\n| 메시지 | Apache Kafka |\n| 저장 (원시) | MongoDB (월별 컬렉션) |\n| 저장 (집계) | Oracle DB (BESTSF), MySQL/MariaDB |\n| 웹 서버 | Apache Tomcat 8 |\n| 웹 프레임워크 | Spring Framework (Spring MVC, Spring Security) |\n| ORM | MyBatis |\n| 뷰 | JSP, JSTL |\n| 차트 | amCharts |\n| 그리드 | jqGrid |\n| 인증 | Spring Security (MES 계정 연동) |\n\n## 분석 문서 목록\n\n| 파일 | 내용 |\n|------|------|\n| [00_overview.md](00_overview.md) | 전체 개요 (이 파일) |\n| [01_docs_analysis.md](01_docs_analysis.md) | docs_org 문서 분석 |\n| [02_backend_analysis.md](02_backend_analysis.md) | src_backend 소스 분석 |\n| [03_frontend_analysis.md](03_frontend_analysis.md) | src_frontend 소스 분석 |\n| [04_data_flow.md](04_data_flow.md) | 데이터 흐름 전체 프로세스 |\n| [05_db_schema.md](05_db_schema.md) | DB 구조 및 주요 테이블 |\n| [06_new_system_requirements.md](06_new_system_requirements.md) | 신규 시스템 개발 요건 정리 |\n"},"docs":{"title":"📄 문서 분석","title_plain":"문서 분석","icon":"📄","content":"# docs_org 문서 분석\n\n## 문서 목록 및 역할\n\n| 파일명 | 구분 | 주요 내용 |\n|--------|------|-----------|\n| FEMS Dev Info.txt | 개발 환경 정보 | 서버 접속정보, DB 접속정보, 미들웨어 접속정보 |\n| FEMS Tag List -20250922.xlsx | 태그 목록 | 수집 태그 전체 목록 (2025년 9월 기준) |\n| FEMS 화면 이관 여부 분석 -202604.xlsx | 화면 이관 분석 | 기존 화면의 신규 시스템 이관 여부 분류 |\n| [VNTG]베스틸_EMS2_화면설계서_V1.0_20210531.pptx | 화면 설계서 | 2차 개발 화면 설계 (VNTG 작성) |\n| 베스틸FEMS_CLLT_1141_수집데이터정보_V2.4.xlsx | 수집 데이터 정의 | 장비별 수집 태그 정의, 프로토콜 정보 |\n| 베스틸FEMS_CLLT_1141_수집데이터정보_프로토콜_V2.1.xlsx | 프로토콜 정의 | Modbus 레지스터 주소, 데이터 타입 정의 |\n| 베스틸FEMS_CLLT_1231_모듈기능분할도_V1.3.xlsx | 모듈 기능 분할 | 수집 모듈 기능별 분류 |\n| 베스틸FEMS_CLLT_1235_Sequence Diagram_V1.0.pptx | 시퀀스 다이어그램 | 데이터 수집·처리 시퀀스 |\n| 베스틸FEMS_CLLT_1242_데이터 모델 정의서_V1.2.xlsx | 데이터 모델 | MongoDB/Oracle 데이터 모델 정의 |\n| 베스틸FEMS_CLLT_1244_코드 정의서_V1.1.xlsx | 코드 정의 | 시스템 코드 체계 정의 |\n| 베스틸FEMS_CLLT_프로그램 설명.pptx | 프로그램 설명 | 수집 프로그램 동작 설명 |\n| 베스틸FEMS_Table 정보.xlsx | 테이블 정보 | Oracle/MongoDB 테이블 목록 |\n| 베스틸FEMS_WEB_(FEMS_표준패키지)테이블 정의서.xlsx | 웹 테이블 정의 | 웹 서비스용 DB 테이블 정의 |\n| 베스틸FEMS_아키텍처.pptx | 아키텍처 | 전체 시스템 아키텍처 다이어그램 |\n| 베스틸_FEMS_2차_화면정의서_V0.9_20210512.pptx | 2차 화면 정의서 | 2차 개발 화면 구성 정의 |\n\n## 핵심 인프라 정보 (FEMS Dev Info.txt)\n\n### 서버 구성\n\n- **FEMS Web 서버**: IP `61.107.76.38` (공인 IP), Port 8080\n  - 접속 URL: `http://bestfems.seah.co.kr:8080/FEMS_SEAH/`\n- **데이터 수집 서버**: `172.31.1.160` (Autobase PC1), `172.31.5.247` (PC2)\n\n### DB 접속 정보\n\n| DB | 호스트 | Port | 계정 |\n|----|--------|------|------|\n| Oracle (BESTSF) | 172.17.40.100 | 1521 | SF_FEMS / SFFEMS* |\n| MongoDB | 172.17.1.35 | 17001 | eco:eco1@SEAH_FEMS |\n| MySQL/MariaDB | 172.17.1.34 | 3306 | root / dt01@ |\n\n### 외부 시스템 연동\n\n- **Citech (PLC)**: 보일러실 `10.1.2.56`, `10.1.2.57`, 수처리실 `10.1.2.58~83`\n- **Autobase**: OPC-UA 기반 계장 데이터 수집\n- **Oracle ERP/MES View**: SF_FEMS 인스턴스에 View 생성하여 연동\n  - `VCODEMASTER`, `VCODEDETAIL` (기준 코드)\n  - `VMESUSER` (MES 로그인)\n  - `VEMPMASTER`, `VDEPTMASTER` (조직 정보)\n  - `VSFMZ2010` (설비 정보)\n\n## 수집 장비 분류 (수집데이터정보 기준)\n\n### 가스 보정기 (Device_type = 'C')\n\n| Maker 코드 | 제조사 | 프로토콜 | 수집 항목 |\n|-----------|--------|----------|-----------|\n| JB | JB (가스 보정기) | Modbus RTU/TCP (FC 03) | 미보정 사용량(TotalVm), 보정 사용량(TotalVb), 평균 온도(AvgTemp), 평균 압력(AvgPress), 보정계수(Cf) |\n| EL | EL (가스 보정기) | Modbus RTU/TCP (FC 03) | JB와 동일 항목 + 소수점 사용량 분리 |\n\n### 전력량계 (Device_type = 'E')\n\n| Maker 코드 | 제조사 | 프로토콜 | 수집 항목 |\n|-----------|--------|----------|-----------|\n| LS | LS일렉트릭 | Modbus RTU/TCP (FC 04) | R/S/T 상전류(INC-R/S/T), 역전류(INV-R/S/T), 역률(PF), 주파수(Freq), 누적전력량(ACC, TotalACC) |\n| MI | Mitsubishi | Modbus RTU/TCP (FC 03) | 상전류, 역전류, 역률, 주파수, 누적전력량 |\n| VI | Vitzro | Modbus RTU/TCP (FC 04) | 전력량(double 형 지원) |\n| ECO | Ecosense | Modbus RTU/TCP (FC 04) | R/S/T 유효전력, 무효전력, 상전류, 역전류, 역률, 주파수, 누적전력량 |\n\n### OPC-UA 기반 (Autobase)\n\n- 계장 실시간 데이터 (압력, 온도, 유량 등)\n- OPC-UA 서브스크립션 방식 수집\n\n## 화면 이관 분석 (FEMS 화면 이관 여부 분석)\n\n기존 화면을 신규 시스템으로 이관하는 여부를 분류한 문서.\n주요 이관 대상 화면 카테고리:\n\n- 실시간 모니터링 화면\n- 에너지 사용량 분석 화면\n- 피크 관리 화면\n- 리포팅 화면\n- 기준정보 관리 화면\n\n## 아키텍처 개요 (베스틸FEMS_아키텍처.pptx)\n\n```text\n[계측 장비층]\n  전력량계, 가스보정기, 보일러/수처리 PLC, Autobase\n        ↓ Modbus RTU/TCP, OPC-UA\n[수집 서버층]\n  Python 수집 프로세스 (mm_00_collect.py 등)\n        ↓ Kafka\n[메시지 브로커층]\n  Apache Kafka\n        ↓ Consumer\n[저장 서버층]\n  MongoDB (원시 데이터)\n  Oracle DB (집계, 마스터)\n  MySQL (SQL 템플릿, 설정)\n        ↓\n[애플리케이션층]\n  Spring MVC Web (Java)\n        ↓\n[사용자층]\n  웹 브라우저 (Chrome 권장)\n```\n"},"backend":{"title":"🐍 백엔드 분석","title_plain":"백엔드 분석","icon":"🐍","content":"# src_backend 소스 분석\n\n## 파일 구성 개요\n\n백엔드는 Python 3.6 기반 스크립트 집합으로, 기능별로 분류됨.\n배포 경로: `/home/seah/app/bestFems/`\n\n```text\nsrc_backend/\n├── 공통 모듈\n│   ├── Global.py           # 전역 유틸리티 (파일 저장, 시간 변환, CRC)\n│   ├── common.py           # DB 접속 및 쿼리 공통 클래스\n│   ├── compat.py           # 호환성 유틸\n│   ├── osCRC.py            # CRC16 체크섬 계산\n│   └── realtime.py         # Kafka 프로듀서, OPC-UA 클라이언트\n│\n├── 수집 모듈 (Step 1: 장비 → Kafka)\n│   ├── mm_00_collect.py    # 메인 수집 (Oracle DB에서 장비 정보 조회)\n│   ├── mm_collec.py        # 구버전 수집 (conf 파일 기반)\n│   ├── mm_collect_update.py# 수집 업데이트 처리\n│   ├── mm_Autobase.py      # Autobase(OPC-UA) 수집\n│   └── mm_00_ct.py         # 수집 보조\n│\n├── 저장 모듈 (Step 2: Kafka → MongoDB)\n│   ├── mm_02_kafka_to_mongo.py # Kafka 소비 → MongoDB 저장\n│   └── mm_02_tmp_mongo.py      # 임시 MongoDB 저장\n│\n├── 사용량 계산 모듈 (Step 3: 1분 사용량)\n│   ├── mm_16_1m_use.py     # 실 태그 1분 사용량 계산 (메인)\n│   ├── mm_15_1m_use.py     # 구버전 1분 사용량\n│   ├── mm_22_1m_use.py     # 공장 22번 1분 사용량\n│   ├── mm_221_1m_use.py    # 공장 221번 1분 사용량\n│   ├── mm_222_1m_use.py    # 공장 222번\n│   ├── mm_223_1m_use.py    # 공장 223번\n│   ├── mm_224_1m_use.py    # 공장 224번\n│   ├── mm_225_1m_use.py    # 공장 225번\n│   ├── mm_226_1m_use_*.py  # 공장 226번 (버전별)\n│   └── mm_996_1m_use.py    # 공장 996번\n│\n├── 가상 태그 계산 모듈 (Step 3-2: 수식 기반 집계)\n│   ├── mm_17_vtag_1m_use.py    # 가상 태그 1분 사용량 (메인)\n│   ├── mm_23_vtag_1m_use.py    # 공장 23번 가상 태그\n│   ├── mm_231_vtag_1m_use.py   # 공장 231번\n│   ├── mm_233_vtag_1m_use.py   # 공장 233번\n│   ├── mm_234_vtag_1m_use.py   # 공장 234번\n│   ├── mm_235_vtag_1m_use.py   # 공장 235번\n│   ├── mm_236_vtag_1m_use.py   # 공장 236번\n│   └── mm_999_vtag_1m_use.py   # 공장 999번\n│\n├── 집계(Summary) 모듈 (Step 4: 15분/시/일/월 집계)\n│   ├── mm_11_summary.py    # 표준 집계 (15분/시/일/월)\n│   ├── mm_12_summary.py    # 구버전 집계\n│   ├── mm_03_summary.py    # ECO 15분 집계\n│   ├── mm_19_summary.py    # 신규 집계 모듈\n│   ├── mm_24_summary.py    # 공장 24번 집계\n│   ├── mm_241_summary.py   # 공장 241번\n│   ├── mm_244_summary.py   # 공장 244번\n│   ├── mm_245_summary.py   # 공장 245번\n│   ├── mm_246_summary.py   # 공장 246번 (day용)\n│   ├── mm_24month_summary.py# 공장 24번 월 집계\n│   └── summary.py          # 집계 공통 유틸\n│\n├── 열량(Heat) 계산 모듈\n│   ├── mm_18_heat.py       # 열사용량 계산 (일/월)\n│   ├── mm_25_heat.py       # 열량 계산 (LNG 기반)\n│   ├── mm_256_heat.py      # 공장 256번 열량\n│   └── mm_27_heat_LNG.py   # LNG 열량 계산\n│\n├── 피크(Peak) 관리 모듈\n│   ├── mm_04_peak.py       # 피크 분석\n│   ├── mm_05_peak_data.py  # 피크 데이터 처리\n│   ├── mm_26_peek.py       # 피크 관리 (공장별)\n│   ├── mm_264_peek.py      # 공장 264번\n│   ├── mm_265_peek.py      # 공장 265번\n│   └── mm_266_peek.py      # 공장 266번\n│\n├── 보정 태그 모듈\n│   ├── mm_14_correction_tag.py  # 태그 보정 (공장 14번)\n│   ├── mm_146_correction_tag.py # 태그 보정 (공장 146번)\n│   └── mm_28_basic_unit.py      # 기본 단위 처리\n│\n├── 레벨2 연동 모듈\n│   ├── mm_20_lv2_send.py   # 레벨2 시스템 전송\n│   └── mm_206_lv2_send.py  # 레벨2 시스템 전송 (206번)\n│\n├── Kafka 릴레이\n│   └── mm_21_kafka_to_kafka.py # Kafka → Kafka 중계\n│\n├── 가상 태그 생성 유틸\n│   ├── mm_creatVTag.py     # 가상 태그 생성\n│   ├── bulk_create_vtag.py # 가상 태그 일괄 생성\n│   └── mm_create_collect_idx.py # 수집 인덱스 생성\n│\n├── DB 마이그레이션 유틸\n│   ├── mongo_to_oralce.py  # MongoDB → Oracle 이관\n│   └── oracle_test.py      # Oracle 접속 테스트\n│\n├── 배치/스케줄 스크립트\n│   ├── eco15m_excuete.sh       # ECO 15분 집계 반복 실행\n│   ├── eco1h_excute.sh         # 1시간 집계 실행\n│   ├── day_and_month_summary.sh# 일/월 집계 실행\n│   └── bulk_all_min_hour.sh    # 분/시 일괄 집계\n│\n└── 설정 파일\n    ├── connect.conf            # Oracle DB 접속 정보\n    ├── JB.conf                 # JB 장비 설정\n    ├── Elinko.conf             # EL 장비 설정 (구버전)\n    ├── LS.conf                 # LS 장비 설정\n    ├── Mitsubishi.conf         # Mitsubishi 장비 설정\n    ├── Ecosense.conf           # Ecosense 장비 설정\n    └── uram.py / uram2.py / uram3.py  # URAM 관련 유틸\n```\n\n---\n\n## 주요 모듈 상세 분석\n\n### 1. 공통 모듈 (common.py, Global.py)\n\n#### common.py\n\n전체 백엔드 스크립트의 핵심 공통 클래스.\n\n```python\nclass common:\n    # DB 접속\n    def my_database_conn()        # Oracle 접속 (connect.conf 기반)\n    def my_conn()                 # MySQL 접속 설정\n    def my_select()               # MySQL SP 호출\n    def my_bulk_insert()          # MySQL 벌크 insert\n    def oracle_table_select()     # Oracle 테이블 조회\n    def oracle_bulk_insert()      # Oracle 벌크 insert\n    def oralce_sp_exec()          # Oracle SP 실행\n\n    # 시간 유틸\n    def time_to_str()             # datetime → 문자열\n    def str_to_time()             # 문자열 → datetime\n    def time_minus_time()         # 시간 차이 계산\n\n    # MongoDB 컬렉션 유틸\n    def create_collection()       # 월별 컬렉션 이름 생성\n    def get_collection()          # 기간별 컬렉션 목록 생성\n```\n\n**특이사항**: MySQL에 SQL 템플릿을 저장하고 `SP_GET_SQL('sql_XX')` 형태로 조회하여 사용.\nOracle 연결 정보 역시 MySQL SP(`SP_ORACLE_CONN`)에서 동적으로 가져옴.\n\n#### Global.py\n\n파일 저장, 시간 포맷, hex 변환 유틸리티.\n\n```python\ndef convertHexString()  # 문자열 → hex\ndef byte2Hex()          # bytearray → hex 문자열\ndef getCurrentTime()    # 현재 시간 반환\ndef getFileName()       # 날짜 기반 파일명 생성\ndef saveFile()          # 파일 저장 (디렉토리 자동 생성)\n```\n\n### 2. 수집 모듈 (mm_00_collect.py)\n\nModbus RTU/TCP 프로토콜로 장비에서 데이터를 읽어 Kafka로 전송.\n\n#### 동작 원리\n\n1. **Oracle DB에서 장비 목록 조회** (`DEVICE_MASTER` 테이블)\n2. **Oracle DB에서 태그 정보 조회** (`TAG_MASTER` 테이블)\n3. **각 장비별 프로세스 병렬 실행** (`multiprocessing.Process`)\n4. **장비 소켓 접속** (TCP:1470 포트)\n5. **Modbus 패킷 전송** (Function Code 03/04)\n6. **응답 파싱** → 제조사별 파싱 함수 호출\n7. **Kafka 전송** (`realtime.sendtokafka()`)\n\n#### 지원 제조사 및 패킷 형식\n\n| Maker | FC | 엔디언 | 파싱 함수 | 수집 항목 |\n|-------|----|----|----------|-----------|\n| JB | 03 | Big | `JBmake_data()` | TotalVm, TotalVb, AvgTemp, AvgPress, Cf |\n| EL | 03 | Big | `ELmake_data()` | TotalVm, TotalVb, AvgTemp, AvgPress, Cf |\n| LS | 04 | Big | `LSmake_data()` | INC-R/S/T, INV-R/S/T, PF, Freq, ACC, TotalACC |\n| MI | 03 | Big | `ECOmake_data()` | 전류, 역률, 주파수, 누적전력량 |\n| VI | 04 | Big | `VImake_data()` | 전력량 (double/float 지원) |\n| ECO | 04 | Big | `ECOmake_data()` | R/S/T 유효·무효전력, 전류, 역률, 주파수, 누적전력량 |\n\n#### Kafka 메시지 형식\n\n```text\ntag_id||value||timestamp||kind||factory_id\n```\n\n예: `C00001_TOT-CORR-USAGE||1234.56||2024-01-01 12:00:00||2||F001`\n\n#### 실행 주기\n\n- 대부분 장비: **매 분 0초**에 실행\n- Vitzro(VI): **매 분 45초**에 실행\n\n### 3. Kafka → MongoDB 저장 (mm_02_kafka_to_mongo.py)\n\n#### 동작 원리\n\n1. Kafka Consumer 구독 (토픽 = 수집 대상)\n2. 메시지 수신 → 태그 ID로 저장 위치 조회 (Oracle `TAG_SUM_STORE_TABLE`)\n3. MongoDB 컬렉션에 삽입\n\n#### MongoDB 도큐먼트 구조 (수집 원시 데이터)\n\n```json\n{\n  \"tag\": \"C00001_TOT-CORR-USAGE\",\n  \"val\": 1234.56,\n  \"time\": \"2024-01-01 12:00:00\",\n  \"kind\": \"2\",\n  \"factory_id\": \"F001\",\n  \"server_time\": \"2024-01-01 12:00:01.234\"\n}\n```\n\n#### 컬렉션 명명 규칙\n\n- 월 단위: `collect_YYYYMM` (예: `collect_202401`)\n- 태그별 저장 위치는 Oracle `TAG_SUM_STORE_TABLE`에서 관리\n\n### 4. 1분 사용량 계산 (mm_16_1m_use.py)\n\n누적 계량값(Accumulator) 간 차이로 실제 사용량을 계산.\n\n#### 계산 로직\n\n```text\n현재 사용량 = 현재 누적값 - 이전 누적값\n※ 카운터 오버플로우 처리: 이전 > 현재인 경우 limit_value 기준으로 보정\n```\n\n#### 처리 흐름\n\n1. Oracle에서 대상 태그 목록 조회\n2. MongoDB에서 기간 내 원시 데이터 조회\n3. **중앙값(Median)으로 이상치 제거**\n4. 이전 삽입 레코드와 현재값 비교하여 사용량 계산\n5. Oracle SP로 TJ(테라줄), TOE(석유환산톤), tCO2(탄소 환산) 계산\n6. MongoDB 사용량 컬렉션에 저장\n7. 가상 태그 계산 프로세스 호출 (`mm_17_vtag_1m_use.py`)\n8. 15분 집계 시점(0, 15, 30, 45분)이면 집계 모듈 호출 (`mm_19_summary.py`)\n\n#### 저장 도큐먼트 구조 (1분 사용량)\n\n```json\n{\n  \"tag\": \"C00001_TOT-CORR-USAGE\",\n  \"time\": \"2024-01-01 12:00:00\",\n  \"val\": 5.23,\n  \"kind\": \"2\",\n  \"fid\": \"F001\",\n  \"before_tag_value\": 1229.33,\n  \"bf_time\": \"2024-01-01 11:59:00\",\n  \"current_tag_value\": 1234.56,\n  \"curr_time\": \"2024-01-01 12:00:00\",\n  \"tj\": 18.83,\n  \"toe\": 0.00045,\n  \"tco2\": 0.0024,\n  \"lod_tmzon\": \"...\"\n}\n```\n\n### 5. 가상 태그 계산 (mm_17_vtag_1m_use.py)\n\n수식(formula)으로 정의된 가상 태그값 계산.\n\n#### 가상 태그 수식 예\n\n```python\n# Oracle TAG_MASTER.VIRTUAL_TAG_FORMULA 필드에 저장된 수식\n# 예: tag[\"C00001_TOT-CORR-USAGE\"] + tag[\"C00002_TOT-CORR-USAGE\"]\ntag_list = re.findall('tag\\s?\\[\\s?\\\"(.*?)\\\"\\s?\\]', formula_string)\n```\n\n수식 내 태그 이름을 파싱하여 해당 태그의 실제 값을 MongoDB에서 조회 후 Python `eval()`로 계산.\n\n### 6. 집계 모듈 (mm_11_summary.py)\n\n15분, 1시간, 1일, 1월 단위 집계 생성.\n\n#### 집계 방식\n\n- **누적계 태그** (ACC 타입): 기간 시작값과 종료값의 차이\n- **평균계 태그** (MAX 타입): 기간 내 중앙값 활용\n- 이상치 제거: 중앙값(Median) 기반\n\n#### 집계 실행 매개변수\n\n```bash\npython3.6 mm_11_summary.py minute|hour|day|month [시간]\n```\n\n| 파라미터 | 설명 | 집계 기간 |\n|---------|------|----------|\n| minute | 15분 집계 | 15분 단위 |\n| hour | 시간 집계 | 1시간 (06:00 기준) |\n| day | 일 집계 | 1일 (06:00 기준) |\n| month | 월 집계 | 1월 (월 1일 06:00 기준) |\n\n#### 집계 결과 도큐먼트 구조\n\n```json\n{\n  \"tag\": \"C00001_TOT-CORR-USAGE\",\n  \"from_date\": \"2024-01-01 12:00:00\",\n  \"to_date\": \"2024-01-01 12:15:00\",\n  \"acc_value\": 1234.56,\n  \"min\": 1229.33,\n  \"value\": 5.23,\n  \"total_value\": 100.45,\n  \"group_time\": \"20240101\",\n  \"kind\": \"2\",\n  \"factory_id\": \"F001\",\n  \"tj\": 18.83,\n  \"toe\": 0.00045,\n  \"tco2\": 0.0024,\n  \"cost\": 523.0,\n  \"status_yn\": \"Y\",\n  \"code\": \"2\"\n}\n```\n\n### 7. 열량 계산 (mm_25_heat.py, mm_18_heat.py)\n\nLNG 등 가스 에너지의 열량을 계산.\n\n- Oracle DB의 `HEAT_MASTER` 테이블에서 단위 열량(kcal/m³) 조회\n- MongoDB의 가스 누적 사용량 × 단위 열량 = 열량(MJ, Mcal)\n- 결과는 MongoDB의 heat 컬렉션에 저장\n\n### 8. 피크 관리 (mm_04_peak.py)\n\n최대 수요전력 피크를 관리.\n\n- 15분 단위 전력 사용량의 최대값 추적\n- Oracle DB에 피크 이력 저장\n- 임계값 초과 시 알람 생성\n\n---\n\n## 실행 스케줄 (Shell Script 기반 cron)\n\n```bash\n# 수집 (매분 실행)\n* * * * * python3.6 mm_00_collect.py JB\n* * * * * python3.6 mm_00_collect.py EL\n* * * * * python3.6 mm_00_collect.py LS\n...\n\n# Kafka → MongoDB (상시 실행)\nwhile true; do python3.6 mm_02_kafka_to_mongo.py collect collect; done\n\n# 1분 사용량 (매분 실행)\n* * * * * python3.6 mm_16_1m_use.py use current\n\n# ECO 15분 집계 (상시 실행)\nsh eco15m_excuete.sh   # → python3.6 mm_03_summary.py FEMS_ECO_15M_DATA 5\n\n# 일/월 집계 (매일 06:05 실행 등)\n5 6 * * * sh day_and_month_summary.sh\n```\n\n---\n\n## 데이터 변환 파이프라인 요약\n\n```text\n[장비 레지스터 값] (16진수 바이트)\n    ↓ struct.unpack (Big Endian float/int 변환)\n[물리 측정값] (float, 예: 1234.56)\n    ↓ 보정계수(CORRECT_RATIO) 적용\n[보정 측정값]\n    ↓ Kafka 메시지 (tag||value||time||kind||factory_id)\n[원시 저장] MongoDB collect_YYYYMM\n    ↓ 중앙값 이상치 제거 + 누적차이 계산\n[1분 사용량] MongoDB zz_1m_use 계열\n    ↓ 가상 태그 수식 적용\n[가상 태그 사용량] MongoDB\n    ↓ 15분/시/일/월 집계\n[집계 데이터] MongoDB summary 계열\n    ↓ Oracle SP로 단위 변환\n[TJ, TOE, tCO2, 비용] Oracle DB 저장\n```\n\n---\n\n## 알려진 이슈 및 특이사항\n\n1. **하드코딩된 IP 주소**: 각 스크립트에 `172.17.1.34`, `172.17.1.35` 등 IP가 직접 기입됨.\n2. **공장 코드별 분리된 스크립트**: 같은 로직이 공장 코드만 다르게 복사·변형되어 다수 파일 존재.\n3. **`eval()` 사용**: 가상 태그 수식 계산에 Python `eval()` 사용 → 보안 주의.\n4. **에러 처리 미흡**: 일부 스크립트에서 bare `except:` 사용, 에러 무시 패턴 존재.\n5. **시작 기준 06:00**: 하루의 시작을 자정(00:00)이 아닌 오전 6시(06:00)로 사용 (공장 근무 기준).\n6. **중앙값 이상치 제거**: 수집 데이터의 품질 관리를 위해 중앙값(Median) 기반 이상치 처리.\n"},"frontend":{"title":"🌐 프론트엔드","title_plain":"프론트엔드","icon":"🌐","content":"# src_frontend 소스 분석\n\n## 기술 스택\n\n- **프레임워크**: Spring Framework (Spring MVC, Spring Security)\n- **ORM**: MyBatis (XML Mapper)\n- **뷰**: JSP + JSTL\n- **차트**: amCharts\n- **그리드**: jqGrid\n- **트리**: jsTree\n- **다중 선택**: multiselect jQuery plugin\n- **달력**: datepicker jQuery plugin\n- **ZIP**: jszip\n- **보안**: Spring Security (MES 사용자 연동)\n- **스케줄러**: Spring @Scheduled (MongoDB 동기화, 날씨 정보)\n- **빌드**: Maven (pom.xml)\n\n## 프로젝트 구조\n\n```text\nFEMS_SEAH/\n├── src/\n│   ├── ecosense/                      # 메인 패키지\n│   │   ├── analysis/                  # 분석 모듈\n│   │   │   ├── controller/\n│   │   │   └── service/\n│   │   ├── cmmn/                      # 공통 모듈\n│   │   │   ├── analysis/              # 통계/회귀분석 유틸\n│   │   │   ├── controller/            # 로그인, 공통 컨트롤러\n│   │   │   ├── dto/                   # 데이터 전송 객체\n│   │   │   ├── mapper/                # MyBatis 매퍼 인터페이스\n│   │   │   ├── scheduler/             # 스케줄러\n│   │   │   ├── security/              # Spring Security 설정\n│   │   │   ├── service/               # 공통 서비스\n│   │   │   ├── util/                  # 유틸리티\n│   │   │   └── vo/                    # Value Object\n│   │   ├── dashboard/                 # 대시보드 모듈\n│   │   ├── data/                      # 데이터 조회 모듈\n│   │   ├── goal/                      # 에너지 목표 모듈\n│   │   ├── info/                      # 기준정보 모듈\n│   │   ├── interceptor/               # 인터셉터\n│   │   ├── main/                      # 메인 화면\n│   │   ├── monitoring/                # 모니터링 모듈\n│   │   ├── renew/                     # 신재생에너지 모듈\n│   │   ├── report/                    # 리포트 모듈\n│   │   ├── support/                   # 지원 모듈\n│   │   └── system/                    # 시스템 관리 모듈\n│   └── mapper/\n│       ├── configs/                   # MyBatis 설정 XML\n│       └── mappers/                   # SQL Mapper XML (모듈별)\n│\n└── WebContent/\n    ├── WEB-INF/\n    │   ├── config/                    # Spring 설정 XML\n    │   ├── jsp/                       # JSP 뷰 파일\n    │   └── lib/                       # JAR 라이브러리\n    └── resources/                     # 정적 자원\n        ├── css/                       # 스타일시트\n        ├── js/                        # 자바스크립트 (모듈별)\n        └── lib/                       # 외부 JS 라이브러리\n```\n\n---\n\n## 메뉴 구조 및 화면 목록\n\n### 1. 대시보드 (Dashboard)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 대시보드 01 | dashboard01.jsp | 전체 에너지 현황 요약 |\n| 대시보드 02 | dashboard02.jsp | 공장별 에너지 현황 |\n| 대시보드 02-1~14 | dashboard02_1.jsp ~ dashboard02_14.jsp | 세부 공장 대시보드 (14개 구역) |\n| 대시보드 03 | dashboard03.jsp | 전력 현황 |\n| 대시보드 04 | dashboard04.jsp | 가스 현황 |\n| 대시보드 05 | dashboard05.jsp | 스팀 현황 |\n| 대시보드 06 | dashboard06.jsp | 수도 현황 |\n| 다이어그램 | diagram.jsp | 단선도 다이어그램 |\n| 다이어그램 01~05 | diagram01.jsp ~ diagram05.jsp | 구역별 단선도 |\n\n### 2. 모니터링 (Monitoring)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 에너지 실시간 현황 | realtime.jsp | 실시간 에너지 사용량 (15분 갱신) |\n| 실시간 합계 | realtimetot.jsp | 전체 실시간 합계 |\n| 실시간 태그값 | rtTagValue.jsp | 태그별 실시간 수집값 |\n| 공장 에너지 | factoryEnergy.jsp | 공장별 에너지 모니터링 |\n| 건물 에너지 | buildingEnergy.jsp | 건물별 에너지 모니터링 |\n| 사용량 에너지 | usageEnergy.jsp | 에너지 사용량 현황 |\n| 상세 에너지 | detailEnergy.jsp | 상세 에너지 현황 |\n| 작업조 에너지 | workGroupEnergy.jsp | 작업조별 에너지 현황 |\n| 태그 조회 | tag.jsp | 태그 목록 조회 |\n| 태그 조회 2 | tag2.jsp | 태그 상세 조회 |\n| 태그 상세 | tagDetail.jsp | 태그 상세 정보 |\n| 태그 통계 관리 | tagStatMngr.jsp | 태그 통계 관리 |\n| 태그 상태 | tagStatus.jsp | 태그 수집 상태 |\n\n### 3. 분석 (Analysis)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 기간별 분석 | period.jsp | 기간 선택 에너지 분석 |\n| 공장 에너지 분석 | facEnergyAnalysis.jsp | 공장별 에너지 비교 분석 |\n| 건물 에너지 분석 | buildingEnergyAnalysis.jsp | 건물별 에너지 비교 분석 |\n| 층별 에너지 분석 | floorEnergyAnalysis.jsp | 층별 에너지 분석 |\n| 피크 분석 | peak.jsp | 최대 수요전력 분석 |\n| 효율 분석 | efficiency.jsp | 에너지 효율 분석 |\n| 원별 비용 분석 | monthWonAnalysis.jsp | 월별 비용 분석 |\n| 공장 부하율 | factoryLoad.jsp | 공장별 부하율 분석 |\n| 분석 결과 | result.jsp | 분석 결과 화면 |\n\n### 4. 리포트 (Report)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 리포트 출력 | reportOutput.jsp | 에너지 리포트 출력 |\n| 리포트 출력 팝업 | popup/reportOutputLayerPop.jsp | 출력 옵션 선택 팝업 |\n| 리포트 서명 | reportSign.jsp | 리포트 서명 처리 |\n| 리포트 인쇄 | print/reportPrint.jsp | 인쇄용 리포트 |\n\n### 5. 데이터 (Data)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 검침 데이터 | meter.jsp | 계량기 검침 데이터 조회 |\n| 청구 데이터 | bill.jsp | 에너지 청구 데이터 |\n| 임계값 설정 | threshold.jsp | 알람 임계값 설정 |\n\n### 6. 기준정보 (Info)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 사업장 정보 | businessGroup.jsp | 사업장/조직 정보 관리 |\n| 건물 정보 | buildingInfo.jsp | 건물 정보 관리 |\n| 설비 관리 | machineMngr.jsp | 설비 정보 관리 |\n| 설비 이력 | machineHistory.jsp | 설비 변경 이력 |\n| 계량기 관리 | deviceModel.jsp | 계량기 장비 모델 관리 |\n| 태그 마스터 | tagMaster.jsp | 태그 마스터 정보 관리 |\n| 제어점 정보 | controlPoint.jsp | 제어점 정보 |\n| 에너지 시스템 | energySystem.jsp | 에너지 시스템 분류 |\n| 에너지 관리자 | energyMngr.jsp | 에너지 관리자 정보 |\n| 에너지 배출계수 관리 | energyEFDMngr.jsp | CO2 배출계수 관리 |\n| 전기 요금제 | energyCostForm.jsp | 전기 요금제 정보 |\n| 기타 에너지 요금 | etcEnergyCostForm.jsp | 가스/스팀/수도 요금 |\n| 전기 시간대 | elecTime.jsp | 전기 시간대 설정 |\n| 공휴일 | holiday.jsp | 공휴일 관리 |\n| iSmart 관리 | ismartMngr.jsp | iSmart 시스템 관리 |\n| iSmart 조회 | ismartView.jsp | iSmart 데이터 조회 |\n| 월별 비용 입력 | monthWonWrite.jsp | 월별 에너지 비용 수기 입력 |\n\n### 7. 지원 (Support)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 공장 목표 관리 | factoryGoalMngr.jsp | 공장별 에너지 목표 관리 |\n| 피크 관리 | peakMngr.jsp | 최대 수요전력 목표 관리 |\n| 온실가스 배출 | greenhouse.jsp | 온실가스 배출량 현황 |\n| 양식 관리 | form.jsp | 리포트 양식 관리 |\n\n### 8. 에너지 목표 (Goal)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 에너지 상관관계 | energyCorrelationship.jsp | 에너지 상관관계 분석 |\n| 에너지 예측 | energyPrediction.jsp | 에너지 사용량 예측 |\n\n### 9. 시스템 (System)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 사용자 관리 | user.jsp | 사용자 계정 관리 |\n| 권한 관리 | auth.jsp | 메뉴 권한 관리 |\n| 코드 설정 | codeSetting.jsp | 시스템 코드 관리 |\n| 알람 설정 | alarmSetting.jsp | 알람 조건 설정 |\n| 알람 이력 | alarmHistory.jsp | 알람 발생 이력 |\n| 시스템 이력 | systemHistory.jsp | 시스템 접속 이력 |\n\n### 10. 신재생에너지 (Renew)\n\n| 화면 | JSP 파일 | 설명 |\n|------|---------|------|\n| 태양광 모니터링 | sunlightMonitoring.jsp | 태양광 발전 모니터링 |\n| 태양광 분석 | sunlightAnalysis.jsp | 태양광 발전량 분석 |\n\n---\n\n## Spring MVC 패키지 구조\n\n### Controller 구조\n\n```text\necosense.{모듈명}.controller.{화면명}Controller\n  → @RequestMapping(\"/{모듈명}/{화면명}\")\n  → 서비스 호출 → Model/JSON 반환\n```\n\n### Service 구조\n\n```text\necosense.{모듈명}.service.{화면명}Service (인터페이스)\n  ecosense.{모듈명}.service.Impl.{화면명}ServiceImpl (구현체)\n    → MyBatis Mapper 호출\n    → MongoDB 직접 조회\n```\n\n### MyBatis Mapper 구조\n\n```text\nmapper/mappers/{모듈명}/{화면명}Mapper.xml\n  → Oracle DB SQL\n  → 파라미터: VO/Map\n  → 결과: List<Map>, VO\n```\n\n---\n\n## 인터셉터 (Interceptor)\n\n| 인터셉터 | 기능 |\n|---------|------|\n| `AuthorInterceptor` | 인증/권한 확인, 비인증 사용자 로그인 페이지 리다이렉트 |\n| `WebUrlInterceptor` | 요청 URL 로깅, 메뉴 목록 세션에 설정 |\n| `SysLogInterceptor` | 시스템 접속 이력 Oracle DB 저장 |\n\n---\n\n## 보안 (Spring Security)\n\n- **인증**: `SignAuthenticationProvider` → MES 사용자 계정 연동 (`VMESUSER` View)\n- **권한**: `SignRole` (역할 기반 접근 제어)\n- **성공 핸들러**: `SigninSuccessHandler` → 로그인 성공 후 메인 리다이렉트\n- **실패 핸들러**: `SigninFailureHandler` → 실패 메시지 표시\n- **거부 핸들러**: `SigninDeniedHandler` → 권한 없음 처리\n\n---\n\n## 스케줄러 (Scheduler)\n\n| 클래스 | 기능 | 주기 |\n|--------|------|------|\n| `MongoDbScheduler` | MongoDB에서 최신 에너지 데이터를 Oracle로 동기화 | 설정에 따라 |\n| `WeatherScheduler` | 외부 날씨 API에서 기상 데이터 수집 | 1시간 |\n\n---\n\n## 공통 분석 유틸 (ecosense.cmmn.analysis)\n\n| 클래스 | 기능 |\n|--------|------|\n| `RegressionAnalysis` | 회귀 분석 (에너지 예측에 사용) |\n| `RegressionAnalysisUtil` | 회귀 분석 유틸리티 |\n| `StatsFormula` | 통계 수식 (평균, 표준편차 등) |\n| `StatsFormulaUtil` | 통계 유틸리티 |\n| `EnthalpyFormula` | 엔탈피 계산 (공조 시스템 에너지 분석) |\n| `OutsideMath` | 외기 조건 계산 |\n\n---\n\n## 레이아웃 구조\n\n### 기본 레이아웃 (layout.jsp)\n\n```text\n+------------------------------------------+\n| 헤더 (header.jsp)                         |\n|  - 로고, 사용자 정보, 상단 메뉴            |\n+----------+-------------------------------+\n| 좌측 메뉴| 컨텐츠 영역                    |\n| (left.jsp)|                               |\n|           |                               |\n+----------+-------------------------------+\n```\n\n### 대시보드 레이아웃 (dashboardLayout.jsp)\n\n```text\n+------------------------------------------+\n| 상단 탭 메뉴                              |\n+------------------------------------------+\n| 전체 화면 컨텐츠 (차트 + 지표)            |\n+------------------------------------------+\n```\n\n### 팝업 레이아웃 (popupLayout.jsp)\n\n```text\n레이어 팝업 (모달) 기반\n```\n\n---\n\n## 데이터 조회 패턴\n\n### Oracle DB 조회 (집계 데이터)\n\n```java\n// MyBatis Mapper 호출\nList<Map<String, Object>> result = mapper.selectEnergyData(searchDto);\n```\n\n### MongoDB 직접 조회 (원시/1분 데이터)\n\n```java\n// Service에서 직접 MongoClient 사용\nMongoClient client = new MongoClient(host, port);\nMongoDatabase db = client.getDatabase(\"SEAH_FEMS\");\nMongoCollection<Document> col = db.getCollection(\"collect_202401\");\n```\n\n### JSON 응답 (Ajax)\n\n```java\n@ResponseBody\n@RequestMapping(value=\"/monitoring/realtime\", method=RequestMethod.POST)\npublic Map<String, Object> getData(@RequestBody SearchDto dto) { ... }\n```\n\n---\n\n## 주요 에너지 지표 계산\n\n| 지표 | 단위 | 설명 |\n|------|------|------|\n| 전력 사용량 | kWh | 누적 전력량(ACC) 차이 |\n| 가스 사용량 | Nm³ | 보정 누적값(TotalVb) 차이 |\n| 열량 | MJ, Mcal | 가스사용량 × 단위열량 |\n| TJ | TJ (테라줄) | 에너지 총량 환산 |\n| TOE | TOE (석유환산톤) | 에너지 효율 지표 |\n| tCO2 | tCO2 (탄소환산톤) | 온실가스 배출량 |\n| 비용 | 원(KRW) | 에너지 요금 |\n| 피크 | kW | 15분 평균 최대 수요전력 |\n\n---\n\n## 알려진 구조적 특징\n\n1. **Spring 레거시 (XML 기반 설정)**: 어노테이션 기반이 아닌 XML 설정 위주\n2. **MongoDB + Oracle 이중 DB**: 원시 데이터는 MongoDB, 마스터/집계는 Oracle\n3. **MyBatis XML Mapper**: 복잡한 동적 SQL은 XML에 구현\n4. **JSP 뷰**: 서버사이드 렌더링, SPA 방식이 아님\n5. **amCharts**: 차트 라이브러리 (시계열, 막대, 게이지 등)\n6. **jqGrid**: 그리드 데이터 출력 및 페이징\n7. **에너지원 분류**: 전기(1), 가스(2), 스팀(3), 수도(4) 등 kind 코드 기반\n"},"flow":{"title":"📊 데이터 흐름","title_plain":"데이터 흐름","icon":"📊","content":"# 데이터 흐름 전체 프로세스\n\n## 전체 데이터 파이프라인 개요\n\n```mermaid\nflowchart TD\n    DEV[\"🏭 현장 계측 장비<br/>전력량계 · 가스보정기 · OPC-UA\"]\n    STEP1[\"📡 STEP 1: 수집<br/>mm_00_collect.py · mm_Autobase.py\"]\n    KAFKA[(\"☁️ Apache Kafka<br/>메시지 브로커\")]\n    STEP2[\"💾 STEP 2: 저장<br/>mm_02_kafka_to_mongo.py\"]\n    MONGO[(\"🍃 MongoDB<br/>collect_YYYYMM\")]\n    STEP3[\"⚡ STEP 3: 1분 사용량 계산<br/>mm_16_1m_use.py\"]\n    VTAG[\"🧮 STEP 3-2: 가상 태그<br/>mm_17_vtag_1m.py\"]\n    STEP4[\"📊 STEP 4: 집계 0·15·30·45분<br/>mm_19_summary.py · mm_11_summary.py\"]\n    ORACLE[(\"🏛️ Oracle DB<br/>15분 · 시간 · 일 · 월 집계\")]\n    SPRING[\"🌐 Spring MVC 웹 서비스\"]\n    BROWSER[\"👤 웹 브라우저\"]\n    HEAT[\"🔥 STEP 5: 열량 계산<br/>mm_25_heat.py\"]\n    PEAK[\"⚡ STEP 6: 피크 관리<br/>mm_04_peak.py\"]\n\n    DEV -->|\"Modbus RTU/TCP · OPC-UA\"| STEP1\n    STEP1 -->|\"Kafka 메시지\"| KAFKA\n    KAFKA -->|\"Kafka Consumer\"| STEP2\n    STEP2 -->|\"PyMongo insert\"| MONGO\n    MONGO -->|\"매분\"| STEP3\n    STEP3 -->|\"즉시 호출\"| VTAG\n    STEP3 -->|\"0·15·30·45분\"| STEP4\n    STEP4 -->|\"Oracle SP 단위변환\"| ORACLE\n    ORACLE -->|\"MyBatis 조회\"| SPRING\n    SPRING -->|\"HTTP/JSON\"| BROWSER\n    MONGO -.->|\"별도 스케줄\"| HEAT\n    HEAT --> ORACLE\n    MONGO -.->|\"별도 스케줄\"| PEAK\n```\n\n---\n\n## STEP 1: 데이터 수집 상세 프로세스\n\n### 1-1. Oracle DB에서 장비 정보 로드\n\n```sql\n-- 장비 목록 조회\nSELECT DISTINCT(COM_CONNECT_DEVICE_ID) AS DEVICE_ID \nFROM DEVICE_MASTER \nWHERE DEVICE_TYPE = '{C|E}' AND USE_YN = 'Y' AND MAKER LIKE '%{maker}%'\n\n-- 태그 정보 조회\nSELECT a.TAG_ID, a.DATA_ADDRESS, b.FACTORY_ID, a.CORRECT_RATIO\nFROM TAG_MASTER a\nINNER JOIN DEVICE_MASTER b ON a.DEVICE_ID = b.DEVICE_ID\nWHERE a.VIRTUAL_TAG_YN = 'N' AND a.COLL_YN = 'Y' AND a.DEVICE_ID = '{device_id}'\n```\n\n### 1-2. Modbus 패킷 구성 및 통신\n\n```text\n송신 패킷 구조 (Modbus RTU over TCP):\n[Device Address 1B] [Function Code 1B] [Register High 1B] [Register Low 1B] [Count High 1B] [Count Low 1B] [CRC 2B]\n\n예: 01 03 00 00 00 0A CRC16\n```\n\n### 1-3. 응답 파싱 → Kafka 전송\n\n```text\n수신 패킷 → struct.unpack → float/int 변환 → 보정계수 적용 → Kafka 전송\n```\n\n**Kafka 메시지 포맷**:\n\n```text\n{tag_id}||{value}||{timestamp}||{kind}||{factory_id}\n```\n\n---\n\n## STEP 2: Kafka → MongoDB 저장 상세\n\n### 저장 컬렉션 결정 로직\n\n1. 메시지에서 `tag_id` 추출\n2. Oracle `TAG_SUM_STORE_TABLE`에서 `tag_id` → `storage_id` 매핑 조회\n3. `storage_id` → MongoDB 접속정보(IP, port, DB, 컬렉션 이름, 주기) 결정\n4. 주기(cycle) = `mm` (월별) → `collect_YYYYMM` 형태 컬렉션에 저장\n\n### 저장 도큐먼트\n\n```json\n{\n  \"tag\":         \"C00001_TOT-CORR-USAGE\",\n  \"val\":         1234.56,\n  \"time\":        \"2024-01-15 14:30:00\",\n  \"kind\":        \"2\",\n  \"factory_id\":  \"F001\",\n  \"server_time\": \"2024-01-15 14:30:01.234567\"\n}\n```\n\n---\n\n## STEP 3: 1분 사용량 계산 상세\n\n### 실행 타이밍\n\n- 매 분 실행 (cron)\n- 처리 기준: 현재 시각 기준 5분~20분 이전 구간 데이터 처리 (데이터 수신 지연 보정)\n\n### 계산 로직\n\n```python\n# 1. 현재 구간 데이터 중앙값(to_value) 추출\n# 2. 이전 삽입 레코드에서 이전 누적값(from_value) 조회\n# 3. 사용량 = to_value - from_value (카운터 오버플로우 보정 포함)\n\ndef current_useing_value(from_use, to_use):\n    if from_use > to_use:\n        acc_value = 0  # 비정상 감소 → 0 처리\n    else:\n        acc_value = to_use - from_use\n    return acc_value\n```\n\n### 단위 변환 (Oracle SP)\n\n```sql\n-- SQL 템플릿 (sql_23): Oracle에서 에너지 단위 변환\nSELECT\n  {kind_code},           -- 에너지 종류\n  {yyyymmddhhmm},        -- 시간\n  {usage}                -- 사용량\n-- → TJ, TOE, tCO2, 비용 반환\n```\n\n---\n\n## STEP 3-2: 가상 태그 계산\n\n### 가상 태그란?\n\n- 실제 수집 태그값의 합산, 차감 등 수식으로 계산되는 파생 태그\n- `TAG_MASTER.VIRTUAL_TAG_YN = 'Y'`\n- `TAG_MASTER.VIRTUAL_TAG_FORMULA` 필드에 Python 수식 저장\n\n### 수식 예시\n\n```python\n# TAG_MASTER.VIRTUAL_TAG_FORMULA 값\ntag[\"C00001_TOT-CORR-USAGE\"] + tag[\"C00002_TOT-CORR-USAGE\"]\n\n# 처리 과정\ntag_list = re.findall('tag[\"(.*?)\"]', formula)  # 태그 추출\nfor t in tag_list:\n    tag[t] = get_value_from_mongodb(t)           # 값 조회\nresult = eval(formula)                           # 수식 계산\n```\n\n---\n\n## STEP 4: 집계 생성 상세\n\n### 15분 집계 (minute)\n\n- **실행 시점**: 매 0, 15, 30, 45분\n- **조회 기간**: 현재 시각 이전 15분\n- **집계 방법**: 누적계 → (종료값 - 시작값), 평균계 → 중앙값\n\n### 시간 집계 (hour)\n\n- **실행 시점**: 매시 직후\n- **조회 기간**: 해당 시간대 전체\n\n### 일 집계 (day)\n\n- **실행 시점**: 매일 06:05\n- **기준 시각**: 전일 06:00 ~ 당일 06:00\n- **특이사항**: 하루의 시작을 06:00으로 정의 (공장 교대 기준)\n\n### 월 집계 (month)\n\n- **실행 시점**: 매월 1일 06:05\n- **기준 기간**: 전월 1일 06:00 ~ 당월 1일 06:00\n\n---\n\n## 프론트엔드 데이터 조회 패턴\n\n### 실시간 데이터 조회\n\n```text\n사용자 화면 요청 (Ajax 15분 주기)\n    → Spring MVC Controller\n    → Service → MongoDB 직접 조회 (최근 1시간)\n    → JSON 응답\n    → amCharts 갱신\n```\n\n### 집계 데이터 조회\n\n```text\n사용자 검색 요청 (기간, 공장, 에너지원 선택)\n    → Spring MVC Controller\n    → Service → MyBatis Mapper\n    → Oracle DB 집계 테이블 조회\n    → JSON 응답\n    → jqGrid + amCharts 표시\n```\n\n### 리포트 생성\n\n```text\n사용자 리포트 요청 (월, 공장 선택)\n    → Spring MVC Controller\n    → Service → Oracle DB 집계 + Excel 생성\n    → 파일 다운로드 또는 화면 출력\n```\n\n---\n\n## 에너지원별 데이터 흐름\n\n### 전기 (kind = '1')\n\n```text\n전력량계 (누적 kWh)\n    → Modbus FC04\n    → collect_YYYYMM: ACC, TotalACC 저장\n    → 1분 사용량: 차이 계산 (kWh)\n    → 집계: 15분, 시간, 일, 월 합계\n    → Oracle: TJ, TOE, tCO2, 비용(요금제 적용)\n    → 피크: 15분 평균 kW 최대값 관리\n```\n\n### 가스 (kind = '2')\n\n```text\n가스 보정기 (누적 Nm³)\n    → Modbus FC03\n    → collect_YYYYMM: TotalVb (보정 사용량) 저장\n    → 1분 사용량: 차이 계산 (Nm³)\n    → 열량 계산: Nm³ × 단위열량(kcal/Nm³) = 열량(Mcal)\n    → 집계: 15분, 시간, 일, 월 합계\n    → Oracle: TJ, TOE, tCO2, 비용\n```\n\n### 스팀/수도 (kind = '3'/'4')\n\n```text\n유량계 (누적값)\n    → Modbus 또는 OPC-UA\n    → 1분 사용량 계산\n    → 집계 및 저장\n```\n\n---\n\n## 에러 처리 흐름\n\n```text\n수집 에러 발생\n    → try/except 캐치\n    → MySQL (fems.error_log) 테이블에 에러 기록\n        { uuid, pro_id, time, Device_ID, error_name }\n    → 다음 장비/태그 계속 수집\n```\n\n---\n\n## 시간 기준 특이사항\n\n| 구분 | 시각 | 설명 |\n|------|------|------|\n| 하루 시작 | 06:00 | 공장 교대조 기준 (자정이 아닌 오전 6시) |\n| 월 시작 | 월 1일 06:00 | 월 첫날 오전 6시 |\n| 피크 측정 | 15분 단위 | 최대 수요전력 15분 평균 |\n| 데이터 지연 | 5~10분 | 수집 후 처리까지의 지연 시간 반영 |\n"},"db":{"title":"🗄️ DB 스키마","title_plain":"DB 스키마","icon":"🗄️","content":"# DB 구조 및 주요 테이블 분석\n\n## DB 시스템 구성\n\n| DB 종류 | 역할 | 접속 정보 |\n|---------|------|----------|\n| Oracle (BESTSF) | 마스터 데이터, 집계 데이터, 설정 정보 | 172.17.40.100:1521 |\n| MongoDB (SEAH_FEMS) | 수집 원시 데이터, 1분 사용량, 집계 중간 데이터 | 172.17.1.35:17001 |\n| MySQL/MariaDB (fems) | SQL 템플릿, 시스템 설정, 에러 로그 | 172.17.1.34:3306 |\n\n---\n\n## Oracle DB 주요 테이블\n\n### 마스터 테이블\n\n#### `DEVICE_MASTER` - 장비(계량기) 마스터\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| DEVICE_ID | VARCHAR | 장비 고유 ID (PK) |\n| DEVICE_TYPE | VARCHAR | 장비 유형 (C: 가스보정기, E: 전력량계, D: 통신장치) |\n| DEVICE_ADDRESS | VARCHAR | Modbus 슬레이브 주소 |\n| USE_YN | VARCHAR | 사용 여부 (Y/N) |\n| MAKER | VARCHAR | 제조사 (JB, EL, LS, MI, VI, ECO) |\n| COM_CONNECT_DEVICE_ID | VARCHAR | 상위 통신 장치 ID |\n| DEVICE_USE | VARCHAR | 장치 용도 코드 |\n| FACTORY_ID | VARCHAR | 공장 ID |\n| IP_ADDRESS | VARCHAR | 장비 IP 주소 |\n| PORT | VARCHAR | 통신 포트 |\n\n#### `TAG_MASTER` - 태그 마스터\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| TAG_ID | VARCHAR | 태그 고유 ID (PK) |\n| DEVICE_ID | VARCHAR | 연결 장비 ID (FK → DEVICE_MASTER) |\n| DATA_ADDRESS | VARCHAR | Modbus 레지스터 주소 (슬레이브주소 FC 레지스터주소 데이터타입 배열번호) |\n| VIRTUAL_TAG_YN | VARCHAR | 가상 태그 여부 (Y/N) |\n| VIRTUAL_TAG_FORMULA | VARCHAR | 가상 태그 수식 |\n| COLL_YN | VARCHAR | 수집 여부 (Y/N) |\n| CORRECT_RATIO | NUMBER | 보정 계수 |\n| FACTORY_ID | VARCHAR | 공장 ID |\n| TAG_NAME | VARCHAR | 태그 명칭 |\n| UNIT | VARCHAR | 단위 (kWh, Nm³ 등) |\n| ENERGY_KIND | VARCHAR | 에너지 종류 코드 |\n\n#### `TAG_SUM_STORE_TABLE` - 태그 저장소 매핑\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| TAG_STORE_TABLE_ID | NUMBER | 저장소 ID (PK) |\n| STORE_DB | VARCHAR | MongoDB DB 명 |\n| STORAGE_TABLE | VARCHAR | MongoDB 컬렉션 기본 이름 |\n| IP_ADDR | VARCHAR | MongoDB IP |\n| PORT | NUMBER | MongoDB Port |\n| CYCLE | VARCHAR | 컬렉션 분할 주기 (mm: 월별) |\n| LAST_CREATE_SUM_TABLE_NAME | VARCHAR | 마지막 생성 집계 테이블명 |\n\n#### `CONNECT_INFO` - 연결 정보\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| CONNECT_ID | VARCHAR | 연결 ID (PK) |\n| IP_ADDRESS | VARCHAR | IP 주소 |\n| PORT | VARCHAR | 포트 |\n| CONNECT_TYPE | VARCHAR | 연결 유형 (Kafka, MongoDB 등) |\n\n#### `MESSAGE_QUEUE` - Kafka 토픽 정보\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| CONNECT_ID | VARCHAR | 연결 ID (FK) |\n| TOPIC | VARCHAR | Kafka 토픽 이름 |\n\n#### `TAG_SUMMARY_MAPPING_FROM` - 태그-집계 매핑\n\n| 컬럼 | 타입 | 설명 |\n|------|------|------|\n| SUMMARY_ID | VARCHAR | 집계 ID |\n| TAG_ID | VARCHAR | 태그 ID |\n\n### 기준정보 테이블\n\n#### `VCODEMASTER` / `VCODEDETAIL` (View)\n\n- ERP/MES에서 제공하는 기준 코드 View\n\n#### `VEMPMASTER` / `VDEPTMASTER` (View)\n\n- ERP/MES의 직원/부서 정보 View\n\n#### `VMESUSER` (View)\n\n- MES 사용자 계정 정보 View (로그인 인증에 사용)\n\n#### `VSFMZ2010` (View)\n\n- 설비 정보 View\n\n### 집계 데이터 테이블\n\n(Oracle에 저장되는 집계 결과 - 정확한 스키마는 `베스틸FEMS_Table 정보.xlsx` 참조)\n\n| 테이블 패턴 | 설명 |\n|-----------|------|\n| FEMS_*_15M | 15분 집계 테이블 |\n| FEMS_*_1H | 1시간 집계 테이블 |\n| FEMS_*_1D | 일 집계 테이블 |\n| FEMS_*_1M | 월 집계 테이블 |\n\n---\n\n## MongoDB 컬렉션 구조\n\n### 수집 원시 데이터\n\n#### `collect_YYYYMM` (월별 컬렉션)\n\n```json\n{\n  \"_id\":         ObjectId,\n  \"tag\":         \"C00001_TOT-CORR-USAGE\",\n  \"val\":         1234.56,\n  \"time\":        \"2024-01-15 14:30:00\",\n  \"kind\":        \"2\",\n  \"factory_id\":  \"F001\",\n  \"server_time\": \"2024-01-15 14:30:01.234567\"\n}\n```\n\n**인덱스**: `tag`, `server_time` (범위 조회 성능)\n\n### 1분 사용량 데이터\n\n#### 사용량 컬렉션 (태그별, 월별 분리)\n\n```json\n{\n  \"_id\":                  ObjectId,\n  \"tag\":                  \"C00001_TOT-CORR-USAGE\",\n  \"time\":                 \"2024-01-15 14:30:00\",\n  \"val\":                  5.23,\n  \"kind\":                 \"2\",\n  \"fid\":                  \"F001\",\n  \"before_tag_value\":     1229.33,\n  \"bf_time\":              \"2024-01-15 14:29:00\",\n  \"current_tag_value\":    1234.56,\n  \"curr_time\":            \"2024-01-15 14:30:00\",\n  \"tj\":                   18.83,\n  \"toe\":                  0.00045,\n  \"tco2\":                 0.0024,\n  \"lod_tmzon\":            \"경부하\"\n}\n```\n\n### 집계 데이터 (MongoDB 중간 집계)\n\n#### 15분/시간/일/월 집계 컬렉션 (월별 분리)\n\n```json\n{\n  \"_id\":          ObjectId,\n  \"tag\":          \"C00001_TOT-CORR-USAGE\",\n  \"from_date\":    \"2024-01-15 14:00:00\",\n  \"to_date\":      \"2024-01-15 14:15:00\",\n  \"acc_value\":    1234.56,\n  \"min\":          1229.33,\n  \"value\":        5.23,\n  \"total_value\":  100.45,\n  \"group_time\":   \"20240115\",\n  \"kind\":         \"2\",\n  \"factory_id\":   \"F001\",\n  \"tj\":           18.83,\n  \"toe\":          0.00045,\n  \"tco2\":         0.0024,\n  \"cost\":         523.0,\n  \"status_yn\":    \"Y\",\n  \"code\":         \"2\",\n  \"tag_from_time\":\"2024-01-15 14:00:01\",\n  \"tag_to_time\":  \"2024-01-15 14:15:01\"\n}\n```\n\n---\n\n## MySQL/MariaDB (fems DB) 구조\n\n### `sql_template` 계열 테이블 (SP_GET_SQL로 조회)\n\nSQL 쿼리 문자열을 DB에 저장하여 동적 관리.\n\n| SQL 코드 | 설명 |\n|---------|------|\n| sql_02 | MongoDB 접속 정보 조회 |\n| sql_04 | 열량 정보 조회 |\n| sql_05 | 열량 계산 태그 목록 |\n| sql_06 | 에러 로그 insert SQL |\n| sql_07 | 태그별 MongoDB 저장 위치 조회 |\n| sql_08 | 태그-저장소 매핑 조회 |\n| sql_10 | 에너지 사용량 단위 변환 계산 |\n| sql_11 | 15분 집계 대상 태그 목록 |\n| sql_12 | 1시간 집계 대상 태그 목록 |\n| sql_13 | 일 집계 대상 태그 목록 |\n| sql_14 | 월 집계 대상 태그 목록 |\n| sql_23 | 1분 사용량 단위 변환 계산 |\n| sql_26 | 장치 정보 조회 |\n\n### Oracle 접속 정보 (SP_ORACLE_CONN)\n\n```text\n결과: [oracle_ip, oracle_port, oracle_id, oracle_pw]\n```\n\n### 에러 로그 테이블\n\n```sql\n{ uuid, pro_id, time, Device_ID, error_name }\n```\n\n---\n\n## 데이터 보관 주기\n\n| 데이터 | 저장소 | 보관 주기 |\n|--------|--------|---------|\n| 수집 원시 데이터 | MongoDB collect_YYYYMM | 월별 컬렉션 (별도 삭제 정책) |\n| 1분 사용량 | MongoDB | 월별 컬렉션 |\n| 15분 집계 | MongoDB + Oracle | 영구 |\n| 시간/일/월 집계 | Oracle | 영구 |\n| 에러 로그 | MySQL | 별도 정책 |\n\n---\n\n## Oracle DB View 연동 (ERP/MES)\n\n```sql\n-- 기준 코드 조회\nSELECT * FROM VCODEMASTER WHERE CODE_CLASS = 'ENERGY_KIND'\nSELECT * FROM VCODEDETAIL WHERE CODE_CLASS = 'ENERGY_KIND'\n\n-- MES 로그인 인증\nSELECT * FROM VMESUSER WHERE USER_ID = ? AND PASSWORD = ?\n\n-- 조직 정보 (USER_FR_DATE 컬럼 조건 필수)\nSELECT * FROM VEMPMASTER WHERE USER_FR_DATE <= SYSDATE\nSELECT * FROM VDEPTMASTER WHERE USER_FR_DATE <= SYSDATE\n\n-- 설비 정보\nSELECT * FROM VSFMZ2010\n```\n\n---\n\n## 컬렉션 명명 규칙\n\n### MongoDB 컬렉션 이름 생성 규칙\n\n| 분류 주기 | 컬렉션 이름 형식 | 예시 |\n|---------|--------------|------|\n| 월별(mm) | `{기본이름}_YYYYMM` | `collect_202401` |\n| 일별(dd) | `{기본이름}_YYYYMMDD` | `collect_20240115` |\n| 연별(yyyy) | `{기본이름}_YYYY` | `collect_2024` |\n\n### 주요 컬렉션 목록 (추정)\n\n| 컬렉션 패턴 | 설명 |\n|-----------|------|\n| `collect_YYYYMM` | 수집 원시 데이터 |\n| `collect_m1_YYYYMM` | 1분 사용량 (전기) |\n| `collect_m2_YYYYMM` | 1분 사용량 (가스) |\n| `summary_15m_YYYYMM` | 15분 집계 |\n| `summary_1h_YYYYMM` | 시간 집계 |\n| `heat_YYYYMM` | 열량 데이터 |\n| `peak_YYYYMM` | 피크 데이터 |\n"},"new_sys":{"title":"🚀 신규 요구사항","title_plain":"신규 요구사항","icon":"🚀","content":"# 신규 FeMS 시스템 개발 요건 정리\n\n## 목표\n\n기존 FeMS 시스템의 기능을 분석하여, Python 기반 Backend + 웹 기반 Frontend로 새롭게 개발.\nRESTful API로 각 서비스를 연결하고, Docker 기반으로 배포.\n\n---\n\n## 신규 시스템 아키텍처 개요\n\n```mermaid\nflowchart LR\n    DEV[\"🏭 현장 계측 장비<br/>Modbus · OPC-UA\"]\n\n    subgraph docker[\"🐳 Docker Compose 환경\"]\n        direction TB\n        COL[\"📡 Collector Service<br/>Python / FastAPI\"]\n        KAFKA[(\"☁️ Kafka KRaft\")]\n        PROC[\"⚙️ Processor Service<br/>Python / FastAPI\"]\n        subgraph dblayer[\"데이터 레이어\"]\n            TS[(\"🐘 PostgreSQL<br/>+ TimescaleDB\")]\n            RD[(\"⚡ Redis\")]\n        end\n        API[\"🔌 API Service<br/>Python / FastAPI\"]\n        FE[\"🖥️ Frontend<br/>React / Next.js\"]\n    end\n\n    USER[\"👤 사용자\"]\n\n    DEV -->|\"데이터 수집\"| COL\n    COL -->|\"메시지 발행\"| KAFKA\n    KAFKA -->|\"메시지 소비\"| PROC\n    PROC --> TS\n    API --> TS\n    API --> RD\n    FE -->|\"REST API\"| API\n    USER --> FE\n```\n\n---\n\n## Backend 서비스 1: 데이터 수집 서비스 (Collector)\n\n### 기능 요건\n\n| 기능 | 상세 |\n|------|------|\n| Modbus 수집 | Modbus RTU over TCP, FC 03/04 지원 |\n| 지원 장비 | JB, EL (가스 보정기), LS, MI, VI, ECO (전력량계) |\n| OPC-UA 수집 | Autobase, Citech PLC 연동 |\n| 수집 주기 | 60초 (대부분 장비), 일부 45초 |\n| 병렬 수집 | 장비별 독립 프로세스/스레드 |\n| 에러 처리 | 수집 실패 시 로그 기록, 재시도 |\n| 설정 관리 | DB 기반 장비 설정 (하드코딩 제거) |\n| 데이터 전송 | Kafka 또는 REST API |\n\n### API 설계 (내부)\n\n```text\nPOST /api/v1/collect/start      # 수집 시작\nPOST /api/v1/collect/stop       # 수집 중지\nGET  /api/v1/collect/status     # 수집 상태 조회\nGET  /api/v1/collect/devices    # 장비 목록 조회\n```\n\n### 기술 스택 권장\n\n- Python 3.11+\n- `pymodbus` (Modbus 통신)\n- `asyncua` 또는 `opcua` (OPC-UA)\n- `kafka-python` 또는 `confluent-kafka`\n- `FastAPI` (상태 API)\n- Docker 컨테이너\n\n---\n\n## Backend 서비스 2: 데이터 처리 서비스 (Processor)\n\n### 기능 요건\n\n| 기능 | 상세 |\n|------|------|\n| 1분 사용량 계산 | 누적값 차이 계산, 이상치(Median) 제거 |\n| 가상 태그 계산 | 수식 기반 파생 태그값 계산 |\n| 시간 집계 | 15분/시간/일/월 집계 |\n| 열량 계산 | LNG 가스 열량 (Nm³ × 단위열량) |\n| 피크 계산 | 15분 최대 수요전력 |\n| 단위 변환 | kWh → TJ, TOE, tCO2, 비용 |\n| 배치 처리 | 스케줄 기반 집계 실행 |\n\n### API 설계\n\n```text\nGET  /api/v1/process/status          # 처리 상태\nPOST /api/v1/process/summary/run     # 수동 집계 실행\nGET  /api/v1/process/summary/{type}  # 집계 결과 조회\n```\n\n### 기술 스택 권장\n\n- Python 3.11+\n- `APScheduler` 또는 Celery (스케줄링)\n- `pandas` (데이터 처리)\n- `FastAPI` (REST API)\n- InfluxDB 또는 TimescaleDB 저장\n\n---\n\n## Backend 서비스 3: API 서버 (API Server)\n\n### 기능 요건\n\n프론트엔드 및 외부 서비스에 데이터를 제공하는 REST API.\n\n#### 실시간 데이터 API\n\n```text\nGET /api/v1/realtime/tags           # 태그 실시간값 목록\nGET /api/v1/realtime/tags/{tag_id}  # 특정 태그 실시간값\n```\n\n#### 집계 데이터 API\n\n```text\nGET /api/v1/energy/usage            # 에너지 사용량 조회\n  Params: factory_id, energy_kind, from, to, unit (15m/1h/1d/1m)\n\nGET /api/v1/energy/summary          # 에너지 집계 요약\n  Params: date, factory_id\n\nGET /api/v1/energy/peak             # 피크 데이터 조회\n  Params: factory_id, from, to\n```\n\n#### 마스터 데이터 API\n\n```text\nGET /api/v1/master/tags             # 태그 마스터 목록\nGET /api/v1/master/devices          # 장비 마스터 목록\nGET /api/v1/master/factories        # 공장 목록\nGET /api/v1/master/energy-types     # 에너지 종류 코드\n```\n\n#### 리포트 API\n\n```text\nGET  /api/v1/report/monthly         # 월간 리포트 데이터\nGET  /api/v1/report/export          # 리포트 Excel 다운로드\n```\n\n### 기술 스택 권장\n\n- Python 3.11+\n- `FastAPI`\n- `SQLAlchemy` 또는 `asyncpg` (PostgreSQL)\n- `motor` (MongoDB 비동기 드라이버)\n- JWT 기반 인증\n\n---\n\n## Frontend 서비스\n\n### 메뉴 구조 (기존 분석 기반 이관 화면)\n\n| 메뉴 | 주요 화면 | 이관 우선순위 |\n|------|---------|------------|\n| 대시보드 | 전체 현황, 공장별 현황 | 높음 |\n| 모니터링 | 실시간 현황, 태그 모니터링 | 높음 |\n| 분석 | 기간별 분석, 피크 분석, 효율 분석 | 높음 |\n| 리포트 | 월간 리포트, 인쇄 | 중간 |\n| 데이터 | 검침 데이터, 청구 데이터 | 중간 |\n| 기준정보 | 태그 마스터, 장비 관리 | 중간 |\n| 지원 | 목표 관리, 온실가스 | 낮음 |\n| 시스템 | 사용자 관리, 권한, 알람 | 중간 |\n| 신재생 | 태양광 모니터링 | 낮음 |\n\n### 기술 스택 권장\n\n- React 18+ 또는 Next.js 14+\n- TypeScript\n- 차트: Apache ECharts 또는 Recharts\n- 그리드: TanStack Table\n- 상태 관리: Zustand 또는 TanStack Query\n- UI 컴포넌트: shadcn/ui 또는 Ant Design\n- 인증: JWT + HTTPS\n\n---\n\n## 데이터베이스 마이그레이션 방향\n\n| 기존 | 신규 권장 | 이유 |\n|------|---------|------|\n| Oracle DB (집계) | PostgreSQL | 오픈소스, Docker 지원, 비용 절감 |\n| MongoDB (원시) | PostgreSQL + TimescaleDB | 시계열 특화 확장, 단일 DB 스택으로 운영 단순화 |\n| MySQL (설정) | PostgreSQL 통합 | DB 단순화 (PostgreSQL 하나로 통합) |\n| Redis 캐시 | Redis 유지 | 실시간 캐시 필요 |\n| Kafka + Zookeeper | Kafka KRaft 모드 | Zookeeper 의존성 제거, 운영 단순화 |\n\n---\n\n## 개선 우선순위\n\n### Critical (필수 개선)\n\n1. **하드코딩된 IP/포트 제거** → 환경 변수 또는 설정 파일\n2. **eval() 제거** → 안전한 수식 파싱 라이브러리 사용 (예: `sympy`, `asteval`)\n3. **공장별 중복 스크립트 통합** → 단일 스크립트 + 파라미터화\n4. **에러 처리 강화** → 구조화된 에러 핸들링 및 알람\n\n### High (중요 개선)\n\n1. **REST API 표준화** → OpenAPI 3.0 스펙 정의\n2. **인증 체계** → JWT + RBAC (Role Based Access Control)\n3. **시계열 DB 도입** → PostgreSQL + TimescaleDB (단일 DB 스택 통합)\n4. **Docker 컨테이너화** → Dockerfile + docker-compose.yml\n5. **로깅 표준화** → 구조화 로깅 (JSON 포맷, ELK 스택)\n\n### Medium (권장 개선)\n\n1. **모니터링** → Prometheus + Grafana (수집 상태, API 응답시간)\n2. **API 문서화** → FastAPI 자동 Swagger 문서\n3. **Unit Test** → pytest 기반 테스트\n4. **CI/CD** → GitHub Actions 기반 자동 배포\n\n---\n\n## Docker 구성 계획\n\n### docker-compose.yml 구성 (개발 환경)\n\n> **변경 사항**: Kafka Zookeeper 제거 → KRaft 모드 적용 / InfluxDB 제거 → PostgreSQL + TimescaleDB 단일 스택 통합\n\n```yaml\nservices:\n\n  # ──────────────────────────────────────────\n  # Application Services\n  # ──────────────────────────────────────────\n  collector:\n    build: ./services/collector\n    restart: unless-stopped\n    environment:\n      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092\n      - POSTGRES_URL=postgresql://fems:fems_pass@timescaledb:5432/fems\n    depends_on:\n      kafka:\n        condition: service_healthy\n      timescaledb:\n        condition: service_healthy\n\n  processor:\n    build: ./services/processor\n    restart: unless-stopped\n    environment:\n      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092\n      - POSTGRES_URL=postgresql://fems:fems_pass@timescaledb:5432/fems\n    depends_on:\n      kafka:\n        condition: service_healthy\n      timescaledb:\n        condition: service_healthy\n\n  api:\n    build: ./services/api\n    ports:\n      - \"8000:8000\"\n    restart: unless-stopped\n    environment:\n      - POSTGRES_URL=postgresql://fems:fems_pass@timescaledb:5432/fems\n      - REDIS_URL=redis://redis:6379\n    depends_on:\n      timescaledb:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n\n  frontend:\n    build: ./frontend\n    ports:\n      - \"3000:3000\"\n    restart: unless-stopped\n    environment:\n      - NEXT_PUBLIC_API_URL=http://localhost:8000\n\n  # ──────────────────────────────────────────\n  # Kafka (KRaft 모드 - Zookeeper 없음)\n  # ──────────────────────────────────────────\n  kafka:\n    image: confluentinc/cp-kafka:7.7.0\n    restart: unless-stopped\n    ports:\n      - \"9092:9092\"       # 내부 브로커 통신\n      - \"9093:9093\"       # KRaft 컨트롤러\n      - \"29092:29092\"     # 호스트에서 직접 접근 (개발용)\n    environment:\n      # KRaft 모드 활성화\n      KAFKA_NODE_ID: 1\n      KAFKA_PROCESS_ROLES: broker,controller\n      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093\n      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://0.0.0.0:29092\n      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092\n      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT\n      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT\n      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER\n      # 클러스터 ID (uuid4 기반 고정값 - 최초 한 번만 생성)\n      CLUSTER_ID: \"MkU3OEVBNTcwNTJENDM2Qk\"\n      # 기본 설정\n      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1\n      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1\n      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1\n      KAFKA_AUTO_CREATE_TOPICS_ENABLE: \"true\"\n      KAFKA_LOG_RETENTION_HOURS: 168      # 7일\n    volumes:\n      - kafka_data:/var/lib/kafka/data\n    healthcheck:\n      test: [\"CMD\", \"kafka-topics\", \"--bootstrap-server\", \"kafka:9092\", \"--list\"]\n      interval: 15s\n      timeout: 10s\n      retries: 5\n      start_period: 30s\n\n  # ──────────────────────────────────────────\n  # PostgreSQL + TimescaleDB\n  # ──────────────────────────────────────────\n  timescaledb:\n    image: timescale/timescaledb:latest-pg16\n    restart: unless-stopped\n    ports:\n      - \"5432:5432\"\n    environment:\n      POSTGRES_DB: fems\n      POSTGRES_USER: fems\n      POSTGRES_PASSWORD: fems_pass\n    volumes:\n      - timescale_data:/var/lib/postgresql/data\n      - ./init-db:/docker-entrypoint-initdb.d   # 초기화 SQL 마운트\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U fems -d fems\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 20s\n\n  # ──────────────────────────────────────────\n  # Redis (캐시 / 세션)\n  # ──────────────────────────────────────────\n  redis:\n    image: redis:7-alpine\n    restart: unless-stopped\n    ports:\n      - \"6379:6379\"\n    command: redis-server --save 60 1 --loglevel warning\n    volumes:\n      - redis_data:/data\n    healthcheck:\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n\nvolumes:\n  kafka_data:\n  timescale_data:\n  redis_data:\n```\n\n### 초기화 SQL (init-db/01_init.sql)\n\nTimescaleDB 확장 활성화 및 시계열 하이퍼테이블 생성 예시.\n\n```sql\n-- TimescaleDB 확장 활성화\nCREATE EXTENSION IF NOT EXISTS timescaledb;\n\n-- 수집 원시 데이터 테이블\nCREATE TABLE IF NOT EXISTS raw_collect (\n  time        TIMESTAMPTZ     NOT NULL,\n  tag_id      TEXT            NOT NULL,\n  val         DOUBLE PRECISION,\n  kind        SMALLINT,\n  factory_id  TEXT,\n  server_time TIMESTAMPTZ\n);\nSELECT create_hypertable('raw_collect', 'time', if_not_exists => TRUE);\n-- 7일 이후 자동 압축\nSELECT add_compression_policy('raw_collect', INTERVAL '7 days');\n\n-- 1분 사용량 테이블\nCREATE TABLE IF NOT EXISTS usage_1m (\n  time              TIMESTAMPTZ     NOT NULL,\n  tag_id            TEXT            NOT NULL,\n  val               DOUBLE PRECISION,\n  kind              SMALLINT,\n  factory_id        TEXT,\n  before_val        DOUBLE PRECISION,\n  current_val       DOUBLE PRECISION,\n  tj                DOUBLE PRECISION,\n  toe               DOUBLE PRECISION,\n  tco2              DOUBLE PRECISION\n);\nSELECT create_hypertable('usage_1m', 'time', if_not_exists => TRUE);\nSELECT add_compression_policy('usage_1m', INTERVAL '30 days');\n\n-- 집계 테이블 (15분/1시간/1일/1월 공용)\nCREATE TABLE IF NOT EXISTS energy_summary (\n  time_from     TIMESTAMPTZ     NOT NULL,\n  time_to       TIMESTAMPTZ     NOT NULL,\n  tag_id        TEXT            NOT NULL,\n  unit          TEXT            NOT NULL,   -- '15m', '1h', '1d', '1month'\n  val           DOUBLE PRECISION,\n  total_val     DOUBLE PRECISION,\n  kind          SMALLINT,\n  factory_id    TEXT,\n  tj            DOUBLE PRECISION,\n  toe           DOUBLE PRECISION,\n  tco2          DOUBLE PRECISION,\n  cost          DOUBLE PRECISION,\n  status_yn     BOOLEAN         DEFAULT TRUE\n);\nSELECT create_hypertable('energy_summary', 'time_from', if_not_exists => TRUE);\nCREATE INDEX ON energy_summary (tag_id, time_from DESC);\nCREATE INDEX ON energy_summary (factory_id, unit, time_from DESC);\n\n-- 마스터 테이블 (일반 PostgreSQL 테이블)\nCREATE TABLE IF NOT EXISTS tag_master (\n  tag_id              TEXT PRIMARY KEY,\n  device_id           TEXT,\n  tag_name            TEXT,\n  virtual_tag_yn      BOOLEAN DEFAULT FALSE,\n  virtual_tag_formula TEXT,\n  coll_yn             BOOLEAN DEFAULT TRUE,\n  correct_ratio       DOUBLE PRECISION DEFAULT 1.0,\n  factory_id          TEXT,\n  energy_kind         SMALLINT,\n  unit                TEXT\n);\n\nCREATE TABLE IF NOT EXISTS device_master (\n  device_id        TEXT PRIMARY KEY,\n  device_type      TEXT,\n  maker            TEXT,\n  ip_address       TEXT,\n  port             INTEGER,\n  device_address   TEXT,\n  use_yn           BOOLEAN DEFAULT TRUE,\n  factory_id       TEXT\n);\n```\n\n### KRaft 클러스터 ID 생성 방법\n\n```bash\n# 최초 배포 시 고정 Cluster ID 생성\ndocker run --rm confluentinc/cp-kafka:7.7.0 kafka-storage random-uuid\n# 출력된 UUID를 docker-compose.yml의 CLUSTER_ID에 고정하여 사용\n```\n\n---\n\n## 에너지 단위 변환 기준 (보존)\n\n기존 Oracle SP의 변환 로직을 신규 시스템에서 재구현.\n\n| 에너지원 | 단위 | TJ 변환 | TOE 변환 | tCO2 변환 |\n|---------|------|--------|---------|---------|\n| 전기 (1) | kWh | × 0.0000036 | × 0.000086 | × 0.000459 |\n| 가스 (2) | Nm³ | (단위열량 × MJ/kcal) | (단위열량 기반) | × 배출계수 |\n| 스팀 (3) | ton | × (엔탈피 기반) | ... | ... |\n| 수도 (4) | m³ | (별도 계산) | ... | ... |\n\n> 정확한 환산 계수는 산업부 고시 기준 적용\n\n---\n\n## 기존 시스템 보존 필요 요소\n\n| 요소 | 설명 | 신규 시스템 반영 방법 |\n|------|------|-------------------|\n| 하루 06:00 시작 기준 | 공장 교대조 기준 | 설정 파라미터화 |\n| 중앙값(Median) 이상치 제거 | 수집 데이터 품질 | 처리 서비스에 유지 |\n| 카운터 오버플로우 처리 | 누적계 리셋 처리 | 계산 로직에 포함 |\n| 가상 태그 수식 | 파생 태그 계산 | 안전한 수식 파싱으로 재구현 |\n| 에너지원 kind 코드 체계 | 1:전기, 2:가스, 3:스팀, 4:수도 | 코드 체계 유지 |\n| MES 사용자 연동 | 통합 인증 | SSO 또는 별도 계정 체계 결정 |\n| 피크 15분 단위 | 최대 수요전력 | 집계 로직에 유지 |\n| 공장 ID 체계 | 조직 계층 구조 | 마스터 DB 마이그레이션 |\n"}};
+const TAB_ORDER = ["overview", "docs", "backend", "frontend", "flow", "db", "new_sys"];
+
+// ── Mermaid ───────────────────────────────────────────────
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'dark',
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+  fontSize: 14,
+  themeVariables: {
+    darkMode: true,
+    background: '#161b22',
+    primaryColor: '#1a3a5c',
+    primaryTextColor: '#c9d1d9',
+    primaryBorderColor: '#388bfd',
+    lineColor: '#58a6ff',
+    secondaryColor: '#21262d',
+    tertiaryColor: '#21262d',
+    clusterBkg: '#161b22',
+    clusterBorder: '#30363d',
+    titleColor: '#f0f6fc',
+    edgeLabelBackground: '#21262d',
+    nodeTextColor: '#c9d1d9',
+  }
+});
+
+// ── marked.js ─────────────────────────────────────────────
+marked.use({
+  gfm: true,
+  renderer: {
+    code(token) {
+      if (token.lang === 'mermaid') {
+        return `<div class="mermaid-wrap"><pre class="mermaid">${token.text}</pre></div>`;
+      }
+      return false; // use default renderer
+    }
+  }
+});
+
+// ── Tab switching ─────────────────────────────────────────
+let currentTab = null;
+
+async function switchTab(id) {
+  if (currentTab === id) return;
+  currentTab = id;
+
+  // Update sidebar
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + id);
+  if (tabEl) tabEl.classList.add('active');
+
+  // Update header
+  document.getElementById('header-icon').textContent = DOCS[id].icon;
+  document.getElementById('header-title').textContent = DOCS[id].title_plain;
+
+  // Render markdown
+  const contentEl = document.getElementById('content');
+  contentEl.innerHTML = marked.parse(DOCS[id].content);
+  contentEl.scrollTop = 0;
+
+  // Wrap tables for horizontal scroll
+  contentEl.querySelectorAll('table').forEach(table => {
+    if (!table.parentElement.classList.contains('table-wrap')) {
+      const wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      table.parentNode.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    }
+  });
+
+  // Syntax highlighting (non-mermaid blocks)
+  contentEl.querySelectorAll('pre code').forEach(el => {
+    try { hljs.highlightElement(el); } catch (_) {}
+  });
+
+  // Mermaid rendering
+  const diagrams = contentEl.querySelectorAll('.mermaid');
+  if (diagrams.length > 0) {
+    // Small delay to ensure DOM is settled
+    requestAnimationFrame(async () => {
+      try {
+        await mermaid.run({ nodes: diagrams });
+      } catch (err) {
+        console.warn('Mermaid render error:', err);
+      }
+    });
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  switchTab(TAB_ORDER[0]);
+});
+
+</script>
+</body>
+</html>
