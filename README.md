@@ -5,7 +5,7 @@ open link pages
 ### 1. PDF to Video 
 - https://randyryu.github.io/openlink/260311_pdf-to-video_converter.html
 
-### 2. DF 리포트 
+### 2. DF Package 리포트 
 - **2026.03** — https://randyryu.github.io/openlink/260312_dataforge-report.html
 - **2026.04** — https://randyryu.github.io/openlink/260415_dataforge-report.html
 - **2026.05** — https://randyryu.github.io/openlink/260515_dataforge-report.html

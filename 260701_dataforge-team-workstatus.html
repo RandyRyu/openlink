@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataForge팀 업무현황 2026년 6월</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; background: #f8fafc; color: #1e293b; font-size: 14px; }
+.header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 24px 32px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13px; opacity: 0.85; }
+.header-meta { display: flex; gap: 24px; margin-top: 12px; font-size: 12px; opacity: 0.8; }
+.tabs { display: flex; background: white; border-bottom: 2px solid #e2e8f0; padding: 0 24px; }
+.tab { padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+.tab:hover { color: #2563eb; }
+.tab.active { color: #2563eb; border-bottom-color: #2563eb; background: white; }
+.content { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+.tab-content { display: none; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); text-align: center; border-top: 4px solid; }
+.stat-card.total { border-color: #2563eb; }
+.stat-card.done { border-color: #16a34a; }
+.stat-card.progress { border-color: #f59e0b; }
+.stat-card.wg { border-color: #8b5cf6; }
+.stat-num { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.stat-card.total .stat-num { color: #2563eb; }
+.stat-card.done .stat-num { color: #16a34a; }
+.stat-card.progress .stat-num { color: #f59e0b; }
+.stat-card.wg .stat-num { color: #8b5cf6; }
+.stat-label { font-size: 12px; color: #64748b; font-weight: 600; }
+.card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 20px; }
+.card-title { font-size: 14px; font-weight: 700; color: #1e3a8a; border-left: 4px solid #2563eb; padding-left: 10px; margin-bottom: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #1e3a8a; color: white; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; }
+td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tr:hover td { background: #f8fafc; }
+tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge-done    { background: #dcfce7; color: #166534; }
+.badge-progress{ background: #dbeafe; color: #1e40af; }
+.badge-review  { background: #fef3c7; color: #92400e; }
+.badge-plan    { background: #ede9fe; color: #5b21b6; }
+.badge-pending { background: #f1f5f9; color: #475569; }
+.highlight-box { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+.highlight-box h3 { font-size: 13px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px; }
+.highlight-box ul { list-style: none; padding: 0; }
+.highlight-box li { font-size: 13px; color: #1e40af; padding: 3px 0; padding-left: 18px; position: relative; }
+.highlight-box li::before { content: "✦"; position: absolute; left: 0; color: #2563eb; font-size: 10px; top: 4px; }
+.month-item { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #cbd5e1; }
+.month-item.current { border-left-color: #16a34a; background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+.month-item h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1e3a8a; }
+.month-item.current h3 { color: #16a34a; }
+.month-stats { display: flex; gap: 12px; margin-bottom: 8px; font-size: 12px; }
+.month-stats span { padding: 2px 8px; border-radius: 12px; }
+.ms-total { background: #dbeafe; color: #1e40af; }
+.ms-done { background: #dcfce7; color: #166534; }
+.ms-prog { background: #fef3c7; color: #92400e; }
+.month-item ul { list-style: none; padding: 0; }
+.month-item li { font-size: 12px; color: #475569; padding: 2px 0; padding-left: 14px; position: relative; }
+.month-item li::before { content: "·"; position: absolute; left: 4px; }
+.kpi-item { margin-bottom: 16px; }
+.kpi-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.kpi-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.kpi-pct { font-size: 13px; font-weight: 700; color: #2563eb; }
+.kpi-bar-bg { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
+.kpi-bar { height: 100%; border-radius: 5px; transition: width 0.3s; }
+.kpi-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.team-card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border-top: 3px solid #2563eb; }
+.team-name { font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+.team-role { font-size: 11px; color: #64748b; margin-bottom: 12px; }
+.team-tasks { font-size: 12px; color: #374151; }
+.team-tasks li { padding: 2px 0; padding-left: 12px; position: relative; list-style: none; }
+.team-tasks li::before { content: "•"; position: absolute; left: 2px; color: #2563eb; }
+.team-count { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9; font-size: 11px; color: #64748b; }
+.special-card { background: linear-gradient(135deg, #fefce8, #fef9c3); border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+.special-card h3 { font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+.section-note { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+.next-plan { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd; border-radius: 8px; padding: 14px 16px; margin-top: 16px; }
+.next-plan h4 { font-size: 12px; font-weight: 700; color: #0369a1; margin-bottom: 8px; }
+.next-plan li { font-size: 12px; color: #0369a1; padding: 2px 0; padding-left: 14px; position: relative; list-style: none; }
+.next-plan li::before { content: "→"; position: absolute; left: 0; }
+.footer { text-align: center; padding: 24px; color: #94a3b8; font-size: 11px; border-top: 1px solid #e2e8f0; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 DataForge팀 업무현황 — 2026년 6월</h1>
+  <p>DataForge팀 월간 업무현황 보고서 (JIRA DF 프로젝트 + Confluence DPE 스페이스 기반)</p>
+  <div class="header-meta">
+    <span>📅 발행일: 2026-07-01</span>
+    <span>🗓 데이터 기준: 2026-07-01</span>
+    <span>👥 팀원: 8명</span>
+    <span>📋 데이터 출처: JIRA(DataForge) + Confluence(DPE)</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview',this)">📋 전체현황</div>
+  <div class="tab" onclick="showTab('monthly',this)">📅 월별작업내역</div>
+  <div class="tab" onclick="showTab('kpi',this)">🎯 KPI진행현황</div>
+  <div class="tab" onclick="showTab('team',this)">👥 팀원별현황</div>
+</div>
+
+<div class="content">
+
+<!-- ======================== TAB 1: 전체현황 ======================== -->
+<div id="tab-overview" class="tab-content" style="display:block">
+
+  <div class="stat-grid">
+    <div class="stat-card total"><div class="stat-num">49</div><div class="stat-label">총 처리 이슈 (변중환 제외)</div></div>
+    <div class="stat-card done"><div class="stat-num">29</div><div class="stat-label">완료</div></div>
+    <div class="stat-card progress"><div class="stat-num">20</div><div class="stat-label">진행 중 / 검토</div></div>
+    <div class="stat-card wg"><div class="stat-num">17</div><div class="stat-label">고객 요청(WG) 처리</div></div>
+  </div>
+
+  <div class="highlight-box">
+    <h3>🏆 6월 주요 성과</h3>
+    <ul>
+      <li>베스틸 HyperFlex Node2 16번 디스크 고장 긴급 조치 완료 (DF-1220, 6/26~6/30)</li>
+      <li>창특/베스틸 Kafka 로그 용량 관리 및 일자별 자동 백업 구축 완료 (DF-1213/1214)</li>
+      <li>GCP 탄소 배출 관리 플랫폼 프로젝트 지원 완료 — Cloud SQL 할당 및 VPC 연동 (DF-1217)</li>
+      <li>Cloud Run, Cloud SQL 로컬망 연동 구축 완료 (DF-1192)</li>
+      <li>창특/베스틸 Mage.ai 파이프라인 상태 Zabbix 연동 작업 진행 (DF-1210/1211)</li>
+      <li>NiFi PostgreSQL Jython 스크립트 전수조사 및 배제 작업 진행 (DF-1223, DF-1203)</li>
+      <li>WG 고객 요청 17건 처리 — 완료 13건(세아베스틸 5건, 세아창원특수강 8건), 진행 3건, 검토 1건</li>
+      <li>GKE VPC Subnet CIDR 충돌 인시던트 해소 — 클러스터 재생성으로 온프렘 VPN 대역 충돌 해결 (이지중)</li>
+      <li>NiFi Python 스크립트 프로세서 버그 수정본 테스트 완료 (DF-1188/1190)</li>
+      <li>창특 PostgreSQL/Edge 서버 패스워드 변경 작업계획 수립 및 진행 (DF-1196)</li>
+      <li>DataForge-SHE시스템 연동 개발 착수 — 베스틸 안전경영팀 요청 (DF-1216)</li>
+      <li>CIO팀 데이터 플랫폼 POC 진행 중 (DF-1207)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 전체 이슈 현황 (49건)</div>
+    <table>
+      <tr><th>이슈 번호</th><th>담당자</th><th>업무 내용</th><th>상태</th><th>최종 업데이트</th></tr>
+      <tr><td>DF-1216</td><td>하민규</td><td>베스틸 &gt; 연동작업 &gt; DataForge-SHE시스템 연동 개발</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1224</td><td>이재훈(위스)</td><td>창특 &gt; 정보확인 &gt; WG-요청-685 그라파나 선반 가동률 대쉬보드 조회 권한 요청</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1225</td><td>하민규</td><td>베스틸 &gt; 태그처리 &gt; WG-요청-686 소형/대형단조 공장 전력량계 Tag 등록 요청</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1214</td><td>김경립</td><td>창특 &gt; 운영개선 &gt; 26.06.22 창특 Kafka 로그 용량 관리 및 일자별 자동 백업 구축</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1213</td><td>김경립</td><td>베스틸 &gt; 운영개선 &gt; 26.06.22 베스틸 Kafka 로그 용량 관리 및 일자별 자동 백업 구축</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1217</td><td>김경립</td><td>창특 &gt; 서버구축 &gt; 26.06.19 GCP 탄소 배출 관리 플랫폼 프로젝트 지원</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1074</td><td>유병재</td><td>창특 &gt; DF운영 &gt; DataForge 청구서 처리 프로세스 수립</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1223</td><td>하민규</td><td>데이터포지팀 &gt; 기능개선 &gt; 세아베스틸 NiFi PostgreSQL Jython 스크립트 삭제</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1218</td><td>이재훈(위스)</td><td>창특 &gt; Grafana &gt; WG-요청-683 그라파나 가공공장 열처리로 조회 권한 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1204</td><td>하민규</td><td>베스틸 &gt; 태그처리 &gt; WG-요청-678 1,2제강 전기로 POT 그라파나 모니터링 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1200</td><td>이재훈(위스)</td><td>창특 &gt; 연동작업 &gt; WG-요청-674 시편 미채취 알람 시스템 Cloud Run, CloudSQL 연동</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1184</td><td>이재훈(위스)</td><td>창특 &gt; WG-요청-672 시편 가공 프로세스 추적관리 시스템 보안 및 네트워크 연동 검토</td><td><span class="badge badge-done">완료</span></td><td>2026-07-01</td></tr>
+      <tr><td>DF-1221</td><td>유병재</td><td>베스틸 &gt; DF운영 &gt; 베스틸 FeMS 이관 업무협의 회의</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-30</td></tr>
+      <tr><td>DF-1181</td><td>하민규</td><td>데이터포지팀 &gt; 기능개선 &gt; MES 데이터 정합성 로그 처리</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-30</td></tr>
+      <tr><td>DF-1222</td><td>하민규</td><td>데이터포지팀 &gt; 정보확인 &gt; RFM Mitsubishi PLC 16진수 태그 확인</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-30</td></tr>
+      <tr><td>DF-1201</td><td>하민규</td><td>창특 &gt; Metabase &gt; WG-요청-677 RFM SPM 속도 품질관리 대시보드 생성 요청</td><td><span class="badge badge-review">검토 중</span></td><td>2026-06-30</td></tr>
+      <tr><td>DF-1219</td><td>이재훈(위스)</td><td>베스틸 &gt; 마트구축 &gt; WG-요청-684 2제강공장 실시간 생산 모니터링 대시보드 개발</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-27</td></tr>
+      <tr><td>DF-1220</td><td>김경립</td><td>베스틸 &gt; 장애처리 &gt; 26.06.26 베스틸 HyperFlex Node2 16번 디스크 고장</td><td><span class="badge badge-done">완료</span></td><td>2026-06-27</td></tr>
+      <tr><td>DF-1122</td><td>김경립</td><td>베스틸 &gt; 장애처리 &gt; 26.03.26 베스틸 HyperFlex Node3 5번 디스크 고장</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-27</td></tr>
+      <tr><td>DF-1212</td><td>유병재</td><td>창특 &gt; DF운영 &gt; 창특 PC1팀 데이터 전송 해결 회의</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1215</td><td>하민규</td><td>데이터포지팀 &gt; 기능개선 &gt; CloudFunction 정리</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1199</td><td>하민규</td><td>베스틸 &gt; 마트구축 &gt; WG-요청-675 MES데이터 수집요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1198</td><td>하민규</td><td>베스틸 &gt; 마트구축 &gt; WG-요청-676 MES. 6462 HEAT별 화학성분현황 데이터 수집요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1203</td><td>하민규</td><td>창특 &gt; 기능개선 &gt; NiFi 포스트그레스 파이썬 스크립트 배제 검토</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1206</td><td>이재훈(위스)</td><td>창특 &gt; Grafana &gt; WG-요청-679 Organization 변경 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1205</td><td>이재훈(위스)</td><td>창특 &gt; 태그처리 &gt; WG-요청-680 가공팀 신규 I/O 등록 및 대시보드 구축 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1209</td><td>이재훈(위스)</td><td>창특 &gt; Grafana &gt; WG-요청-681 가공팀 Organization 변경 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1208</td><td>이재훈(위스)</td><td>창특 &gt; Grafana &gt; WG-요청-682 그라파나 화면 그래프 추가 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1176</td><td>김경립</td><td>공통 &gt; 운영관리 &gt; GLPI Agent 설치 대상 선정</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1192</td><td>김경립</td><td>창특 &gt; 서비스구축 &gt; 26.06.02 Cloud Run, Cloud SQL 로컬망 연동 구축</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1202</td><td>안종성</td><td>공통 &gt; 운영관리 &gt; 26.06.17 Edge 6월 정기 점검</td><td><span class="badge badge-done">완료</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1196</td><td>김경립</td><td>창특 &gt; 운영관리 &gt; 26.06.05 PostgreSQL 계정, Edge 서버 패스워드 변경 작업</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1195</td><td>김경립</td><td>베스틸 &gt; 운영관리 &gt; 26.06.05 PostgreSQL 계정, Edge 서버 패스워드 변경 작업</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-23</td></tr>
+      <tr><td>DF-1038</td><td>김성만</td><td>과제 &gt; 8. Sale Kit 개발</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-22</td></tr>
+      <tr><td>DF-1211</td><td>김경립</td><td>창특 &gt; 운영개선 &gt; 26.06.16 창특 Mage.ai 파이프라인 상태 Zabbix 연동</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-20</td></tr>
+      <tr><td>DF-1210</td><td>김경립</td><td>베스틸 &gt; 운영개선 &gt; 26.06.16 베스틸 Mage.ai 파이프라인 상태 Zabbix 연동</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-20</td></tr>
+      <tr><td>DF-1207</td><td>김경립</td><td>공통 &gt; 프로젝트 &gt; CIO팀 데이터 플랫폼 POC</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-18</td></tr>
+      <tr><td>DF-1164</td><td>이재훈(위스)</td><td>창특 &gt; WG-요청-667 대형정정 선반 가동율 Monitoring System Grafana 화면 구축</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1188</td><td>유성열</td><td>공통 &gt; 장애처리 &gt; 26.06.02 NiFi Python 스크립트 프로세서 버그 수정본 테스트</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1191</td><td>이재훈(위스)</td><td>창특 &gt; 시각화 &gt; WG-요청-673 2연주 Strand별 Strock cpk 데이터 변경 요청</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1173</td><td>김경립</td><td>공통 &gt; 운영개선 &gt; 창특/베스틸 Postgresql 파티션 생성 프로그램 수정 및 Mage 스케줄 연동</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1193</td><td>김경립</td><td>공통 &gt; 서비스구축 &gt; 26.06.10 상암IDC 181번 개발 서버 점검 조치</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1194</td><td>김경립</td><td>창특 &gt; 서버구축 &gt; 26.06.04 창특 테스트 Kepware와 sdp-data 프로젝트 VPC 피어링</td><td><span class="badge badge-done">완료</span></td><td>2026-06-17</td></tr>
+      <tr><td>DF-1073</td><td>유성열</td><td>베스틸 &gt; 기능구현 &gt; 베스틸 AX TF 과제 협업 (소재ID 트래킹)</td><td><span class="badge badge-progress">진행 중</span></td><td>2026-06-12</td></tr>
+      <tr><td>DF-1165</td><td>하민규</td><td>베스틸 &gt; 연동작업 &gt; WG-요청-668 Grafana 경보용 음성 알람 구현 가능 여부 검토</td><td><span class="badge badge-done">완료</span></td><td>2026-06-09</td></tr>
+      <tr><td>DF-1183</td><td>하민규</td><td>베스틸 &gt; 태그처리 &gt; 군산 소형정정 에버가드 수집 이전 작업</td><td><span class="badge badge-done">완료</span></td><td>2026-06-09</td></tr>
+      <tr><td>DF-1190</td><td>유성열</td><td>공통 &gt; 장애처리 &gt; 26.06.02 NiFi PostgreSQL 저장 프로세서 부동소숫점 자릿수 불일치</td><td><span class="badge badge-done">완료</span></td><td>2026-06-09</td></tr>
+      <tr><td>DF-1162</td><td>김경립</td><td>공통 &gt; 구성변경 &gt; 26.05.12 창특 Kepware 테스트 서버 구성</td><td><span class="badge badge-done">완료</span></td><td>2026-06-09</td></tr>
+      <tr><td>DF-1166</td><td>안종성</td><td>창특 &gt; 서버구축 &gt; GCP 탄소 배출 관리 플랫폼 프로젝트 기술 검토 및 지원</td><td><span class="badge badge-done">완료</span></td><td>2026-06-09</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📞 WG 고객 요청 처리 현황 (17건)</div>
+    <table>
+      <tr><th>WG 번호</th><th>담당자</th><th>요청 내용</th><th>고객사</th><th>상태</th></tr>
+      <tr><td>WG-686</td><td>하민규</td><td>소형/대형단조 공장 전력량계 Tag 등록 요청 (DF-1225)</td><td>세아베스틸</td><td><span class="badge badge-progress">진행 중</span></td></tr>
+      <tr><td>WG-685</td><td>이재훈(위스)</td><td>그라파나 선반 가동률 대쉬보드 조회 권한 요청 (DF-1224)</td><td>세아창원특수강</td><td><span class="badge badge-progress">진행 중</span></td></tr>
+      <tr><td>WG-684</td><td>이재훈(위스)</td><td>2제강공장 실시간 생산 모니터링 대시보드 개발 (DF-1219)</td><td>세아베스틸</td><td><span class="badge badge-progress">진행 중</span></td></tr>
+      <tr><td>WG-683</td><td>이재훈(위스)</td><td>그라파나 가공공장 열처리로 조회 권한 요청 (DF-1218)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-682</td><td>이재훈(위스)</td><td>그라파나 화면 내 그래프 추가 요청 (DF-1208)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-681</td><td>이재훈(위스)</td><td>가공팀 Organization 변경 요청 (DF-1209)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-680</td><td>이재훈(위스)</td><td>가공팀 신규 I/O 등록 및 대시보드 구축 요청 (DF-1205)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-679</td><td>이재훈(위스)</td><td>Organization 변경 요청 (DF-1206)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-678</td><td>하민규</td><td>1,2제강 전기로 POT 그라파나 모니터링 요청 (DF-1204)</td><td>세아베스틸</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-677</td><td>하민규</td><td>RFM SPM 속도 품질관리 대시보드 생성 요청 (DF-1201)</td><td>세아창원특수강</td><td><span class="badge badge-review">검토 중</span></td></tr>
+      <tr><td>WG-676</td><td>하민규</td><td>MES 6462 HEAT별 화학성분현황 데이터 수집요청 (DF-1198)</td><td>세아베스틸</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-675</td><td>하민규</td><td>MES데이터 수집요청 (DF-1199)</td><td>세아베스틸</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-674</td><td>이재훈(위스)</td><td>시편 미채취 알람 시스템 Cloud Run, CloudSQL 연동 (DF-1200)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-673</td><td>이재훈(위스)</td><td>2연주 Strand별 Strock cpk 데이터 변경 요청 (DF-1191)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-672</td><td>이재훈(위스)</td><td>시편 가공 프로세스 추적관리 시스템 보안 및 네트워크 연동 검토 (DF-1184)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-668</td><td>하민규</td><td>Grafana 경보용 음성 알람 구현 가능 여부 검토 (DF-1165)</td><td>세아베스틸</td><td><span class="badge badge-done">완료</span></td></tr>
+      <tr><td>WG-667</td><td>이재훈(위스)</td><td>대형정정 선반 가동율 Monitoring System Grafana 화면 구축 (DF-1164)</td><td>세아창원특수강</td><td><span class="badge badge-done">완료</span></td></tr>
+    </table>
+  </div>
+
+  <div class="next-plan">
+    <h4>📌 7월 예정 주요 업무</h4>
+    <ul>
+      <li>베스틸 FeMS 이관 — 7/1 군산센터 PC2팀 업무협의, 7/16 현업 회의 예정 (유병재)</li>
+      <li>창특 PC1팀 데이터 전송 오류 해결 — 7/8~9 창원 출장 (유병재, 유성열)</li>
+      <li>WG-684 2제강 실시간 생산 모니터링 대시보드 개발 완료 (이재훈)</li>
+      <li>WG-685/686 처리 완료 — 권한 부여 및 Tag 등록 (이재훈, 하민규)</li>
+      <li>창특/베스틸 Mage.ai Zabbix 연동 완료 (김경립)</li>
+      <li>NiFi PostgreSQL Jython 스크립트 완전 배제 완료 (하민규, 유성열)</li>
+      <li>DataForge-SHE시스템 연동 개발 지속 (하민규)</li>
+      <li>CIO팀 데이터 플랫폼 POC 완료 (김경립)</li>
+      <li>GKE 클러스터 재생성 후 서비스 안정화 검증 (이지중)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ======================== TAB 2: 월별작업내역 ======================== -->
+<div id="tab-monthly" class="tab-content">
+
+  <div class="month-item">
+    <h3>📅 2026년 1월</h3>
+    <div class="month-stats">
+      <span class="ms-total">누적 이슈 처리</span>
+    </div>
+    <ul>
+      <li>창특/베스틸 DataForge 인프라 정기 점검</li>
+      <li>NiFi 파이프라인 안정화 작업</li>
+      <li>신규 고객사 PoC 검토</li>
+    </ul>
+  </div>
+
+  <div class="month-item">
+    <h3>📅 2026년 2월</h3>
+    <div class="month-stats">
+      <span class="ms-total">누적 이슈 처리</span>
+    </div>
+    <ul>
+      <li>창특 Kepware 테스트 서버 구성 착수 (DF-1162)</li>
+      <li>PostgreSQL 파티션 생성 자동화 검토</li>
+      <li>Edge 서버 운영 점검</li>
+    </ul>
+  </div>
+
+  <div class="month-item">
+    <h3>📅 2026년 3월</h3>
+    <div class="month-stats">
+      <span class="ms-total">누적 이슈 처리</span>
+    </div>
+    <ul>
+      <li>베스틸 HyperFlex Node3 5번 디스크 고장 조치 착수 (DF-1122)</li>
+      <li>창특 대형정정 선반 가동율 Grafana 화면 구축 착수 (WG-667)</li>
+      <li>NiFi 기능 개선 및 버그 수정 작업 착수 (DF-1073)</li>
+      <li>Sale Kit 개발 착수 (DF-1038)</li>
+      <li>DataForge 청구서 처리 프로세스 수립 착수 (DF-1074)</li>
+    </ul>
+  </div>
+
+  <div class="month-item">
+    <h3>📅 2026년 4월</h3>
+    <div class="month-stats">
+      <span class="ms-total">누적 이슈 처리</span>
+    </div>
+    <ul>
+      <li>창특/베스틸 PostgreSQL 파티션 자동화 + Mage 스케줄 연동 완료 (DF-1173)</li>
+      <li>WG-667 대형정정 선반 가동율 Grafana 완료 (이재훈)</li>
+      <li>Cloud Run/SQL 연동 개발 진행 (DF-1200)</li>
+      <li>MES 데이터 정합성 로그 처리 개발 착수 (DF-1181)</li>
+    </ul>
+  </div>
+
+  <div class="month-item">
+    <h3>📅 2026년 5월</h3>
+    <div class="month-stats">
+      <span class="ms-total">누적 이슈 처리</span>
+    </div>
+    <ul>
+      <li>창특 Kepware 테스트 서버 구성 완료 (DF-1162)</li>
+      <li>Cloud Run, Cloud SQL 로컬망 연동 구축 착수 (DF-1192)</li>
+      <li>GCP 탄소 배출 관리 플랫폼 기술 검토 착수 (안종성)</li>
+      <li>WG-667/672/673 처리 완료 (이재훈)</li>
+      <li>상암IDC 181번 개발 서버 점검 완료 (DF-1193)</li>
+      <li>창특 테스트 Kepware VPC 피어링 완료 (DF-1194)</li>
+    </ul>
+  </div>
+
+  <div class="month-item current">
+    <h3>📅 2026년 6월 (이번 달)</h3>
+    <div class="month-stats">
+      <span class="ms-total">총 49건</span>
+      <span class="ms-done">완료 29건</span>
+      <span class="ms-prog">진행/검토 20건</span>
+    </div>
+    <ul>
+      <li>베스틸 HyperFlex Node2 16번 디스크 고장 긴급 조치 완료 (DF-1220)</li>
+      <li>창특/베스틸 Kafka 로그 용량 관리 및 일자별 자동 백업 구축 완료 (DF-1213/1214)</li>
+      <li>GCP 탄소 배출 관리 플랫폼 Cloud SQL 할당 및 VPC 연동 완료 (DF-1217, 김경립)</li>
+      <li>Cloud Run, Cloud SQL 로컬망 연동 구축 완료 (DF-1192)</li>
+      <li>GCP 탄소 배출 관리 플랫폼 기술 검토 지원 완료 (안종성, DF-1166)</li>
+      <li>Edge 6월 정기 점검 완료 (안종성, DF-1202)</li>
+      <li>NiFi Python 스크립트 프로세서 버그 수정본 테스트 완료 (유성열, DF-1188/1190)</li>
+      <li>WG-667~683 처리 — 완료 13건 / 진행 3건 / 검토 1건 (총 17건)</li>
+      <li>NiFi PostgreSQL Jython 스크립트 배제 검토 진행 (DF-1203/1223, 하민규)</li>
+      <li>창특/베스틸 Mage.ai 파이프라인 상태 Zabbix 연동 진행 (DF-1210/1211, 김경립)</li>
+      <li>창특/베스틸 PostgreSQL·Edge 패스워드 변경 작업 진행 (DF-1195/1196, 김경립)</li>
+      <li>CIO팀 데이터 플랫폼 POC 진행 (DF-1207, 김경립)</li>
+      <li>DataForge-SHE시스템 연동 개발 착수 (DF-1216, 하민규)</li>
+      <li>베스틸 FeMS 이관 업무협의 진행 (DF-1221, 유병재)</li>
+      <li>GKE VPC Subnet CIDR 충돌 해소 — 클러스터 재생성으로 온프렘 VPN 대역 충돌 해결 (이지중)</li>
+      <li>GLPI Agent 설치 대상 선정 완료 (DF-1176, 김경립)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ======================== TAB 3: KPI 진행현황 ======================== -->
+<div id="tab-kpi" class="tab-content">
+
+  <div class="card">
+    <div class="card-title">🎯 KPI 진행률 현황 (2026년 6월 기준)</div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">① 데이터 수집률 향상</span><span class="kpi-pct">40%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:40%;background:#ef4444;"></div></div>
+      <div class="kpi-sub">NiFi 파이프라인 안정화 + PostgreSQL 파티션 자동화 진행 중. MES 데이터 정합성 이슈 처리 중 (DF-1181)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">② 시스템 가동률 99% 유지</span><span class="kpi-pct">75%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:75%;background:#f59e0b;"></div></div>
+      <div class="kpi-sub">HyperFlex 디스크 장애 긴급 대응 완료 (Node2 DF-1220, Node3 DF-1122 진행 중). Edge 정기 점검 완료 (DF-1202)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">③ 고객 요청(WG) 처리율</span><span class="kpi-pct">80%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:80%;background:#16a34a;"></div></div>
+      <div class="kpi-sub">17건 중 13건 완료, 3건 진행 중, 1건 검토 중. 이재훈(위스) 11건, 하민규 6건 처리</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">④ 인프라 보안 강화</span><span class="kpi-pct">75%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:75%;background:#f59e0b;"></div></div>
+      <div class="kpi-sub">창특/베스틸 PostgreSQL·Edge 패스워드 변경 진행 중 (DF-1195/1196). GKE VPC CIDR 충돌 해소 완료 (이지중)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑤ 클라우드 인프라 최적화</span><span class="kpi-pct">50%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:50%;background:#f59e0b;"></div></div>
+      <div class="kpi-sub">GCP Cloud Run/SQL 연동 구축 완료 (DF-1192/1200). Cloud SQL 할당 및 VPC 연동 완료 (DF-1217). GKE 클러스터 최적화 진행 중 (이지중)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑥ 모니터링 시스템 구축</span><span class="kpi-pct">55%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:55%;background:#f59e0b;"></div></div>
+      <div class="kpi-sub">Mage.ai Zabbix 연동 진행 중 (DF-1210/1211). Grafana 대시보드 다수 구축 완료. 음성 알람 기능 검토 완료 (DF-1165)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑦ DataForge 플랫폼 기능 확장</span><span class="kpi-pct">60%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:60%;background:#16a34a;"></div></div>
+      <div class="kpi-sub">SHE시스템 연동 개발 착수 (DF-1216). CloudFunction 정리 진행 (DF-1215). MES 데이터 정합성 처리 진행 (DF-1181). Metabase 대시보드 검토 (WG-677)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑧ 데이터 파이프라인 안정화</span><span class="kpi-pct">70%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:70%;background:#16a34a;"></div></div>
+      <div class="kpi-sub">NiFi Python 버그 수정본 테스트 완료 (DF-1188/1190). Kafka 로그 자동 백업 구축 완료 (DF-1213/1214). NiFi Jython 스크립트 배제 진행 (DF-1203/1223)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑨ 신규 고객사 확대 지원</span><span class="kpi-pct">65%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:65%;background:#16a34a;"></div></div>
+      <div class="kpi-sub">CIO팀 데이터 플랫폼 POC 진행 중 (DF-1207). GCP 탄소 배출 관리 플랫폼 지원 완료 (DF-1166/1217). FeMS 이관 협의 진행 (DF-1221)</div>
+    </div>
+
+    <div class="kpi-item">
+      <div class="kpi-header"><span class="kpi-name">⑩ Sale Kit 개발 완료</span><span class="kpi-pct">45%</span></div>
+      <div class="kpi-bar-bg"><div class="kpi-bar" style="width:45%;background:#ef4444;"></div></div>
+      <div class="kpi-sub">Sale Kit 개발 진행 중 (DF-1038, 김성만). 6월 기준 45% 완료 단계</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 KPI 현황 요약표</div>
+    <table>
+      <tr><th>번호</th><th>KPI 항목</th><th>진행률</th><th>상태</th><th>담당</th><th>비고</th></tr>
+      <tr>
+        <td>①</td><td>데이터 수집률 향상</td>
+        <td><strong style="color:#ef4444">40%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>유성열, 하민규</td><td>MES 데이터 정합성 이슈 처리 중</td>
+      </tr>
+      <tr>
+        <td>②</td><td>시스템 가동률 99% 유지</td>
+        <td><strong style="color:#f59e0b">75%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김경립, 안종성</td><td>HyperFlex Node3 교체 진행 중</td>
+      </tr>
+      <tr>
+        <td>③</td><td>고객 요청(WG) 처리율</td>
+        <td><strong style="color:#16a34a">80%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>이재훈(위스), 하민규</td><td>17건 중 13건 완료</td>
+      </tr>
+      <tr>
+        <td>④</td><td>인프라 보안 강화</td>
+        <td><strong style="color:#f59e0b">75%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김경립, 이지중</td><td>패스워드 변경 + GKE CIDR 해소</td>
+      </tr>
+      <tr>
+        <td>⑤</td><td>클라우드 인프라 최적화</td>
+        <td><strong style="color:#f59e0b">50%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김경립, 이지중</td><td>GCP 연동 완료, GKE 최적화 진행</td>
+      </tr>
+      <tr>
+        <td>⑥</td><td>모니터링 시스템 구축</td>
+        <td><strong style="color:#f59e0b">55%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김경립, 이재훈(위스)</td><td>Mage.ai Zabbix 연동 진행 중</td>
+      </tr>
+      <tr>
+        <td>⑦</td><td>DataForge 플랫폼 기능 확장</td>
+        <td><strong style="color:#16a34a">60%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>하민규</td><td>SHE 연동, CloudFunction 정리</td>
+      </tr>
+      <tr>
+        <td>⑧</td><td>데이터 파이프라인 안정화</td>
+        <td><strong style="color:#16a34a">70%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>유성열, 하민규, 김경립</td><td>NiFi 버그 수정, Kafka 백업 완료</td>
+      </tr>
+      <tr>
+        <td>⑨</td><td>신규 고객사 확대 지원</td>
+        <td><strong style="color:#16a34a">65%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김경립, 유병재</td><td>CIO팀 POC, FeMS 이관 협의</td>
+      </tr>
+      <tr>
+        <td>⑩</td><td>Sale Kit 개발 완료</td>
+        <td><strong style="color:#ef4444">45%</strong></td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>김성만</td><td>DF-1038 지속 개발 중</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ======================== TAB 4: 팀원별현황 ======================== -->
+<div id="tab-team" class="tab-content">
+
+  <div class="section-note">※ 담당자 기준: JIRA assignee 1순위, Confluence Page Owner(Main/Sub) 2순위</div>
+
+  <div class="team-grid">
+
+    <!-- 유병재 -->
+    <div class="team-card">
+      <div class="team-name">유병재</div>
+      <div class="team-role">팀장 / DataForge 운영총괄</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1074 — 창특 DataForge 청구서 처리 프로세스 수립</li>
+        <li>[진행] DF-1221 — 베스틸 FeMS 이관 업무협의 회의</li>
+        <li>[진행] DF-1212 — 창특 PC1팀 데이터 전송 해결 회의</li>
+      </ul>
+      <div class="team-count">이슈 3건 (진행 중 3건)</div>
+    </div>
+
+    <!-- 하민규 -->
+    <div class="team-card">
+      <div class="team-name">하민규</div>
+      <div class="team-role">선임 / DataForge 기능개발·WG</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1216 — 베스틸 DataForge-SHE시스템 연동 개발</li>
+        <li>[진행] DF-1223 — 베스틸 NiFi PostgreSQL Jython 스크립트 삭제</li>
+        <li>[진행] DF-1225 — WG-686 소형/대형단조 전력량계 Tag 등록</li>
+        <li>[진행] DF-1181 — MES 데이터 정합성 로그 처리</li>
+        <li>[진행] DF-1222 — RFM Mitsubishi PLC 16진수 태그 확인</li>
+        <li>[검토] DF-1201 — WG-677 RFM SPM 속도 품질관리 대시보드</li>
+        <li>[완료] DF-1199 — WG-675 MES데이터 수집요청</li>
+        <li>[완료] DF-1198 — WG-676 HEAT별 화학성분현황 데이터 수집</li>
+        <li>[완료] DF-1203 — 창특 NiFi 포스트그레스 파이썬 스크립트 배제</li>
+        <li>[완료] DF-1204 — WG-678 1,2제강 전기로 POT 그라파나 모니터링</li>
+        <li>[완료] DF-1165 — WG-668 Grafana 경보용 음성 알람 구현 검토</li>
+        <li>[완료] DF-1183 — 군산 소형정정 에버가드 수집 이전</li>
+      </ul>
+      <div class="team-count">이슈 12건 (진행 5건 / 검토 1건 / 완료 6건)</div>
+    </div>
+
+    <!-- 김경립 -->
+    <div class="team-card">
+      <div class="team-name">김경립</div>
+      <div class="team-role">선임 / 인프라·클라우드·운영</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1122 — 베스틸 HyperFlex Node3 5번 디스크 고장</li>
+        <li>[진행] DF-1196 — 창특 PostgreSQL/Edge 패스워드 변경</li>
+        <li>[진행] DF-1195 — 베스틸 PostgreSQL/Edge 패스워드 변경</li>
+        <li>[진행] DF-1211 — 창특 Mage.ai Zabbix 연동</li>
+        <li>[진행] DF-1210 — 베스틸 Mage.ai Zabbix 연동</li>
+        <li>[진행] DF-1207 — CIO팀 데이터 플랫폼 POC</li>
+        <li>[완료] DF-1220 — 베스틸 HyperFlex Node2 16번 디스크 고장</li>
+        <li>[완료] DF-1214 — 창특 Kafka 로그 용량 관리 및 자동 백업</li>
+        <li>[완료] DF-1213 — 베스틸 Kafka 로그 용량 관리 및 자동 백업</li>
+        <li>[완료] DF-1217 — GCP 탄소 배출 관리 플랫폼 Cloud SQL 지원</li>
+        <li>[완료] DF-1192 — 창특 Cloud Run, Cloud SQL 로컬망 연동</li>
+        <li>[완료] DF-1176 — GLPI Agent 설치 대상 선정</li>
+        <li>[완료] DF-1173 — 창특/베스틸 PostgreSQL 파티션 Mage 연동</li>
+        <li>[완료] DF-1193 — 상암IDC 개발 서버 점검 조치</li>
+        <li>[완료] DF-1194 — 창특 테스트 Kepware VPC 피어링</li>
+        <li>[완료] DF-1162 — 창특 Kepware 테스트 서버 구성</li>
+        <li>[완료] DF-1166 — GCP 탄소 배출 관리 플랫폼 기술 검토 지원</li>
+      </ul>
+      <div class="team-count">이슈 17건 (진행 6건 / 완료 11건)</div>
+    </div>
+
+    <!-- 안종성 -->
+    <div class="team-card">
+      <div class="team-name">안종성</div>
+      <div class="team-role">선임 / 운영관리·인프라점검</div>
+      <ul class="team-tasks">
+        <li>[완료] DF-1202 — Edge 6월 정기 점검 (06.17)</li>
+        <li>[Confluence] pgpool-II Zabbix 설정 — pgpool-II 서비스 모니터링 적용</li>
+        <li>[Confluence] InfluxDB 용량 초과 문제 — 원인 분석 및 해결 방안 문서화</li>
+        <li>[Confluence] Kafka 로그 관리 — 로그 파티션 정리 가이드 작성</li>
+      </ul>
+      <div class="team-count">JIRA 1건 (완료) + Confluence 작업 3건</div>
+    </div>
+
+    <!-- 이재훈(위스) -->
+    <div class="team-card">
+      <div class="team-name">이재훈(위스)</div>
+      <div class="team-role">책임 / Grafana·WG 대응</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1224 — WG-685 그라파나 선반 가동률 조회 권한 요청</li>
+        <li>[진행] DF-1219 — WG-684 2제강 실시간 생산 모니터링 대시보드</li>
+        <li>[완료] DF-1218 — WG-683 그라파나 가공공장 열처리로 조회 권한</li>
+        <li>[완료] DF-1208 — WG-682 그라파나 화면 그래프 추가 요청</li>
+        <li>[완료] DF-1209 — WG-681 가공팀 Organization 변경 요청</li>
+        <li>[완료] DF-1205 — WG-680 가공팀 신규 I/O 등록 및 대시보드</li>
+        <li>[완료] DF-1206 — WG-679 Organization 변경 요청</li>
+        <li>[완료] DF-1200 — WG-674 시편 알람 Cloud Run/SQL 연동</li>
+        <li>[완료] DF-1184 — WG-672 시편 추적관리 시스템 네트워크 검토</li>
+        <li>[완료] DF-1191 — WG-673 2연주 Strand Strock cpk 데이터 변경</li>
+        <li>[완료] DF-1164 — WG-667 대형정정 선반 가동율 Grafana 구축</li>
+      </ul>
+      <div class="team-count">이슈 11건 (진행 2건 / 완료 9건)</div>
+    </div>
+
+    <!-- 유성열 -->
+    <div class="team-card">
+      <div class="team-name">유성열</div>
+      <div class="team-role">책임 / NiFi·데이터파이프라인</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1073 — 베스틸 AX TF 과제 협업 (소재ID 트래킹)</li>
+        <li>[완료] DF-1188 — NiFi Python 스크립트 버그 수정본 테스트</li>
+        <li>[완료] DF-1190 — NiFi PostgreSQL 저장 프로세서 부동소숫점 불일치</li>
+      </ul>
+      <div class="team-count">이슈 3건 (진행 1건 / 완료 2건)</div>
+    </div>
+
+    <!-- 김성만 -->
+    <div class="team-card">
+      <div class="team-name">김성만</div>
+      <div class="team-role">책임 / Sale Kit 개발</div>
+      <ul class="team-tasks">
+        <li>[진행] DF-1038 — Sale Kit 개발 (과제 #8)</li>
+      </ul>
+      <div class="team-count">이슈 1건 (진행 중)</div>
+    </div>
+
+    <!-- 이지중 -->
+    <div class="team-card">
+      <div class="team-name">이지중</div>
+      <div class="team-role">선임 / GCP·GKE 인프라</div>
+      <ul class="team-tasks">
+        <li>[완료] GKE VPC Subnet CIDR 충돌 해소 (2026-06-19) — 온프렘 VPN 대역 충돌로 인한 클러스터 재생성 완료</li>
+      </ul>
+      <div class="team-count">Confluence 작업 1건 (완료)</div>
+    </div>
+
+  </div>
+
+  <!-- 변중환 국책과제 섹션 -->
+  <div class="special-card">
+    <h3>🏛️ 변중환 실장 — 국책과제 (별도 관리)</h3>
+    <table>
+      <tr><th>이슈 번호</th><th>과제명</th><th>상태</th><th>최종 업데이트</th><th>비고</th></tr>
+      <tr>
+        <td>DF-983</td>
+        <td>Pack 정책 수립</td>
+        <td><span class="badge badge-progress">진행 중</span></td>
+        <td>2026-06-22</td>
+        <td>국책과제 — 일반 이슈 통계 제외</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 팀원 요약표 -->
+  <div class="card">
+    <div class="card-title">📋 팀원별 6월 업무 요약표</div>
+    <table>
+      <tr>
+        <th>팀원</th><th>역할</th><th>총 이슈</th><th>완료</th><th>진행/검토</th><th>주요 업무</th>
+      </tr>
+      <tr>
+        <td><strong>유병재</strong></td><td>팀장</td><td>3</td><td>0</td><td>3</td>
+        <td>FeMS 이관 협의, 청구서 프로세스, 창특 데이터 전송</td>
+      </tr>
+      <tr>
+        <td><strong>하민규</strong></td><td>선임</td><td>12</td><td>6</td><td>6</td>
+        <td>SHE 연동 개발, NiFi Jython 배제, WG 6건 처리</td>
+      </tr>
+      <tr>
+        <td><strong>김경립</strong></td><td>선임</td><td>17</td><td>11</td><td>6</td>
+        <td>HyperFlex 디스크 조치, Kafka 백업, GCP 연동, Mage Zabbix</td>
+      </tr>
+      <tr>
+        <td><strong>안종성</strong></td><td>선임</td><td>1+3</td><td>1</td><td>0</td>
+        <td>Edge 정기 점검, Confluence 운영 문서 작성 3건</td>
+      </tr>
+      <tr>
+        <td><strong>이재훈(위스)</strong></td><td>책임</td><td>11</td><td>9</td><td>2</td>
+        <td>WG 11건 처리 (Grafana 권한, 대시보드, Cloud Run 연동)</td>
+      </tr>
+      <tr>
+        <td><strong>유성열</strong></td><td>책임</td><td>3</td><td>2</td><td>1</td>
+        <td>NiFi 버그 수정 테스트 완료, 베스틸 AX TF 협업</td>
+      </tr>
+      <tr>
+        <td><strong>김성만</strong></td><td>책임</td><td>1</td><td>0</td><td>1</td>
+        <td>Sale Kit 개발 지속 (DF-1038)</td>
+      </tr>
+      <tr>
+        <td><strong>이지중</strong></td><td>선임</td><td>1(Conf)</td><td>1</td><td>0</td>
+        <td>GKE VPC Subnet CIDR 충돌 해소 — 클러스터 재생성 완료</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+</div><!-- .content -->
+
+<div class="footer">
+  DataForge팀 업무현황 보고서 | 발행일: 2026-07-01 | 데이터 기준: 2026-07-01 | JIRA(DataForge) + Confluence(DPE) 기반
+</div>
+
+<script>
+function showTab(tabId, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId).style.display = 'block';
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
