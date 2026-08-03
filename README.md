@@ -16,6 +16,7 @@ open link pages
 - **2026.04** — https://randyryu.github.io/openlink/status_dfteam/260505_dataforge-team-workstatus.html
 - **2026.05** — https://randyryu.github.io/openlink/status_dfteam/260601_dataforge-team-workstatus.html
 - **2026.06** — https://randyryu.github.io/openlink/status_dfteam/260701_dataforge-team-workstatus.html
+- **2026.07** — https://randyryu.github.io/openlink/status_dfteam/260803_dataforge-team-workstatus.html
 
 ### 4. 2026.04 장모님칠순 가족여행 
 - https://randyryu.github.io/openlink/personal/260331_hanatour_vietnam_schedule.html 
