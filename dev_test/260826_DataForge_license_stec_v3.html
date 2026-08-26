@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DataForge 라이선스 통합 설계서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;600&display=swap">
+
+<style>
+:root{
+  --ground:#EEF1F2;
+  --surface:#FFFFFF;
+  --surface-2:#F6F8F8;
+  --ink:#15191C;
+  --ink-2:#3A464C;
+  --muted:#68767C;
+  --rule:#D2DADD;
+  --rule-strong:#B4C0C4;
+  --accent:#14606E;
+  --accent-soft:#DCEAEC;
+  --signal:#A8451B;
+  --signal-soft:#F6E3DA;
+  --ok:#2C6248;
+  --ok-soft:#DCEAE2;
+  --warn:#8A6410;
+  --warn-soft:#F5EBD3;
+  --shadow:0 1px 2px rgba(20,40,48,.06), 0 6px 20px rgba(20,40,48,.05);
+
+  --f-sans:"IBM Plex Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-serif:"Noto Serif KR", "IBM Plex Sans KR", Georgia, serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1214;
+    --surface:#161B1E;
+    --surface-2:#1C2226;
+    --ink:#E4EAEC;
+    --ink-2:#B4C0C5;
+    --muted:#87959B;
+    --rule:#2A3237;
+    --rule-strong:#3C464C;
+    --accent:#5FB6C4;
+    --accent-soft:#12333A;
+    --signal:#DE8A5E;
+    --signal-soft:#3A2318;
+    --ok:#77BE9B;
+    --ok-soft:#16301F;
+    --warn:#D7B15C;
+    --warn-soft:#302711;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1214;
+  --surface:#161B1E;
+  --surface-2:#1C2226;
+  --ink:#E4EAEC;
+  --ink-2:#B4C0C5;
+  --muted:#87959B;
+  --rule:#2A3237;
+  --rule-strong:#3C464C;
+  --accent:#5FB6C4;
+  --accent-soft:#12333A;
+  --signal:#DE8A5E;
+  --signal-soft:#3A2318;
+  --ok:#77BE9B;
+  --ok-soft:#16301F;
+  --warn:#D7B15C;
+  --warn-soft:#302711;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-sans);
+  font-size:15px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{text-wrap:balance;margin:0;line-height:1.3;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+
+/* ---------- shell ---------- */
+.shell{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:236px minmax(0,1fr);gap:0;align-items:start}
+.rail{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:32px 20px 40px 24px;
+  border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:20px;
+}
+.rail-brand{display:flex;flex-direction:column;gap:3px}
+.rail-brand .mark{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;
+}
+.rail-brand .name{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+.rail-brand .ver{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.rail nav{display:flex;flex-direction:column;gap:1px}
+.rail nav a{
+  display:flex;gap:10px;align-items:baseline;
+  padding:6px 8px;border-radius:4px;
+  text-decoration:none;color:var(--ink-2);font-size:13px;line-height:1.4;
+  border-left:2px solid transparent;
+}
+.rail nav a .n{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);font-weight:500;min-width:14px}
+.rail nav a:hover{background:var(--surface-2);color:var(--ink)}
+.rail nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.rail-foot{margin-top:auto;font-size:11px;color:var(--muted);line-height:1.55;border-top:1px solid var(--rule);padding-top:14px}
+
+.main{padding:0 40px 96px;min-width:0}
+
+/* ---------- masthead ---------- */
+.masthead{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.055em;
+  color:var(--signal);font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.eyebrow .sep{width:20px;height:1px;background:var(--rule-strong)}
+h1{font-size:clamp(30px,4.2vw,44px);font-weight:700;letter-spacing:-.025em;margin:14px 0 0;line-height:1.18}
+.dek{font-family:var(--f-serif);font-size:16.5px;line-height:1.8;color:var(--ink-2);max-width:64ch;margin-top:16px}
+.meta-row{display:flex;flex-wrap:wrap;gap:0;margin-top:26px;border-top:1px solid var(--rule);padding-top:16px}
+.meta-row div{padding-right:28px;margin-right:28px;border-right:1px solid var(--rule)}
+.meta-row div:last-child{border-right:0}
+.meta-row dt{font-family:var(--f-sans);font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);margin:0 0 4px}
+.meta-row dd{margin:0;font-size:13.5px;font-weight:500}
+
+/* ---------- gauge cluster ---------- */
+.cluster{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;
+  margin:32px 0 0;
+}
+.gauge{background:var(--surface);padding:16px 18px 18px;display:flex;flex-direction:column;gap:5px}
+.gauge .lab{font-family:var(--f-sans);font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--muted)}
+.gauge .val{font-family:var(--f-mono);font-size:25px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.gauge .sub{font-size:11.5px;color:var(--muted);line-height:1.45}
+.gauge.is-accent .val{color:var(--accent)}
+.gauge.is-signal .val{color:var(--signal)}
+
+/* ---------- sections ---------- */
+section{padding-top:64px;scroll-margin-top:20px}
+.s-head{display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--rule-strong);padding-bottom:12px;margin-bottom:26px}
+.s-head .num{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em;padding-top:5px;white-space:nowrap;
+}
+.s-head h2{font-size:24px;letter-spacing:-.02em;font-weight:700;flex:1}
+.s-head .tag{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--rule-strong);border-radius:3px;padding:3px 8px;white-space:nowrap;
+}
+.lede{font-family:var(--f-serif);font-size:15.5px;line-height:1.85;color:var(--ink-2);max-width:68ch;margin-bottom:24px}
+h3{font-size:16px;font-weight:600;margin:34px 0 12px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+h3::before{content:"";width:3px;height:15px;background:var(--accent);border-radius:1px;flex:none}
+h4{font-size:13.5px;font-weight:600;margin:22px 0 8px;color:var(--ink-2)}
+.prose{max-width:70ch}
+.prose p+p{margin-top:12px}
+.stack{display:flex;flex-direction:column;gap:14px}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface);margin:6px 0 4px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+thead th{
+  background:var(--surface-2);text-align:left;font-weight:600;font-size:11.5px;
+  letter-spacing:.02em;color:var(--muted);font-family:var(--f-sans);
+  padding:10px 13px;border-bottom:1px solid var(--rule-strong);white-space:nowrap;vertical-align:bottom;
+}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.6}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surface-2)}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.mono{font-family:var(--f-mono);font-size:12px}
+tr.hi td{background:var(--accent-soft)}
+tr.hi:hover td{background:var(--accent-soft)}
+tr.hi td:first-child{font-weight:600}
+caption{caption-side:bottom;text-align:left;font-size:11.5px;color:var(--muted);padding:9px 13px;line-height:1.6;border-top:1px solid var(--rule)}
+.t-note{font-size:12px;color:var(--muted);line-height:1.65;margin-top:8px;max-width:70ch}
+
+/* ---------- pills ---------- */
+.pill{
+  display:inline-block;font-family:var(--f-sans);font-size:10.5px;font-weight:600;
+  letter-spacing:.01em;padding:2px 8px;border-radius:3px;white-space:nowrap;
+}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-sig{background:var(--signal-soft);color:var(--signal)}
+.p-acc{background:var(--accent-soft);color:var(--accent)}
+.p-mute{background:var(--surface-2);color:var(--muted);border:1px solid var(--rule)}
+
+/* ---------- callouts ---------- */
+.call{
+  border:1px solid var(--rule);border-left:3px solid var(--accent);
+  background:var(--surface);border-radius:0 6px 6px 0;padding:16px 20px;margin:20px 0;
+  display:flex;flex-direction:column;gap:7px;max-width:76ch;
+}
+.call.sig{border-left-color:var(--signal)}
+.call.warn{border-left-color:var(--warn)}
+.call.ok{border-left-color:var(--ok)}
+.call .ct{
+  font-family:var(--f-sans);font-size:11px;letter-spacing:.03em;font-weight:600;color:var(--accent);
+}
+.call.sig .ct{color:var(--signal)}
+.call.warn .ct{color:var(--warn)}
+.call.ok .ct{color:var(--ok)}
+.call p{font-size:13.5px;line-height:1.72;color:var(--ink-2)}
+.call strong{color:var(--ink);font-weight:600}
+
+/* ---------- layer stack ---------- */
+.layers{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.layer{background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:76px minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.layer .lid{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em;padding-top:1px}
+.layer .lname{font-size:14.5px;font-weight:600;margin-bottom:4px}
+.layer .ldesc{font-size:12.5px;color:var(--muted);line-height:1.62}
+.layer .lprice{font-size:12.5px;line-height:1.62;color:var(--ink-2)}
+.layer .lprice b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-size:12.5px}
+.layer.excl{background:var(--surface-2)}
+.layer.excl .lid{color:var(--muted)}
+
+/* ---------- formula ---------- */
+.formula{
+  font-family:var(--f-mono);font-size:14px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:6px;padding:16px 20px;margin:16px 0;overflow-x:auto;line-height:1.9;
+  font-variant-numeric:tabular-nums;box-shadow:var(--shadow);
+}
+.formula .k{color:var(--accent);font-weight:600}
+.formula .c{color:var(--muted)}
+
+/* ---------- decision list ---------- */
+.dec{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.dec-item{background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:30px minmax(0,1fr) 128px;gap:16px;align-items:start}
+.dec-item .dn{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--muted);padding-top:1px}
+.dec-item .dq{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.45}
+.dec-item .dd{font-size:12.5px;color:var(--muted);line-height:1.65}
+.dec-item .dd b{color:var(--ink-2);font-weight:600}
+.dec-item .dw{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+
+/* ---------- misc ---------- */
+ul.tight{margin:8px 0;padding-left:19px;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+ul.tight li{font-size:13.5px;line-height:1.68;color:var(--ink-2)}
+ul.tight li::marker{color:var(--rule-strong)}
+ul.tight strong{color:var(--ink);font-weight:600}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--surface-2);border:1px solid var(--rule);border-radius:3px;padding:1px 5px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start}
+.footer{margin-top:80px;padding-top:22px;border-top:2px solid var(--ink);font-size:12px;color:var(--muted);line-height:1.75;max-width:74ch}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:24px}
+  .rail nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0}
+  .rail-foot{margin-top:14px}
+  .main{padding:0 22px 72px}
+  .layer{grid-template-columns:1fr;gap:8px}
+  .dec-item{grid-template-columns:1fr;gap:8px}
+  .meta-row div{border-right:0;margin-right:0;padding-right:0;min-width:46%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="shell">
+
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="mark">Internal / Confidential</div>
+    <div class="name">DataForge<br>라이선스 통합 설계서</div>
+    <div class="ver">rev 2026-08-26</div>
+  </div>
+  <nav>
+    <a href="#s0"><span class="n">00</span><span>판정 요약</span></a>
+    <a href="#s1"><span class="n">01</span><span>두 문서 대조</span></a>
+    <a href="#s2"><span class="n">02</span><span>수치 검증 결과</span></a>
+    <a href="#s3"><span class="n">03</span><span>통합 체계 · 5계층</span></a>
+    <a href="#s4"><span class="n">04</span><span>과금 지표 확정안</span></a>
+    <a href="#s5"><span class="n">05</span><span>등급표 &amp; 가드 밴드</span></a>
+    <a href="#s6"><span class="n">06</span><span>플러그인 체계</span></a>
+    <a href="#s7"><span class="n">07</span><span>계약 · 방어 조항</span></a>
+    <a href="#s8"><span class="n">08</span><span>매출 영향 &amp; BEP</span></a>
+    <a href="#s9"><span class="n">09</span><span>미해결 쟁점</span></a>
+    <a href="#s10"><span class="n">10</span><span>이행 로드맵</span></a>
+  </nav>
+  <div class="rail-foot">
+    출처 문서<br>
+    ① DF 라이선스 체계 수립 기획 초안 (2026-06-21, 팀 회의)<br>
+    ② DataForge 라이선스 요금 산정 근거 (개발 내부)
+  </div>
+</aside>
+
+<main class="main">
+
+<header class="masthead">
+  <div class="eyebrow"><span>내부 확정용 설계서</span><span class="sep"></span><span>대외 배포 금지</span></div>
+  <h1>DataForge 라이선스 체계<br>통합 설계 및 검증</h1>
+  <p class="dek">팀 회의 기획 초안과 개발 산정 근거 두 문서를 대조해 합의·충돌·공백을 분리하고, 개발 문서의 요금 산식을 재계산으로 검증한 뒤, 하나의 5계층 라이선스 체계로 통합한다. 검증을 통과한 골격은 그대로 채택하고, 두 문서가 어긋나는 지점에는 보정안을 제시한다.</p>
+  <dl class="meta-row">
+    <div><dt>1차 독자</dt><dd>DataForge 팀 · 경영 승인</dd></div>
+    <div><dt>대상 계약</dt><dd>세아창원특수강 외 그룹사</dd></div>
+    <div><dt>실측 근거</dt><dd>dataforge-seahcss · 62일</dd></div>
+    <div><dt>목표 시점</dt><dd>2026년 8월 체계 확정</dd></div>
+  </dl>
+</header>
+
+<!-- ══════════════ 00 ══════════════ -->
+<section id="s0">
+  <div class="s-head"><span class="num">00</span><h2>판정 요약</h2><span class="tag">Executive</span></div>
+
+  <p class="lede">두 문서는 <strong>같은 문제 인식에서 출발해 서로 다른 층위를 풀었다.</strong> 기획 초안은 <em>무엇에 값을 매길 것인가</em>(과금 대상·서비스 분류·가드 항목)를, 개발 문서는 <em>얼마를 받을 것인가</em>(지표·산식·등급표·실측)를 답했다. 두 문서는 대체 관계가 아니라 상하위 관계이며, 개발 문서의 요금 산식은 재계산 결과 8개 등급 전부 정확히 재현된다. 통합의 실제 과제는 가격이 아니라 <strong>계측 기준의 충돌 3건과 기획 초안이 요구한 가드 4종의 반영 여부</strong>다.</p>
+
+  <div class="cluster">
+    <div class="gauge is-ok"><span class="lab">요금 산식 검증</span><span class="val" style="color:var(--ok)">8 / 8</span><span class="sub">등급 전부 산식과 일치 · 보정 불필요</span></div>
+    <div class="gauge is-signal"><span class="lab">지표 정의 충돌</span><span class="val">3건</span><span class="sub">계측 지점 · 과금축 · 보존기간</span></div>
+    <div class="gauge is-signal"><span class="lab">기획 요구 미반영</span><span class="val">4종</span><span class="sub">가드 항목 전부 개발 문서에 없음</span></div>
+    <div class="gauge is-accent"><span class="lab">의사결정 대기</span><span class="val">8건</span><span class="sub">§09 · 경영 승인 3건 포함</span></div>
+  </div>
+
+  <h3>결론 4문장</h3>
+  <ul class="tight">
+    <li><strong>골격은 개발 문서를 채택한다.</strong> 기본료 2,000만원 + 일일 수집량 구간 등급(430,000원/GB·day) 구조는 산식·실측·어뷰징 방어까지 완결되어 있고, AS-IS의 Tag/Column 이중 등급이 낳은 3대 병폐(수량 감축 노동, 의견 충돌, 필요 데이터 미수집)를 구조적으로 제거한다.</li>
+    <li><strong>기획 초안의 가드 4종을 L2 계층으로 신설해 얹는다.</strong> 일일 증분 하나로는 초당 부하·가상 태그 연산·전송량·쿼리 스캔이 전혀 잡히지 않는다. 단, 가드는 과금축이 아니라 상한선으로만 둔다(@김성만 원안 유지).</li>
+    <li><strong>계측 기준을 이원화해 두 문서의 충돌을 해소한다.</strong> 청구 근거는 BigQuery 논리 증분(투명·재현 가능), 우회 탐지는 Kafka 처리량(대조 전용). 어느 한쪽을 버리는 대신 역할을 나눈다.</li>
+    <li><strong>가격 수준 자체는 경영 판단이 남아 있다.</strong> AS-IS 최대 청구 구간(월 8,500만~1억 2,300만) 대비 세아 실측 기준 To-Be는 월 5,000만원으로, 손익분기 고객사 수가 약 1.7배로 늘어난다(§08).</li>
+  </ul>
+</section>
+
+<!-- ══════════════ 01 ══════════════ -->
+<section id="s1">
+  <div class="s-head"><span class="num">01</span><h2>두 문서 대조 — 합의 · 충돌 · 공백</h2><span class="tag">Gap Analysis</span></div>
+
+  <p class="lede">항목별로 두 문서의 입장을 나란히 놓고 <span class="pill p-ok">합의</span> <span class="pill p-sig">충돌</span> <span class="pill p-warn">공백</span>으로 판정했다. 충돌 6건 중 4건은 아래 통합안에서 해소되며, 2건은 §09의 의사결정 대상으로 넘긴다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:15%">항목</th><th style="width:27%">① 기획 초안 (팀 회의)</th><th style="width:27%">② 개발 산정 근거</th><th style="width:9%">판정</th><th style="width:22%">통합안 처리</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>과금 단순화 방향</b></td>
+          <td>Tag·Column 이중 등급 폐기, 단일 축으로 통합</td>
+          <td>일일 증분을 전체 사용의 단일 프록시로 채택</td>
+          <td><span class="pill p-ok">합의</span></td>
+          <td>그대로 채택. AS-IS 이중 등급 폐기 명문화</td>
+        </tr>
+        <tr>
+          <td><b>최소 기본료</b></td>
+          <td>사업장당 최소 플로어 (@김성만 ①), 운영 공수는 분리</td>
+          <td>월 2,000만원 고정, 상시 운영 서비스 <em>포함</em></td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td>금액 유지 + <b>인보이스 2줄 분리 표기</b>(§03 L0)</td>
+        </tr>
+        <tr>
+          <td><b>1차 과금축</b></td>
+          <td>논리적 볼륨 = 데이터포인트 × <b>보존기간</b> (@김성만 ②)</td>
+          <td>일일 증분(수집 처리량) — 보존기간 미반영</td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td>증분 유지 + <b>기본 보존 12개월 포함</b>으로 봉합(§04)</td>
+        </tr>
+        <tr>
+          <td><b>계측 지점</b></td>
+          <td>DW 저장량이 아닌 <b>Kafka</b> 적재량 기준 (Action ①)</td>
+          <td>BigQuery <code>stored_bytes</code> 일일 증분</td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td><b>이원화</b> — BQ=청구, Kafka=우회 탐지(§04)</td>
+        </tr>
+        <tr>
+          <td><b>압축 기준</b></td>
+          <td>"압축 후 raw bytes로 정의하면 새 게임" → 논리량 명시</td>
+          <td>기준 미명시 (<code>stored_bytes</code>만 기재)</td>
+          <td><span class="pill p-warn">공백</span></td>
+          <td><b>logical bytes</b>로 계약서 명문화(§04)</td>
+        </tr>
+        <tr>
+          <td><b>전송량(API)</b></td>
+          <td>수집 밴드 + <b>전송 밴드</b> 조합 Tier (Action ①)</td>
+          <td>수집 증분에 안 잡힘 → 플러그인으로 분리</td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td><b>가드 밴드 + 초과 시 플러그인</b> 2단(§05)</td>
+        </tr>
+        <tr>
+          <td><b>가상 Tag 부하</b></td>
+          <td>스케줄러/개수 가드를 도커 단위 Plugin 수량으로 (Action ②)</td>
+          <td>언급 없음</td>
+          <td><span class="pill p-warn">공백</span></td>
+          <td><b>L2 가드 ③</b>으로 신설(§05)</td>
+        </tr>
+        <tr>
+          <td><b>DW 쿼리 스캔</b></td>
+          <td>계정당 월 1TB 스캔 가드, 초과 시 MSP Bypass (Action ④)</td>
+          <td>언급 없음 (compute를 고객 GCP로 이관)</td>
+          <td><span class="pill p-ok">해소</span></td>
+          <td><b>조건부</b> — VNTG 계정 운영 계약에만 적용(§05)</td>
+        </tr>
+        <tr>
+          <td><b>소재 트래킹</b></td>
+          <td>고가치 Add-on, 기능 티어 매트릭스(@이재훈), 기본료 X% 추가(Action ③)</td>
+          <td>플러그인 별도 과금 — 기본료 + 개발 공수</td>
+          <td><span class="pill p-ok">합의</span></td>
+          <td>기능 매트릭스 유지 + <b>기본료 % 방식</b>(§06)</td>
+        </tr>
+        <tr>
+          <td><b>BI · 대시보드</b></td>
+          <td>df-port 기능 모듈당 과금 대상에 BI 포함 (@김성만 ③)</td>
+          <td>기본 제공 — 기본료의 가치 앵커</td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td><span class="pill p-mute">미결</span> §09-④ 의사결정</td>
+        </tr>
+        <tr>
+          <td><b>서비스 티어 명칭</b></td>
+          <td>Standard/Pro/Enterprise (@이재훈) ↔ 티어는 그룹사에서 애매 (@김성만)</td>
+          <td>티어 없음 — 기능 모듈 단위</td>
+          <td><span class="pill p-ok">해소</span></td>
+          <td>티어 폐기, <b>모듈 단위</b> 확정(§06)</td>
+        </tr>
+        <tr>
+          <td><b>AI · LLM 과금</b></td>
+          <td>DF 라이선스 계약 금액의 10% 추가 부과</td>
+          <td>기본료 + 개발 공수 + <b>추론 토큰 실비 고객 부담</b></td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td>개발 문서안 채택 — %방식은 런타임 미포착(§06)</td>
+        </tr>
+        <tr>
+          <td><b>ML · 예측</b></td>
+          <td>인프라 비용에 20% 추가 부과</td>
+          <td>도메인 리스크 경고 — 표준 정찰가 금지, 공정 검증 PoC 선행</td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td>개발 문서안 채택 — 표준 플러그인에서 제외(§06)</td>
+        </tr>
+        <tr>
+          <td><b>compute · 인프라</b></td>
+          <td>Compute 자원 소량/중량 사용료를 라이선스에 반영</td>
+          <td>고객 GCP 이관 — 라이선스 범위 밖</td>
+          <td><span class="pill p-ok">해소</span></td>
+          <td>개발 문서안 채택. 어뷰징 걱정 자체가 소멸(§03)</td>
+        </tr>
+        <tr>
+          <td><b>비용 절감 레버</b></td>
+          <td>수집주기↑ / 미사용 삭제 / 보존주기↓ / 수집 중단 (@유성열·@김성만)</td>
+          <td>동일하되 <b>감축은 다음 갱신에만 반영</b></td>
+          <td><span class="pill p-sig">충돌</span></td>
+          <td><b>비대칭 조정</b> — 하향 6개월 재산정 허용(§07)</td>
+        </tr>
+        <tr>
+          <td><b>중복 데이터 책임</b></td>
+          <td>DM 중복은 사용자 책임으로 이관, 운영자 policing 불필요</td>
+          <td>저장량 과금이므로 동일 논리</td>
+          <td><span class="pill p-ok">합의</span></td>
+          <td>계약서 명문화 — AS-IS 이슈 2 해소</td>
+        </tr>
+        <tr>
+          <td><b>개발 공수</b></td>
+          <td>1회성·별도 산정, 라이선스에서 분리 (@김성만 ④, @이재훈 2)</td>
+          <td>플러그인 기본료 + 개발 공수, SOW로 분리</td>
+          <td><span class="pill p-ok">합의</span></td>
+          <td>L4 계층으로 명시 분리(§03)</td>
+        </tr>
+        <tr>
+          <td><b>SLA · 계측 정정</b></td>
+          <td>언급 없음</td>
+          <td>언급 없음</td>
+          <td><span class="pill p-warn">공백</span></td>
+          <td>계약 필수 조항으로 신설(§07)</td>
+        </tr>
+      </tbody>
+      <caption>판정 기준 — 합의: 두 문서가 같은 방향 / 충돌: 명시적으로 다른 방식 / 공백: 한쪽에만 있거나 양쪽 모두 없음 / 해소: 다른 전제 변경으로 쟁점 자체가 소멸</caption>
+    </table>
+  </div>
+
+  <div class="call ok">
+    <span class="ct">AS-IS 개선 포인트 달성 점검</span>
+    <p>기획 초안 §1.3.1이 제시한 개선 포인트 3개는 통합안에서 모두 달성된다. ① 수량 체크·증명 노력 → BigQuery SQL 자동 판정으로 소멸. ② 체계 단순화 → 이중 등급이 단일 축으로. ③ 의견 충돌 요소 제거 → 태그 동일성 판단이 과금과 무관해짐. <strong>다만 §1.3.1의 4번(운영 공수가 섞인 라이선스가 과다청구로 보임)은 개발 문서가 기본료에 운영 서비스를 다시 포함시키면서 재발 위험이 있다</strong> — L0의 인보이스 분리 표기로 대응한다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 02 ══════════════ -->
+<section id="s2">
+  <div class="s-head"><span class="num">02</span><h2>수치 검증 결과</h2><span class="tag">Verification</span></div>
+
+  <p class="lede">개발 문서의 등급표·실효단가·실측치를 전부 독립 재계산했다. <strong>요금 산식은 8개 등급 전부 정확히 재현된다.</strong> 반면 가드값 산정 방식과 태그 단가 환산에는 보정이 필요한 지점이 있다.</p>
+
+  <h3>등급표 산식 재현</h3>
+  <div class="formula">
+<span class="k">월 사용료</span> = 20,000,000<span class="c"> (기본료 고정)</span> + <span class="k">밴드 대표점(GB/day)</span> × 430,000<span class="c"> (수집 스핀 단가)</span>
+             <span class="c">→ 100만원 단위 반올림</span>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>등급</th><th class="num">밴드 (GB/day)</th><th class="num">대표점</th><th class="num">산식 원값</th><th class="num">반올림</th><th class="num">문서 기재</th><th>판정</th><th class="num">총액 실효단가</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">DF-20</td><td class="num">≤ 20</td><td class="num">10</td><td class="num">24,300,000</td><td class="num">24,000,000</td><td class="num">24,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">2,400,000</td></tr>
+        <tr><td class="mono">DF-40</td><td class="num">20 ~ 40</td><td class="num">30</td><td class="num">32,900,000</td><td class="num">33,000,000</td><td class="num">33,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">1,100,000</td></tr>
+        <tr><td class="mono">DF-60</td><td class="num">40 ~ 60</td><td class="num">50</td><td class="num">41,500,000</td><td class="num">42,000,000</td><td class="num">42,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">840,000</td></tr>
+        <tr class="hi"><td class="mono">DF-80</td><td class="num">60 ~ 80</td><td class="num">70</td><td class="num">50,100,000</td><td class="num">50,000,000</td><td class="num">50,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">714,286</td></tr>
+        <tr><td class="mono">DF-100</td><td class="num">80 ~ 100</td><td class="num">90</td><td class="num">58,700,000</td><td class="num">59,000,000</td><td class="num">59,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">655,556</td></tr>
+        <tr><td class="mono">DF-130</td><td class="num">100 ~ 130</td><td class="num">115</td><td class="num">69,450,000</td><td class="num">69,000,000</td><td class="num">69,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">600,000</td></tr>
+        <tr><td class="mono">DF-160</td><td class="num">130 ~ 160</td><td class="num">145</td><td class="num">82,350,000</td><td class="num">82,000,000</td><td class="num">82,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">565,517</td></tr>
+        <tr><td class="mono">DF-200</td><td class="num">160 ~ 200</td><td class="num">180</td><td class="num">97,400,000</td><td class="num">97,000,000</td><td class="num">97,000,000</td><td><span class="pill p-ok">일치</span></td><td class="num">538,889</td></tr>
+      </tbody>
+      <caption>강조 행 = 세아창원특수강 실측 가드값 63.6 GB/day가 안착하는 등급. 총액 실효단가 = 월 사용료 ÷ 대표점 (기본료 포함 기준).</caption>
+    </table>
+  </div>
+
+  <div class="call">
+    <span class="ct">실효단가 열의 정의 주의</span>
+    <p>개발 문서의 "GB/day당 실효단가" 열(400,000~440,000원)은 <strong>기본료를 제외한 수집 사용료만</strong> 대표점으로 나눈 값이다. 고객이 총 청구액으로 역산하면 위 표의 총액 실효단가(DF-80 기준 <b>714,286원</b>)가 나오며, 이 값은 소량 → 대량으로 갈수록 단조 감소해 볼륨 디스카운트가 일관되게 성립한다. 반면 수집 사용료 기준 실효단가는 DF-20(400,000) → DF-60(440,000) → DF-130(426,087)으로 비단조라, "왜 130 등급이 60 등급보다 GB당 싸냐"는 반박을 부른다. <strong>내부 문서에서 두 열의 정의를 분리 표기하고, 협상 테이블에는 총액 기준만 쓴다.</strong></p>
+  </div>
+
+  <h3>실측치 검증 — dataforge-seahcss</h3>
+  <div class="cols2">
+    <div class="tw">
+      <table>
+        <thead><tr><th>지표</th><th class="num">문서 기재</th><th class="num">재계산</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>평균 일일 수집량</td><td class="num">54.6</td><td class="num">—</td><td><span class="pill p-mute">원자료</span></td></tr>
+          <tr><td>중앙값</td><td class="num">56.6</td><td class="num">—</td><td><span class="pill p-mute">원자료</span></td></tr>
+          <tr><td>단일 최댓값</td><td class="num">69.8</td><td class="num">—</td><td><span class="pill p-mute">원자료</span></td></tr>
+          <tr><td>최댓값/중앙값</td><td class="num">+23%</td><td class="num">+23.3%</td><td><span class="pill p-ok">일치</span></td></tr>
+          <tr><td>월 환산 (30일)</td><td class="num">1.91 TB</td><td class="num">1.908 TB</td><td><span class="pill p-ok">일치</span></td></tr>
+          <tr><td>가드값 → 등급</td><td class="num">63.6 → DF-80</td><td class="num">60~80 밴드</td><td><span class="pill p-ok">일치</span></td></tr>
+          <tr><td>DF-80 월 사용료</td><td class="num">50,000,000</td><td class="num">50,100,000</td><td><span class="pill p-ok">일치</span></td></tr>
+        </tbody>
+        <caption>단위 GB/day, 10진 GB. 문서 본문 63.6과 §7 검증 결과 63.59는 반올림 차이로 동일.</caption>
+      </table>
+    </div>
+    <div class="stack">
+      <div class="call warn" style="margin:0">
+        <span class="ct">보정 필요 ① — 가드값 산정 기간 의존성</span>
+        <p>"상위 10개 평균"은 <strong>측정 기간에 따라 엄정도가 6배 달라진다.</strong> 62일 관측에서 상위 10개는 상위 16.1%지만, 1년 계약이면 상위 2.7%다. 기간이 짧을수록 상위 10개가 분포의 넓은 부분을 포함해 평균이 중앙값 쪽으로 끌려 내려가고, 결과적으로 <b>짧은 측정 구간일수록 가드값이 낮게 잡혀 VNTG에 불리</b>하다. 세아의 62일 관측이 정확히 그 구간이다.</p>
+      </div>
+      <div class="call ok" style="margin:0">
+        <span class="ct">보정안</span>
+        <p>가드값 = <b>유효 측정일 상위 3%의 평균, 단 최소 5일 · 최대 20일</b>로 정의한다. 62일 → 상위 5일, 182일 → 상위 5.5일, 365일 → 상위 11일이 되어 계약 기간과 무관하게 일관된다. 대외 문서에는 "상위 구간 평균"으로만 표기하고 산식은 계약서 부속에 둔다. <strong>세아 케이스는 이 정의로 재계산해 등급 변동 여부를 확인해야 한다</strong>(원자료 필요).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>추가 검증 지적</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:22%">대상</th><th style="width:40%">문제</th><th style="width:38%">권고</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>태그당 단가 환산</b></td>
+          <td>"1,000tag 기준 약 3,700,000원 → 태그 1개당 월 3,715원". 3,700,000 ÷ 1,000 = 3,700원으로 <b>기재값과 불일치</b>(3,715원은 미반올림 3,715,000원 기준). 더 근본적으로 <b>1,000 태그 → 8.6 GB/day라는 환산 전제가 문서 어디에도 없다</b>(역산 시 태그당 8.6 MB/day).</td>
+          <td>환산 전제(태그당 일일 바이트, 수집 주기, 페이로드 크기)를 명시하거나, <b>대외 자료에서 태그 환산 논리를 아예 제거</b>한다. 태그 단위 환산은 폐기하려는 AS-IS 축을 되살리는 역효과가 있다.</td>
+        </tr>
+        <tr>
+          <td><b>용어 일관성</b></td>
+          <td>§1.1은 "고객에게 저장 GB로 환산해 보여준다", §3.3은 "대내외 표현을 저장량이 아닌 <b>수집량</b> 과금으로 통일"로 서로 어긋난다.</td>
+          <td><b>"일일 수집량(GB/day)"</b> 단일 용어로 확정. 저장 용어는 보존기간 항목에서만 사용.</td>
+        </tr>
+        <tr>
+          <td><b>가드 용어</b></td>
+          <td>"상위 10개 평균 = 가드값"은 실제로는 상한(cap)이 아니라 <b>과금 기준값</b>이다. @김성만이 말한 가드(초당 처리량 밴드)와 같은 단어를 쓰고 있어 회의에서 혼선이 반복된다.</td>
+          <td><b>과금 기준값(Billing Base)</b>과 <b>가드(Guard/Cap)</b>를 용어로 분리. 본 설계서는 이 구분을 따른다.</td>
+        </tr>
+        <tr>
+          <td><b>밴드 폭 비대칭</b></td>
+          <td>하위 밴드는 폭 20 GB/day, 상위는 30~40으로 넓어진다. 세아의 63.6은 60~80 밴드의 하단이라 <b>상단 80까지 16.4 GB/day가 추가 과금 없이 열려 있다</b>(단가 환산 약 705만원/월 상당).</td>
+          <td>영업적으로는 "무중단 확장 여유"로 제시 가능하나, <b>수익 누수 폭을 인지하고 협상 시 명시적 가치로 청구</b>한다. 밴드 폭 축소는 단순화 취지에 역행하므로 권하지 않는다.</td>
+        </tr>
+        <tr>
+          <td><b>비례성 주장</b></td>
+          <td>"40 GB/day 17,200,000 → 80 GB/day 34,400,000, 정확히 2배" — 재계산 결과 <b>사실</b>. 단 이는 대표점이 아닌 실제 GB/day 기준이며, 기본료 포함 총액은 2배가 아니다.</td>
+          <td>비례성 증명은 <b>수집 사용료 한정</b>임을 반드시 병기. 총액 비례를 주장하면 즉시 반박당한다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════ 03 ══════════════ -->
+<section id="s3">
+  <div class="s-head"><span class="num">03</span><h2>통합 라이선스 체계 — 5계층</h2><span class="tag">Architecture</span></div>
+
+  <p class="lede">두 문서의 모든 과금 요소를 <strong>다섯 개 계층과 하나의 범위 밖 항목</strong>으로 배치한다. 각 계층은 서로 다른 질문에 답하며, 계층이 섞이는 순간 AS-IS의 "이게 무슨 비용인지 모르겠다"는 문제가 재발한다. 청구서는 이 계층 순서 그대로 라인 아이템을 분리한다.</p>
+
+  <div class="layers">
+    <div class="layer">
+      <span class="lid">L0</span>
+      <div><div class="lname">Base — 최소 기본료</div><div class="ldesc">DF-Stream · DF-Port 소프트웨어 사용권(IP) + 상시 운영지원(설치·구축, 장애 대응, 문의 대응, 정기 업데이트·보안 패치, 매뉴얼 제작·배포). 데이터 저장·서비스 이용 여부와 <b>무관하게</b> 부과되는 최소 유지비.</div></div>
+      <div class="lprice"><b>사업장당 월 20,000,000원</b><br><span class="ldesc">청구서에 ① 솔루션 사용권 ② 운영지원 서비스 <b>2줄로 분리 표기</b>하되 번들 필수(분리 구매 불가). 다사업장 정책은 §09-③ 미결.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L1</span>
+      <div><div class="lname">Volume — 수집 밴드 (1차 과금축)</div><div class="ldesc">DF-Stream을 경유해 타깃 저장소에 적재된 데이터의 <b>일일 논리 증분(GB/day)</b>. 물리 Tag · 가상 Tag · Dataset Tag화 · Legacy(L2·MES·ERP·SCM) 수집을 전부 이 한 축으로 통합한다. AS-IS의 Tag 등급과 Column 등급은 <b>동시 폐기</b>.</div></div>
+      <div class="lprice"><b>대표점 × 430,000원/(GB·day)</b><br><span class="ldesc">DF-20 ~ DF-200 8단계. <b>기본 보존기간 12개월 포함</b>(신규 보정안). 200 초과는 Enterprise Custom.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L2</span>
+      <div><div class="lname">Guard — 가드 밴드 (상한 · 과금축 아님)</div><div class="ldesc">일일 증분이 잡지 못하는 부하·비용을 상한선으로 포착한다. 초당 수집 피크, API 전송량, 가상 Tag/스케줄러 동시 실행 수, DW 쿼리 스캔량, 보존기간. <b>초과가 곧 청구가 아니라</b>, 지속 초과 시 상위 등급 전환 또는 해당 플러그인 활성으로 이어진다.</div></div>
+      <div class="lprice"><b>등급별 밴드 정의</b><br><span class="ldesc">3개월 연속 초과 시 조정. @김성만 원안대로 throughput을 1차 과금축으로 쓰지 않아 <b>부풀리기 인센티브가 생기지 않는다</b>.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L3</span>
+      <div><div class="lname">Plugin — 기능 모듈</div><div class="ldesc">저장량과 상관없이 가치를 만드는 고부가 기능. 소재 ID 트래킹·매칭, 외부 시스템 연계·API 전송, AI·LLM, ML·예측, 확장 백업·복구, 통합 관제. <b>쓰는 모듈만 부과</b>하므로 그룹사 간에도 "이 계열사는 트래킹만"으로 공정·명확하다.</div></div>
+      <div class="lprice"><b>모듈별 기본료 % 또는 정액</b><br><span class="ldesc">Standard/Pro/Enterprise 티어는 <b>폐기</b>(그룹사 맥락에서 등급 차별이 어색). AI·ML은 별도 규칙(§06).</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L4</span>
+      <div><div class="lname">Project — 1회성 공수</div><div class="ldesc">자동화 프로세스로 처리 불가한 커스텀 개발·SI·데이터 전처리, 맞춤 대시보드(ACE-Q, 3D 등), KepServer 외 물리 Tag 연결, 사용자 Portal 맞춤 구현, <b>심화 교육·온보딩 세션·워크숍</b>.</div></div>
+      <div class="lprice"><b>M/M 공수 산정 · 별도 SOW</b><br><span class="ldesc">라이선스에서 완전 분리 → "운영 공수 섞어 과다청구" 인상 해소(고객 최초 요청 충족).</span></div>
+    </div>
+    <div class="layer excl">
+      <span class="lid">밖</span>
+      <div><div class="lname">Infra — 라이선스 범위 밖</div><div class="ldesc">GCP 프로젝트를 고객이 소유·관리하고 청구서도 고객이 수령한다. BigQuery 스캔·slot·egress·VM 등 인프라 비용은 전량 고객 부담.</div></div>
+      <div class="lprice"><b>고객 직접 계약</b><br><span class="ldesc">compute 어뷰징 우려가 <b>구조적으로 소멸</b>. 락인 없음은 그룹사 협상의 강력한 세일즈 포인트.</span></div>
+    </div>
+  </div>
+
+  <div class="call">
+    <span class="ct">왜 L0의 인보이스를 쪼개는가</span>
+    <p>AS-IS 이슈 §1.3.1-4는 "운영 공수가 포함된 라이선스 비용이 과다청구로 보인다"는 <strong>고객의 최초 요청</strong>이었다. @이재훈·@김성만 두 사람 모두 라이선스와 운영비 분리를 주장했으나, 개발 문서는 기본료 2,000만원을 "솔루션 사용권 + IP + 지속 투입 인력 서비스"의 묶음으로 다시 통합했다. 총액을 지키면서 요청을 충족하는 해법은 <strong>계약 분리가 아니라 청구서 라인 분리</strong>다. 금액 협상 여지를 열지 않으면서 투명성 요구는 만족시킨다.</p>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">기본료 명목 변경에 대한 예상 반박</span>
+    <p>AS-IS에서 기본료 2,000만원은 <strong>"인프라비 확보"</strong> 명목이었다(기획 초안 §1.1). To-Be에서 인프라를 고객 GCP로 넘겼는데 기본료가 그대로면 <strong>"인프라는 우리가 내는데 기본료는 왜 그대로냐"</strong>는 반박이 필연적이다. 개발 문서 §3.6이 이에 대한 답("인프라료는 당신이 내는 게 맞고, 우리가 받는 것은 그 데이터를 수집·저장·활용 가능하게 만드는 소프트웨어 사용권이다")을 준비해 두었으나, <strong>명목이 언제 왜 바뀌었는지를 협상 전에 문서로 정리해 두어야 한다.</strong> 계약 갱신 시점에 AS-IS 계약서와 나란히 놓이면 즉시 드러난다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 04 ══════════════ -->
+<section id="s4">
+  <div class="s-head"><span class="num">04</span><h2>과금 지표 확정안</h2><span class="tag">Metering</span></div>
+
+  <p class="lede">두 문서 충돌의 핵심이 여기 있다. 기획 초안은 <strong>Kafka 적재량</strong>을, 개발 문서는 <strong>BigQuery 일일 증분</strong>을 기준으로 잡았다. 어느 한쪽을 버리는 대신 <strong>역할을 나눈다</strong> — 각자 잘하는 일이 다르기 때문이다.</p>
+
+  <h3>계측 이원화</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:16%">역할</th><th style="width:20%">지표</th><th style="width:32%">강점</th><th style="width:32%">약점 · 보완</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="pill p-acc">1차 · 청구</span></td>
+          <td><b>BigQuery logical bytes 일일 증분</b><br><span class="ldesc" style="font-size:12px">max(0, 당일 − 전일)</span></td>
+          <td>고객이 자기 GCP 콘솔에서 <b>직접 재현·검증 가능</b> → 청구 근거로서 투명성 최상. SQL 자동화 완료(<code>dataforge_license_grade.sql</code>). "테그·컬럼 카운팅 논쟁" 원천 소멸.</td>
+          <td>BQ를 우회해 GCS·자체 DB에 적재하면 계측 밖. → 계약서에 과금 대상을 <b>"DF-Stream SW를 경유해 수집/저장되는 데이터"</b>로 정의(물리적 위치 무관)하고, 아래 2차 지표로 교차 탐지.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-mute">2차 · 대조</span></td>
+          <td><b>Kafka · 커넥터 처리량</b><br><span class="ldesc" style="font-size:12px">청구 근거 아님</span></td>
+          <td>DW 적재 여부와 무관하게 <b>파이프라인을 통과한 실제 데이터를 포착</b> → 우회 탐지에 강함. 기획 초안 Action ①의 취지를 살린다.</td>
+          <td>JSON 구조 오버헤드로 실제 데이터량 대비 부풀려진다(기획 초안도 "실제 어느정도인지 체크 후"로 유보). <b>청구 근거로 쓰면 고객이 즉시 반박한다.</b> → 대조 전용, 두 지표 괴리 시 조사 조항 발동.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>정의 확정 사항 — 계약서 명문화 대상</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:20%">항목</th><th style="width:44%">확정 정의</th><th style="width:36%">근거 · 출처</th></tr></thead>
+      <tbody>
+        <tr><td><b>바이트 기준</b></td><td><b>logical(비압축 논리) bytes</b>. physical/compressed 기준 사용 금지.</td><td>@김성만: "압축 후 raw bytes로 정의하면 과압축·손실압축으로 새 게임이 생긴다". 개발 문서는 <code>stored_bytes</code>만 기재해 기준이 <b>공백</b> → 반드시 명시.</td></tr>
+        <tr><td><b>증분 정의</b></td><td><code>max(0, 당일 − 전일)</code>. 리텐션·삭제로 인한 음수 증분은 0 처리.</td><td>개발 문서 §3.1. 자동으로 상위값에서 배제됨.</td></tr>
+        <tr><td><b>공백 처리</b></td><td>스냅샷 <code>gap_days = 1</code>인 구간만 유효. 수집 중단 등으로 간격이 1일 초과인 구간은 집계 제외.</td><td>개발 문서 §7 검증에서 14일 공백(4/30~5/14) 후 802GB 가짜 증분이 정상 배제됨을 확인.</td></tr>
+        <tr><td><b>제외 대상</b></td><td>백필 · 재처리 · 스테이징 데이터셋의 증분은 과금 기준에서 제외. 소스 테이블에 <code>is_billable</code> 플래그 운영.</td><td>개발 문서 §4 · §7 운영 유의. 일회성 백필이 가드값을 부당하게 끌어올리는 것을 방지.</td></tr>
+        <tr><td><b>과금 단위</b></td><td><code>business_place_mt</code> 단위. 사업장 분할·통합으로 기본료를 회피할 수 없도록 계약서에 명시.</td><td>개발 문서 §4 + @김성만 ①(사업장당 Base). 창원·군산 다사업장 정책은 §09-③.</td></tr>
+        <tr><td><b>기준값 산정</b></td><td>계약 기간 중 유효 측정일 <b>상위 3%(최소 5일·최대 20일)의 평균</b> 단일값. 이 값으로 계약 기간 내내 정액 청구.</td><td>개발 문서의 "상위 10개 평균"을 §02 보정안으로 대체. 측정 기간 의존성 제거.</td></tr>
+        <tr><td><b>보존기간</b></td><td>기본 <b>12개월</b> 포함. 최소 보존기간 미만 설정 불가. 12개월 초과 보존은 저장 확장 요금.</td><td><b>신규 보정</b> — 개발 문서 §3.3이 자인한 결함(보존기간 다른 두 고객이 같은 증분이면 요금 동일)과 @유성열·@김성만의 저장기간 정책 요구를 동시 해소.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">미해결 — 과금축의 성격 (flow vs stock)</span>
+    <p>@김성만의 원안은 <strong>논리적 볼륨 = 수집 데이터포인트 × 보존기간</strong>이라는 <em>재고(stock)</em> 개념이었다. 개발 문서가 채택한 일일 증분은 <em>흐름(flow)</em>이다. 개발 문서 §3.3은 이 부작용을 스스로 인정한다 — <strong>"보존기간이 다른 두 고객이 같은 일일 증분이면 총 저장량이 크게 달라도 요금이 동일"</strong>. 위의 "기본 보존 12개월 포함 + 초과 시 저장 확장" 보정은 이 구멍을 실무적으로 메우지만, <strong>과금축의 성격 자체를 바꾸지는 않는다.</strong> flow 축을 유지할지, stock 축으로 되돌릴지는 §09-①의 의사결정 사항이다. flow 축의 장점은 청구액 안정성(증분이 flat이라 "매년 무한 상승" 문제 없음)이고, stock 축의 장점은 실제 원가와의 정합성이다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 05 ══════════════ -->
+<section id="s5">
+  <div class="s-head"><span class="num">05</span><h2>등급표 &amp; 가드 밴드</h2><span class="tag">Pricing</span></div>
+
+  <h3>L1 — 수집 밴드 등급표 (채택)</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>등급</th><th class="num">일일 수집량 (GB/day)</th><th class="num">기본료 (L0)</th><th class="num">수집 사용료 (L1)</th><th class="num">월 합계</th><th class="num">연 환산</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">DF-20</td><td class="num">20 이하</td><td class="num">20,000,000</td><td class="num">4,000,000</td><td class="num">24,000,000</td><td class="num">288,000,000</td></tr>
+        <tr><td class="mono">DF-40</td><td class="num">20 ~ 40</td><td class="num">20,000,000</td><td class="num">13,000,000</td><td class="num">33,000,000</td><td class="num">396,000,000</td></tr>
+        <tr><td class="mono">DF-60</td><td class="num">40 ~ 60</td><td class="num">20,000,000</td><td class="num">22,000,000</td><td class="num">42,000,000</td><td class="num">504,000,000</td></tr>
+        <tr class="hi"><td class="mono">DF-80</td><td class="num">60 ~ 80</td><td class="num">20,000,000</td><td class="num">30,000,000</td><td class="num">50,000,000</td><td class="num">600,000,000</td></tr>
+        <tr><td class="mono">DF-100</td><td class="num">80 ~ 100</td><td class="num">20,000,000</td><td class="num">39,000,000</td><td class="num">59,000,000</td><td class="num">708,000,000</td></tr>
+        <tr><td class="mono">DF-130</td><td class="num">100 ~ 130</td><td class="num">20,000,000</td><td class="num">49,000,000</td><td class="num">69,000,000</td><td class="num">828,000,000</td></tr>
+        <tr><td class="mono">DF-160</td><td class="num">130 ~ 160</td><td class="num">20,000,000</td><td class="num">62,000,000</td><td class="num">82,000,000</td><td class="num">984,000,000</td></tr>
+        <tr><td class="mono">DF-200</td><td class="num">160 ~ 200</td><td class="num">20,000,000</td><td class="num">77,000,000</td><td class="num">97,000,000</td><td class="num">1,164,000,000</td></tr>
+      </tbody>
+      <caption>20 이하 / 200 초과는 별도 협의(200 초과 = Enterprise Custom). 강조 행 = 세아창원특수강 현재 안착 등급. 기본 보존기간 12개월 포함.</caption>
+    </table>
+  </div>
+  <p class="t-note">단가 430,000원/(GB·day)는 <strong>저장 원가 회수분이 아니다.</strong> BigQuery 인프라 원가는 고객 GCP로 직접 나가므로, 이 단가는 전체 SW·IP·서비스 가치를 수집 처리량이라는 단일 프록시로 환산한 분모다. 원가 대비 배수는 내부에서도 "원가 마진"으로 커뮤니케이션하지 않는다.</p>
+
+  <h3>L2 — 가드 밴드 (신설)</h3>
+  <p class="lede" style="margin-bottom:18px">일일 증분 하나로는 <strong>네 종류의 비용이 전혀 잡히지 않는다.</strong> 기획 초안의 Action Item ①~④가 정확히 이 구멍을 지적했고, 개발 문서에는 대응 항목이 없다. 가드는 과금축이 아니라 상한선이며, 초과가 곧 청구가 되지 않는 것이 핵심이다 — 그래야 고객이 수집 주기를 늘리는 <em>건강한</em> 절감 행동에 페널티가 붙지 않는다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:19%">가드 항목</th><th style="width:29%">왜 필요한가 — 증분이 못 잡는 것</th><th style="width:24%">밴드 정의</th><th style="width:22%">초과 시 처리</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">G1</td>
+          <td><b>초당 수집 피크</b><br><span class="ldesc" style="font-size:12px">msg/s 또는 bytes/s</span></td>
+          <td>저장량은 "보존된 양"이라 <b>실시간 인프라 부하</b>(Kafka·Benthos·커넥터 사이징)를 직접 못 잡는다. 짧은 보존 + 초고빈도면 저장량은 작은데 인프라는 크다.</td>
+          <td>등급별 피크 상한. 예: DF-80 → 밴드 상단의 N배 순간 처리율.</td>
+          <td>3개월 연속 초과 시 상위 인프라 등급으로 전환.</td>
+        </tr>
+        <tr>
+          <td class="mono">G2</td>
+          <td><b>API 전송량</b><br><span class="ldesc" style="font-size:12px">Pull &amp; Push</span></td>
+          <td>데이터를 <b>밖으로 빼는 활동</b>이라 수집 증분에 전혀 안 잡힌다. 기획 초안 Action ①이 "수집 밴드 + 전송 밴드 조합"을 요구한 지점.</td>
+          <td>등급별 월간 전송 GB 상한. Excel 다운로드 제외.</td>
+          <td>초과 시 <b>API 전송 플러그인</b> 활성(L3).</td>
+        </tr>
+        <tr>
+          <td class="mono">G3</td>
+          <td><b>가상 Tag · 스케줄러<br>동시 실행 수</b></td>
+          <td>가상 Tag의 <b>CPU 연산 부하</b>는 저장량과 무관하다. "1초 주기로 복잡한 SQL 연산을 하는 가상 태그 100개면 VM이 마비된다"(기획 초안 Action ②).</td>
+          <td>등급별 동시 실행 가능 가상 Tag 연산 / 배치 스케줄러 Plugin 개수 제한.</td>
+          <td>도커 단위 Plugin 추가 구매. <b>안 쓰는 가상 태그 삭제를 유도</b>하는 건강한 통제(@유성열 의견 반영).</td>
+        </tr>
+        <tr>
+          <td class="mono">G4</td>
+          <td><b>DW 쿼리 스캔량</b><br><span class="pill p-warn">조건부</span></td>
+          <td>BigQuery는 저장보다 <b>대시보드 새로고침 쿼리 스캔 비용이 훨씬 크다</b>. 가드가 없으면 대시보드를 잘못 짠 고객 때문에 인프라 비용이 폭증한다(기획 초안 Action ④).</td>
+          <td>계정당 월 1TB 스캔(초안 제시값).</td>
+          <td><b>compute가 고객 GCP인 계약에서는 미적용</b> — 비용이 고객에게 직접 나가므로 자연 억제. VNTG 계정 운영 계약에만 적용, 초과 시 MSP Bypass 청구.</td>
+        </tr>
+        <tr>
+          <td class="mono">G5</td>
+          <td><b>보존기간</b></td>
+          <td>같은 일일 증분이라도 보존기간이 2배면 총 저장량이 2배다. 개발 문서 §3.3이 자인한 결함.</td>
+          <td>기본 12개월 포함. 최소 보존기간 미만 설정 불가.</td>
+          <td>12개월 초과 보존 요청 시 <b>저장 확장 요금</b>(L3).</td>
+        </tr>
+      </tbody>
+      <caption>밴드 구체 수치는 인프라 실측 후 확정 대상(§10 로드맵 P2). 본 표는 가드 항목과 처리 로직을 확정한다.</caption>
+    </table>
+  </div>
+
+  <div class="call ok">
+    <span class="ct">왜 throughput을 1차 과금축으로 쓰지 않는가</span>
+    <p>@변중환의 지적 — <strong>"자원 사용량 기반은 일부러 사용량을 늘릴 수 있으니 객관적이지 않다"</strong>. throughput을 1차 과금축에 놓으면 이 우려가 살아난다. 저장량(증분)을 1차 축에 두고 throughput은 가드로만 두면, 고객이 수집 주기를 늘렸을 때 <strong>throughput과 저장량이 함께 내려가는 일치된 레버</strong>가 되어 부풀릴 인센티브가 생기지 않는다. 이것이 @김성만 ②-가드의 설계 의도이며 통합안이 그대로 계승한다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 06 ══════════════ -->
+<section id="s6">
+  <div class="s-head"><span class="num">06</span><h2>플러그인(모듈) 체계</h2><span class="tag">Add-on</span></div>
+
+  <p class="lede">경계 기준은 하나다 — <strong>저장량과 상관없이 가치를 만드는 기능은 프록시가 놓치므로 별도 계측·과금한다.</strong> 서비스 티어(Standard/Pro/Enterprise)는 폐기한다. @김성만의 지적대로 그룹사 맥락에서 계열사 간 등급 차별은 어색하고, 모듈 단위여야 "이 계열사는 BI·트래킹만"으로 공정하고 명확하다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:8%">구분</th><th style="width:20%">모듈</th><th style="width:34%">범위</th><th style="width:38%">과금 방식</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="5"><span class="pill p-acc">유료</span></td>
+          <td><b>소재 ID 트래킹 · 매칭</b></td>
+          <td>Tracking Key 기준 조회, 공정별 작업 이력, 공정 간 흐름 연결, 입측/출측 시간 계산, 체류 시간 분석, 표준시간 대비 편차, 조업 조건·품질 결과 연결, 공장 간 통합 추적</td>
+          <td><b>기본료의 X% 추가</b> + 기능 레벨(Lite/Standard/Pro/Enterprise) 매트릭스로 범위 결정. 저장은 작은 기준 데이터셋이지만 IP 가치가 큼 — 프록시가 가장 크게 과소청구하는 영역.</td></tr>
+        <tr><td><b>외부 시스템 연계 · API 전송</b></td><td>분석팀 연계, 3rd-party 시스템 연동, Pull/Push API 주기 전송</td><td>기본료 + 개발 공수. 가드 G2 초과 시 자동 활성.</td></tr>
+        <tr><td><b>확장 백업 · 복구</b></td><td>PostgreSQL 증분 백업(1일 단위), BigQuery 저장 기간 연장, Log 2개월 이상, 운영 소스·시스템 이미지 백업</td><td>저장 비용의 20% 추가(기획 초안 방식 유지 — 이 항목은 실제로 저장 원가에 비례).</td></tr>
+        <tr><td><b>통합 관제</b></td><td>기본 제공 외 추가 통합 모니터링, 통합 관제 &amp; 장애 처리 안내</td><td>정액. 계약 금액 %는 <b>비권장</b> — 관제 공수는 계약 규모가 아니라 시스템 복잡도에 비례.</td></tr>
+        <tr><td><b>DW 저장 확장</b></td><td>기본 12개월 초과 보존</td><td>초과 개월 × 저장 확장 단가. 가드 G5와 연동.</td></tr>
+
+        <tr><td rowspan="2"><span class="pill p-sig">특수</span></td>
+          <td><b>AI · LLM</b></td>
+          <td>자연어 쿼리(Text-to-SQL), AI 대시보드 생성, 카탈로그 RAG 어시스턴트, 내러티브 BI, MCP 커넥터, 시맨틱 검색</td>
+          <td><b>개발 공수(1회성) + 추론 자원(고객 부담)</b>. 폐쇄망은 온프레미스 모델(Qwen3 계열) — GPU/VM은 고객 인프라, VNTG는 모델 서빙·튜닝 공수만. 클라우드는 고객 GCP 청구서로 나가도록 구성.</td></tr>
+        <tr><td><b>ML · 예측</b></td>
+          <td>모델 개발, 이상 탐지·예측</td>
+          <td><b>표준 플러그인 정찰가 금지.</b> 공정별 적합성 사전 검증(PoC) 없이 성능을 약속하면 실패한다. 맞춤 개발(공정 검증 포함) 별도 산정으로만 제공.</td></tr>
+
+        <tr><td rowspan="2"><span class="pill p-mute">기본</span></td>
+          <td><b>DF-Port · DF-Stream 기본 기능</b></td>
+          <td>BI 대시보드 Self 서비스, 수집 상태 모니터링, 데이터 카탈로그·리니지, 통합 검색, 게시판, 사용자·권한 관리, Data 표준 체계 관리</td>
+          <td>수집 증분에 포함(L0+L1). <span class="pill p-warn">§09-④ 미결</span> — @김성만은 BI도 모듈화 대상으로 봄.</td></tr>
+        <tr><td><b>기본 운영 지원</b></td><td>기본 log 적재, 시스템·Pipeline 상태 모니터링, 1일 단위 DB·운영소스·시스템 이미지 백업</td><td>라이선스 대상에서 제외(VNTG 운영 지원). 기획 초안 §2.1.3 그대로 유지.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cols2">
+    <div class="call sig" style="margin-top:20px">
+      <span class="ct">AI · LLM — 기획 초안의 10% 방식은 채택 불가</span>
+      <p>기획 초안은 AI 서비스를 <strong>"DF 라이선스 계약 금액의 10% 추가"</strong>로 처리했다. 이 방식은 <strong>런타임 토큰 비용을 전혀 잡지 못한다.</strong> 기존 플러그인 공식(기본료 + 개발 공수)은 일회성 R&amp;D 비용만 잡는데, LLM은 개발이 끝난 뒤에도 매 호출마다 추론 비용이 계속 발생한다. 이 구조가 방치되면 고객이 무거운 AI 기능을 상시 돌려도 VNTG는 개발비만 받는다. <strong>VNTG 마스터 키로 대납하는 구조는 금지</strong> — 그 순간 토큰 비용이 VNTG 손실이 되고 마진이 고객 프롬프트 습관에 인질로 잡힌다.</p>
+    </div>
+    <div class="call warn" style="margin-top:20px">
+      <span class="ct">ML · 예측 — 도메인 리스크 (내부 경고)</span>
+      <p>철강 배치 공정(제강 등)은 <strong>범용 시계열 모델 가정과 근본적으로 불합치</strong>한다(TimesFM 커버리지 40~50% 수준, 80% 아님). "이상 탐지·예측"을 표준 플러그인 정찰가로 팔면 안 되는 이유다. 이 계열은 반드시 <strong>공정 검증을 포함한 맞춤 개발</strong>로만 제공하고, 대고객 문서에도 "공정 특성 사전 검증 후 적용"으로 명시한다. 기획 초안의 "인프라 비용 20% 추가" 방식은 이 리스크를 가격에 반영하지 못한다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ 07 ══════════════ -->
+<section id="s7">
+  <div class="s-head"><span class="num">07</span><h2>계약 · 방어 조항</h2><span class="tag">Contract</span></div>
+
+  <h3>어뷰징 · 공정성 방어</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:34%">벡터</th><th style="width:66%">방어</th></tr></thead>
+      <tbody>
+        <tr><td>일회성 백필·재처리가 기준값을 부당하게 상승시킴</td><td>백필·재처리·스테이징 데이터셋은 과금 기준에서 제외 명시(<code>is_billable</code>). 상위 구간 평균으로 스파이크 희석.</td></tr>
+        <tr><td>측정 기간이 짧을 때 상위 구간이 왜곡됨</td><td>상위 3%(최소 5일·최대 20일) 정의로 기간 정규화. 신규 계약 첫 해는 예상 증분으로 초기화 후 재정산.</td></tr>
+        <tr><td>DW 우회 — BQ가 아닌 GCS·자체 DB에 적재</td><td>과금 대상을 <b>"DF-Stream SW를 경유해 수집/저장되는 데이터"</b>로 정의(저장소 물리 위치 무관). Kafka 처리량과의 괴리 발생 시 조사 조항 발동.</td></tr>
+        <tr><td>리텐션·삭제로 증분을 음수화</td><td><code>증분 = max(0, 당일 − 전일)</code>. 음수는 0 처리라 기준값에 영향 없음.</td></tr>
+        <tr><td>사업장 분할·통합으로 기본료 회피</td><td><code>business_place_mt</code> 단위의 과금 단위 정의를 계약서에 명시.</td></tr>
+        <tr><td>가상 Tag 남발로 인프라 부하 전가</td><td>가드 G3 — 동시 실행 가능 연산/스케줄러 Plugin 개수 제한. 안 쓰는 태그 삭제 유도.</td></tr>
+        <tr><td>압축률 조작으로 계측값 축소</td><td>logical bytes 기준 명문화. physical/compressed 기준 사용 금지.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>정당한 비용 통제 — 허용 · 권장</h3>
+  <p class="prose">수집 주기 연장, 미사용 데이터 삭제, 보존 기간 단축(최소 기간까지), 수집 중단은 모두 <strong>허용하고 적극 안내한다.</strong> AS-IS의 병폐는 고객이 등급을 넘기지 않으려 <em>필요한 데이터까지 안 받았던</em> 것이다. 통합안에서는 절감 레버가 데이터 필요성이 아니라 수집 설계에 걸린다.</p>
+
+  <div class="call">
+    <span class="ct">보정 — 절감 반영 시점의 비대칭 조정</span>
+    <p>개발 문서는 <strong>"감축은 현재 계약 요금이 아니라 다음 계약 갱신 시 가드값에 반영"</strong>으로 정했다(전향식). 정산 절차를 없애는 장점이 있지만, <strong>고객이 절감 노력을 해도 당해년도에 아무 효과가 없다</strong>는 뜻이다. @유성열이 준비한 "비용 절감 방안 안내"가 실효를 잃고, AS-IS 이슈 3(필요 데이터 미수집)이 다른 형태로 재발할 수 있다.</p>
+    <p><strong>권고 — 비대칭 조정.</strong> 하향 조정은 계약 중간(6개월 시점) 연 1회 재산정을 허용하고, 상향은 다음 갱신에만 반영한다. 영업적으로 <strong>"절감 노력은 6개월 안에 요금에 반영됩니다"</strong>라고 말할 수 있게 되며, 상향이 늦게 걸리므로 VNTG 리스크도 제한적이다.</p>
+  </div>
+
+  <h3>신규 조항 — 두 문서 모두 공백</h3>
+  <ul class="tight">
+    <li><strong>지원 범위 선긋기.</strong> 기본료 포함 지원은 장애 대응·문의 대응·정기 점검으로 한정한다. <strong>교육·트레이닝은 문서·계약에서 기본 포함 항목으로 명시하지 않는다</strong> — "교육"을 명시하면 무제한 교육 요청이 상시 유입된다(실제 발생 중). 심화 교육·온보딩 세션·워크숍은 L4 유상 전문 서비스로 분리해 SOW에 명문화.</li>
+    <li><strong>계측 오류 정정 절차.</strong> 스냅샷 누락·SQL 오류·GCP 장애로 인한 계측 왜곡 발생 시 정정 기준과 소급 범위. 두 문서 모두 없음.</li>
+    <li><strong>SLA.</strong> 수집 가용성 목표, 데이터 손실 시 책임 범위, 최소 수집 주기 보장. 고객이 절감을 위해 주기를 늘릴 때 품질 하한을 어디에 두는지 함께 정의.</li>
+    <li><strong>단가 에스컬레이션.</strong> 다년 계약 시 KOSA SW기술자 평균임금 공표 단가에 연동한 인상 조항. 기본료가 인력 서비스를 포함하므로 인건비 상승이 직접 마진을 침식한다.</li>
+    <li><strong>중복 데이터 책임 이관.</strong> DW/DM 단위의 데이터 중복 판단과 책임은 사용자(고객) 측에 있음을 명시. 운영자가 중복을 policing하지 않는다 — AS-IS 이슈 2(태그 동일성 의견 충돌) 재발 차단.</li>
+  </ul>
+
+  <div class="call warn">
+    <span class="ct">대외 노출 금지 항목</span>
+    <p>다음은 협상 테이블에 절대 올리지 않는다. ① <strong>GB/day당 실효단가</strong>(43만원/GB) — 노출되면 고객이 초정밀 종량 정산 협상으로 끌고 간다. ② <strong>M/M 원가와 인건비 산정 근거</strong> — "투자 회수 끝나면 내려주냐", "M/M이 실제 그만큼 드느냐"는 원가 검증 논쟁으로 흘러간다. ③ <strong>선투자 회수 논리</strong> — 가격의 근거이되 정당화 논리는 가치여야 한다. 앞에는 가치·단순함·통제·투명성을 세운다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 08 ══════════════ -->
+<section id="s8">
+  <div class="s-head"><span class="num">08</span><h2>매출 영향 &amp; 손익분기</h2><span class="tag">Business Case</span></div>
+
+  <p class="lede">두 문서 모두 <strong>AS-IS 대비 To-Be의 매출 영향을 계산하지 않았다.</strong> 라이선스 체계 전환은 과금 구조 개선이자 동시에 가격 수준의 변경이며, 이 두 번째 효과가 경영 승인의 실질 대상이다.</p>
+
+  <h3>AS-IS 청구 구간 vs To-Be</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>AS-IS 등급</th><th class="num">기본료</th><th class="num">Tag 라이선스</th><th class="num">Column 라이선스</th><th class="num">월 최대 청구</th><th class="num">연 환산</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">DataForge-5000 + Col-2000</td><td class="num">20,000,000</td><td class="num">35,000,000</td><td class="num">15,000,000</td><td class="num">70,000,000</td><td class="num">840,000,000</td></tr>
+        <tr><td class="mono">DataForge-8000 + Col-5000</td><td class="num">20,000,000</td><td class="num">50,000,000</td><td class="num">29,000,000</td><td class="num">99,000,000</td><td class="num">1,188,000,000</td></tr>
+        <tr><td class="mono">DataForge-12500 + Col-8000</td><td class="num">20,000,000</td><td class="num">65,000,000</td><td class="num">38,000,000</td><td class="num">123,000,000</td><td class="num">1,476,000,000</td></tr>
+        <tr><td class="mono">DataForge-15000 + Col-9000</td><td class="num">20,000,000</td><td class="num">70,000,000</td><td class="num">40,000,000</td><td class="num">130,000,000</td><td class="num">1,560,000,000</td></tr>
+        <tr class="hi"><td class="mono">To-Be DF-80 (세아 실측)</td><td class="num">20,000,000</td><td class="num" colspan="2">30,000,000 (수집)</td><td class="num">50,000,000</td><td class="num">600,000,000</td></tr>
+      </tbody>
+      <caption>AS-IS는 Tag 등급과 Column 등급이 각각 부과되므로 두 라이선스의 합이 최대 청구액이다. To-Be는 단일 축.</caption>
+    </table>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">확인 필요 — 세아의 AS-IS 실제 등급</span>
+    <p>두 문서 어디에도 <strong>세아창원특수강이 AS-IS에서 어느 등급이었는지</strong> 기재되어 있지 않다. 이 값 없이는 전환 손익을 계산할 수 없다. 만약 DataForge-8000 구간(월 7,000만~9,900만)이었다면 To-Be 5,000만원은 <strong>29~49% 인하</strong>이며, DataForge-12500 구간이었다면 <strong>41~59% 인하</strong>다. <strong>이것이 의사결정 이전에 확보해야 할 첫 번째 숫자다.</strong></p>
+  </div>
+
+  <h3>손익분기 고객사 수</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:28%">시나리오</th><th class="num">연간 인건비</th><th class="num">고객사당 연 매출</th><th class="num">BEP 고객사 수</th></tr></thead>
+      <tbody>
+        <tr><td>To-Be · 인력 12명</td><td class="num">2,592,000,000</td><td class="num">600,000,000</td><td class="num">4.3</td></tr>
+        <tr><td>To-Be · 인력 15명</td><td class="num">3,240,000,000</td><td class="num">600,000,000</td><td class="num">5.4</td></tr>
+        <tr><td>AS-IS 참고 · 12명 (월 8,500만 가정)</td><td class="num">2,592,000,000</td><td class="num">1,020,000,000</td><td class="num">2.5</td></tr>
+        <tr><td>AS-IS 참고 · 15명 (월 8,500만 가정)</td><td class="num">3,240,000,000</td><td class="num">1,020,000,000</td><td class="num">3.2</td></tr>
+      </tbody>
+      <caption>인건비 = 인원 × 응용SW개발 특급 등급별 노임단가 월 18,000,000원 × 12개월(KOSA 2024 적용 기준). 30여 억원 선투자 회수는 별도이며 이 표에 미반영. AS-IS 행은 세아 실제 등급 확인 전 <b>가정치</b>다.</caption>
+    </table>
+  </div>
+
+  <div class="call">
+    <span class="ct">해석</span>
+    <p>To-Be 체계로 전환하면 <strong>손익분기에 필요한 고객사 수가 약 1.7배로 늘어난다.</strong> 이것이 반드시 잘못된 결정이라는 뜻은 아니다 — AS-IS 체계는 고객이 <em>필요한 데이터를 안 받는</em> 방향으로 대응하게 만들어 계정 성장 자체를 막고 있었고, 단순·투명한 체계는 신규 그룹사 확대 속도를 높인다. 다만 <strong>"몇 개 계열사를 몇 년 안에 확보한다"는 확장 계획이 이 인하폭의 전제</strong>이므로, 그 계획과 함께 승인받아야 한다. 8단계 무중단 확장 구조도 이 관점에서는 <em>고객 성장에 따른 자동 증액 경로</em>라는 매출 논리를 갖는다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 09 ══════════════ -->
+<section id="s9">
+  <div class="s-head"><span class="num">09</span><h2>미해결 쟁점 — 의사결정 요청</h2><span class="tag">Decisions</span></div>
+
+  <p class="lede">통합 과정에서 해소되지 않은 8건. 각 항목의 결정 주체와 권고안을 함께 표기했다.</p>
+
+  <div class="dec">
+    <div class="dec-item">
+      <span class="dn">1</span>
+      <div><div class="dq">1차 과금축을 flow(일일 증분)로 확정할 것인가</div>
+      <div class="dd">@김성만 원안은 <b>논리적 볼륨 = 데이터포인트 × 보존기간</b>(stock). 개발 문서는 <b>일일 증분</b>(flow). 본 설계서는 "증분 + 기본 보존 12개월 포함"으로 봉합했으나 과금축의 성격은 그대로다. <b>권고 — flow 유지.</b> 청구액 안정성과 SQL 자동화 완결성이 결정적이며, 보존기간 구멍은 L1 포함 기간과 G5 가드로 실무 봉합 가능하다.</div></div>
+      <div class="dw"><span class="pill p-sig">체계 근간</span><span class="pill p-mute">팀 합의</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">2</span>
+      <div><div class="dq">AS-IS 대비 인하폭과 확장 계획을 승인할 것인가</div>
+      <div class="dd">세아 AS-IS 실제 등급 확인이 <b>선행 조건</b>. BEP 고객사 수가 약 1.7배로 늘어나는 만큼, 목표 계열사 수·확보 시점과 묶어 승인받아야 한다.</div></div>
+      <div class="dw"><span class="pill p-sig">경영 승인</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">3</span>
+      <div><div class="dq">다사업장 기본료를 어떻게 부과할 것인가</div>
+      <div class="dd">창원 + 군산처럼 한 고객사가 복수 사업장을 운영할 때 기본료 2,000만원 × N인가, 감면인가. @김성만 ①은 "사업장당 Base", 개발 문서 §4는 <code>business_place_mt</code> 단위 명시. <b>권고 — 사업장당 부과 원칙 + 2번째 사업장부터 감면율 적용</b>(운영 규모의 경제 반영). 감면율 수치 결정 필요.</div></div>
+      <div class="dw"><span class="pill p-acc">영업 · 팀</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">4</span>
+      <div><div class="dq">BI · 대시보드를 기본 제공으로 둘 것인가</div>
+      <div class="dd">개발 문서는 기본 제공(기본료 정당화의 가치 앵커), @김성만 ③은 df-port 기능 모듈 과금 대상. <b>권고 — 기본 제공 유지.</b> 기본료 2,000만원이 "무엇에 대한 값인가"를 설명할 수 있는 가장 눈에 보이는 자산이고, BI를 떼면 기본료 방어가 IP 주장 하나로 얇아진다.</div></div>
+      <div class="dw"><span class="pill p-acc">팀 합의</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">5</span>
+      <div><div class="dq">라이선스와 운영비를 어느 수준까지 분리할 것인가</div>
+      <div class="dd">@이재훈·@김성만은 분리 주장, 개발 문서는 기본료에 통합. <b>권고 — 계약은 번들 유지, 청구서 라인만 분리.</b> 계약을 쪼개면 고객이 운영비만 재협상하려 들고, 라인만 분리하면 투명성 요구는 충족된다.</div></div>
+      <div class="dw"><span class="pill p-acc">팀 합의</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">6</span>
+      <div><div class="dq">가드값 산정 기간 정규화안을 채택할 것인가</div>
+      <div class="dd">"상위 10개 평균" → "상위 3%(최소 5일·최대 20일) 평균". 채택 시 <b>세아 62일 원자료로 재계산해 등급 변동 여부를 먼저 확인</b>해야 한다(상위 5일 평균이 80을 넘으면 DF-100으로 이동).</div></div>
+      <div class="dw"><span class="pill p-acc">개발 · 팀</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">7</span>
+      <div><div class="dq">신규 고객 첫 해 기준값을 어떻게 산정할 것인가</div>
+      <div class="dd">전향식은 직전 계약 기간의 실측을 쓰지만 <b>신규 고객은 실측이 없다</b>. 개발 문서는 "예상 증분으로 초기화"만 언급. 설계 태그 수 기반 추정치의 근거, 실측 확보 후 재정산 시점과 소급 여부를 확정해야 한다.</div></div>
+      <div class="dw"><span class="pill p-acc">개발 · 영업</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">8</span>
+      <div><div class="dq">태그당 단가 환산 논리를 유지할 것인가</div>
+      <div class="dd">"태그 1개당 월 3,715원" 기재값이 본문 금액(3,700,000원 ÷ 1,000)과 맞지 않고, <b>1,000 태그 → 8.6 GB/day라는 환산 전제가 문서에 없다</b>. <b>권고 — 대외 자료에서 제거.</b> 폐기하려는 AS-IS 태그 축을 되살리는 역효과가 크다. 내부 참고용으로만 남기되 전제를 명시.</div></div>
+      <div class="dw"><span class="pill p-warn">문서 정정</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ 10 ══════════════ -->
+<section id="s10">
+  <div class="s-head"><span class="num">10</span><h2>이행 로드맵</h2><span class="tag">Rollout</span></div>
+
+  <p class="lede">기획 초안의 목표는 <strong>"정확한 서버 사용량과 비용을 측정한 후 License 범위 재설계, 26년 8월 완료"</strong>다. 현 시점 기준으로 P0는 이미 확보되어 있고, 남은 것은 가드 실측과 계약 문서화다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:8%">단계</th><th style="width:30%">산출물</th><th style="width:40%">내용</th><th style="width:22%">선행 조건</th></tr></thead>
+      <tbody>
+        <tr><td class="mono"><span class="pill p-ok">P0 완료</span></td><td>수집 밴드 등급표 · 산정 SQL</td><td>일일 증분 계측 로직, 등급 자동 판정(<code>dataforge_license_grade.sql</code>), 세아 실측 검증</td><td>—</td></tr>
+        <tr><td class="mono">P1</td><td><b>세아 AS-IS 등급 확인 + 전환 손익</b></td><td>현재 계약 등급·청구액 확인, 전환 시 증감 산출, 확장 계획과 묶어 경영 승인</td><td>계약 원본</td></tr>
+        <tr><td class="mono">P2</td><td><b>가드 밴드 실측 수치 확정</b></td><td>G1 초당 피크, G2 전송량, G3 가상 Tag 동시 실행 수의 등급별 상한값. Kafka JSON 오버헤드 비율 실측(기획 초안이 유보한 항목)</td><td>인프라 모니터링 데이터</td></tr>
+        <tr><td class="mono">P3</td><td><b>플러그인 단가표</b></td><td>트래킹 모듈 기능 매트릭스별 기본료 %, 외부연계·확장백업·통합관제 정액, AI/LLM 공수 산정 템플릿</td><td>§09-④ 결정</td></tr>
+        <tr><td class="mono">P4</td><td><b>계약서 부속 — 계측 정의서</b></td><td>logical bytes, 증분·공백·제외 정의, 상위 3% 산식, <code>business_place_mt</code> 단위, 지원 범위 선긋기, SLA, 계측 정정 절차, 에스컬레이션</td><td>§09-①·⑥ 결정</td></tr>
+        <tr><td class="mono">P5</td><td><b>대외 설명 자료</b></td><td>요금 테이블만 노출(실효단가·원가 열 제거), 가치 매핑 표, 협상 스크립트, 예상 반박 대응</td><td>P1~P4</td></tr>
+        <tr><td class="mono">P6</td><td><b>전환 안내 · 갱신 협상</b></td><td>AS-IS 대비 무엇이 좋아지는지(태그 정리 노동 소멸, 필요 데이터 자유 수집, 인프라 락인 없음), 비대칭 조정 조항 안내</td><td>P5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>협상 앵커 — 월 5,000만원이 담는 것</h3>
+  <p class="prose">수집량(GB)은 시장에서 가장 싼 커모디티 지표다(AWS SiteWise 등 GB당 센트 단위). 실효를 역산한 고객에게 "1.9TB/월 수집에 왜 월 5,000만원이냐"는 반박은 예정되어 있다. <strong>지표가 가치를 나르지 못하므로 문서가 가치를 날라야 한다.</strong></p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:24%">담고 있는 것</th><th style="width:46%">구체 내용</th><th style="width:30%">시장에서 따로 사면</th></tr></thead>
+      <tbody>
+        <tr><td><b>철강 도메인 IP</b></td><td>행안부·산업부 기반 표준 용어 사전(word/term), ISA-95 계층, 값·업무 도메인 체계, RFM 등 설비 표준</td><td>컨설팅 + 구축 수억원, 재현 난이도 극상</td></tr>
+        <tr><td><b>데이터 거버넌스</b></td><td>SSOT 파이프라인(DB 단일 원천), 데이터 리니지 자동화, 표준-현업 용어 매칭, RBAC/컬럼 마스킹</td><td>별도 거버넌스 솔루션 라이선스</td></tr>
+        <tr><td><b>운영 · 지원 서비스</b></td><td>설치·구축, 상시 기술지원·장애대응, 정기 업데이트·보안패치, 매뉴얼</td><td>상시 전담 인력 M/M 비용</td></tr>
+        <tr><td><b>8단계 무중단 확장</b></td><td>현재 등급 상단까지 추가 비용 없이 수집 확대, 등급 상향만으로 스케일</td><td>—</td></tr>
+        <tr><td><b>플랫폼 기능</b></td><td>BI 대시보드, 모니터링, 카탈로그, 통합검색, 게시판, 사용자 관리</td><td>개별 BI/모니터링 툴 각각 구독</td></tr>
+      </tbody>
+      <caption>"따로 사면" 열은 개략적 앵커링용. 구체 금액은 협상 상황에 따라 제시하며 과도한 수치 확약은 금지.</caption>
+    </table>
+  </div>
+  <p class="t-note">협상 스크립트 — <em>"수집량이 아니라 위 다섯 가지 묶음에 값을 매긴다. 특히 철강 표준 사전과 소재 트래킹 기준 데이터는 현업과 함께 수년간 만든 자산으로, 시장에서 재현하려면 컨설팅·구축비가 별도로 든다. GB 단가로 환산하지 말고 대체 조달 비용과 비교하라."</em></p>
+</section>
+
+<p class="footer">
+  본 문서는 두 원본 문서(DF 라이선스 체계 수립 기획 초안 2026-06-21 · DataForge 라이선스 요금 산정 근거)의 내용을 대조·검증해 통합한 <b>내부 확정용 설계서</b>다. 요금 산식·실측치·AS-IS 등급표의 수치는 원본에서 인용 후 독립 재계산으로 검증했으며, 검증 판정과 보정안·미해결 쟁점은 본 문서의 분석이다. 원가·M/M·실효단가·선투자 관련 내용은 <b>대외 노출 금지</b>. 세아창원특수강 AS-IS 실제 등급, 가드 밴드 실측 수치, 상위 3% 재계산 결과는 아직 확보되지 않은 값이며 §10 로드맵의 선행 과제다.
+</p>
+
+</main>
+</div>
+
+</body>
+</html>
