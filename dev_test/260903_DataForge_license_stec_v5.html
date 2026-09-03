@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DataForge 라이선스 통합 설계서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#EEF1F2;
+  --surface:#FFFFFF;
+  --surface-2:#F6F8F8;
+  --ink:#15191C;
+  --ink-2:#3A464C;
+  --muted:#68767C;
+  --rule:#D2DADD;
+  --rule-strong:#B4C0C4;
+  --accent:#14606E;
+  --accent-soft:#DCEAEC;
+  --signal:#A8451B;
+  --signal-soft:#F6E3DA;
+  --ok:#2C6248;
+  --ok-soft:#DCEAE2;
+  --warn:#8A6410;
+  --warn-soft:#F5EBD3;
+  --shadow:0 1px 2px rgba(20,40,48,.06), 0 6px 20px rgba(20,40,48,.05);
+
+  --f-sans:"IBM Plex Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-serif:"Noto Serif KR", "IBM Plex Sans KR", Georgia, serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1214;
+    --surface:#161B1E;
+    --surface-2:#1C2226;
+    --ink:#E4EAEC;
+    --ink-2:#B4C0C5;
+    --muted:#87959B;
+    --rule:#2A3237;
+    --rule-strong:#3C464C;
+    --accent:#5FB6C4;
+    --accent-soft:#12333A;
+    --signal:#DE8A5E;
+    --signal-soft:#3A2318;
+    --ok:#77BE9B;
+    --ok-soft:#16301F;
+    --warn:#D7B15C;
+    --warn-soft:#302711;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1214;
+  --surface:#161B1E;
+  --surface-2:#1C2226;
+  --ink:#E4EAEC;
+  --ink-2:#B4C0C5;
+  --muted:#87959B;
+  --rule:#2A3237;
+  --rule-strong:#3C464C;
+  --accent:#5FB6C4;
+  --accent-soft:#12333A;
+  --signal:#DE8A5E;
+  --signal-soft:#3A2318;
+  --ok:#77BE9B;
+  --ok-soft:#16301F;
+  --warn:#D7B15C;
+  --warn-soft:#302711;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-sans);
+  font-size:15px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{text-wrap:balance;margin:0;line-height:1.3;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+
+/* ---------- shell ---------- */
+.shell{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:236px minmax(0,1fr);gap:0;align-items:start}
+.rail{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:32px 20px 40px 24px;
+  border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:20px;
+}
+.rail-brand{display:flex;flex-direction:column;gap:3px}
+.rail-brand .mark{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;
+}
+.rail-brand .name{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+.rail-brand .ver{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.rail nav{display:flex;flex-direction:column;gap:1px}
+.rail nav a{
+  display:flex;gap:10px;align-items:baseline;
+  padding:6px 8px;border-radius:4px;
+  text-decoration:none;color:var(--ink-2);font-size:13px;line-height:1.4;
+  border-left:2px solid transparent;
+}
+.rail nav a .n{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);font-weight:500;min-width:14px}
+.rail nav a:hover{background:var(--surface-2);color:var(--ink)}
+.rail nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.rail-foot{margin-top:auto;font-size:11px;color:var(--muted);line-height:1.55;border-top:1px solid var(--rule);padding-top:14px}
+
+.main{padding:0 40px 96px;min-width:0}
+
+/* ---------- masthead ---------- */
+.masthead{padding:52px 0 30px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:var(--f-sans);font-size:11.5px;font-weight:600;letter-spacing:.055em;
+  color:var(--signal);font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.eyebrow .sep{width:20px;height:1px;background:var(--rule-strong)}
+h1{font-size:clamp(30px,4.2vw,44px);font-weight:700;letter-spacing:-.025em;margin:14px 0 0;line-height:1.18}
+.dek{font-family:var(--f-serif);font-size:16.5px;line-height:1.8;color:var(--ink-2);max-width:64ch;margin-top:16px}
+.meta-row{display:flex;flex-wrap:wrap;gap:0;margin-top:26px;border-top:1px solid var(--rule);padding-top:16px}
+.meta-row div{padding-right:28px;margin-right:28px;border-right:1px solid var(--rule)}
+.meta-row div:last-child{border-right:0}
+.meta-row dt{font-family:var(--f-sans);font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--muted);margin:0 0 4px}
+.meta-row dd{margin:0;font-size:13.5px;font-weight:500}
+
+/* ---------- gauge cluster ---------- */
+.cluster{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;
+  margin:32px 0 0;
+}
+.gauge{background:var(--surface);padding:16px 18px 18px;display:flex;flex-direction:column;gap:5px}
+.gauge .lab{font-family:var(--f-sans);font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--muted)}
+.gauge .val{font-family:var(--f-mono);font-size:25px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.gauge .sub{font-size:11.5px;color:var(--muted);line-height:1.45}
+.gauge.is-accent .val{color:var(--accent)}
+.gauge.is-signal .val{color:var(--signal)}
+
+/* ---------- sections ---------- */
+section{padding-top:64px;scroll-margin-top:20px}
+.s-head{display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--rule-strong);padding-bottom:12px;margin-bottom:26px}
+.s-head .num{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em;padding-top:5px;white-space:nowrap;
+}
+.s-head h2{font-size:24px;letter-spacing:-.02em;font-weight:700;flex:1}
+.s-head .tag{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--rule-strong);border-radius:3px;padding:3px 8px;white-space:nowrap;
+}
+.lede{font-family:var(--f-serif);font-size:15.5px;line-height:1.85;color:var(--ink-2);max-width:68ch;margin-bottom:24px}
+h3{font-size:16px;font-weight:600;margin:34px 0 12px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+h3::before{content:"";width:3px;height:15px;background:var(--accent);border-radius:1px;flex:none}
+h4{font-size:13.5px;font-weight:600;margin:22px 0 8px;color:var(--ink-2)}
+.prose{max-width:70ch}
+.prose p+p{margin-top:12px}
+.stack{display:flex;flex-direction:column;gap:14px}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface);margin:6px 0 4px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+thead th{
+  background:var(--surface-2);text-align:left;font-weight:600;font-size:11.5px;
+  letter-spacing:.02em;color:var(--muted);font-family:var(--f-sans);
+  padding:10px 13px;border-bottom:1px solid var(--rule-strong);white-space:nowrap;vertical-align:bottom;
+}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.6}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surface-2)}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.mono{font-family:var(--f-mono);font-size:12px}
+tr.hi td{background:var(--accent-soft)}
+tr.hi:hover td{background:var(--accent-soft)}
+tr.hi td:first-child{font-weight:600}
+caption{caption-side:bottom;text-align:left;font-size:11.5px;color:var(--muted);padding:9px 13px;line-height:1.6;border-top:1px solid var(--rule)}
+.t-note{font-size:12px;color:var(--muted);line-height:1.65;margin-top:8px;max-width:70ch}
+
+/* ---------- pills ---------- */
+.pill{
+  display:inline-block;font-family:var(--f-sans);font-size:10.5px;font-weight:600;
+  letter-spacing:.01em;padding:2px 8px;border-radius:3px;white-space:nowrap;
+}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-sig{background:var(--signal-soft);color:var(--signal)}
+.p-acc{background:var(--accent-soft);color:var(--accent)}
+.p-mute{background:var(--surface-2);color:var(--muted);border:1px solid var(--rule)}
+
+/* ---------- callouts ---------- */
+.call{
+  border:1px solid var(--rule);border-left:3px solid var(--accent);
+  background:var(--surface);border-radius:0 6px 6px 0;padding:16px 20px;margin:20px 0;
+  display:flex;flex-direction:column;gap:7px;max-width:76ch;
+}
+.call.sig{border-left-color:var(--signal)}
+.call.warn{border-left-color:var(--warn)}
+.call.ok{border-left-color:var(--ok)}
+.call .ct{
+  font-family:var(--f-sans);font-size:11px;letter-spacing:.03em;font-weight:600;color:var(--accent);
+}
+.call.sig .ct{color:var(--signal)}
+.call.warn .ct{color:var(--warn)}
+.call.ok .ct{color:var(--ok)}
+.call p{font-size:13.5px;line-height:1.72;color:var(--ink-2)}
+.call strong{color:var(--ink);font-weight:600}
+
+/* ---------- layer stack ---------- */
+.layers{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.layer{background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:76px minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.layer .lid{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em;padding-top:1px}
+.layer .lname{font-size:14.5px;font-weight:600;margin-bottom:4px}
+.layer .ldesc{font-size:12.5px;color:var(--muted);line-height:1.62}
+.layer .lprice{font-size:12.5px;line-height:1.62;color:var(--ink-2)}
+.layer .lprice b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-size:12.5px}
+.layer.excl{background:var(--surface-2)}
+.layer.excl .lid{color:var(--muted)}
+
+/* ---------- formula ---------- */
+.formula{
+  font-family:var(--f-mono);font-size:14px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:6px;padding:16px 20px;margin:16px 0;overflow-x:auto;line-height:1.9;white-space:pre;
+  font-variant-numeric:tabular-nums;box-shadow:var(--shadow);
+}
+.formula .k{color:var(--accent);font-weight:600}
+.formula .c{color:var(--muted)}
+
+/* ---------- decision list ---------- */
+.dec{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.dec-item{background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:30px minmax(0,1fr) 128px;gap:16px;align-items:start}
+.dec-item .dn{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--muted);padding-top:1px}
+.dec-item .dq{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.45}
+.dec-item .dd{font-size:12.5px;color:var(--muted);line-height:1.65}
+.dec-item .dd b{color:var(--ink-2);font-weight:600}
+.dec-item .dw{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+
+/* ---------- misc ---------- */
+ul.tight{margin:8px 0;padding-left:19px;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+ul.tight li{font-size:13.5px;line-height:1.68;color:var(--ink-2)}
+ul.tight li::marker{color:var(--rule-strong)}
+ul.tight strong{color:var(--ink);font-weight:600}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--surface-2);border:1px solid var(--rule);border-radius:3px;padding:1px 5px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start}
+.footer{margin-top:80px;padding-top:22px;border-top:2px solid var(--ink);font-size:12px;color:var(--muted);line-height:1.75;max-width:74ch}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:24px}
+  .rail nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0}
+  .rail-foot{margin-top:14px}
+  .main{padding:0 22px 72px}
+  .layer{grid-template-columns:1fr;gap:8px}
+  .dec-item{grid-template-columns:1fr;gap:8px}
+  .meta-row div{border-right:0;margin-right:0;padding-right:0;min-width:46%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+/* v2 additions */
+.badge-new{display:inline-block;font-family:var(--f-sans);font-size:9.5px;font-weight:700;letter-spacing:.06em;
+  background:var(--signal);color:#fff;padding:1px 6px;border-radius:3px;vertical-align:middle;margin-left:8px}
+:root[data-theme="dark"] .badge-new{color:#14181A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge-new{color:#14181A}}
+.rail nav a .nb{font-size:8px;font-weight:700;color:var(--signal);letter-spacing:.04em;margin-left:auto;padding-left:6px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin:18px 0}
+.kpi > div{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.kpi .k{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.kpi .v{font-family:var(--f-mono);font-size:21px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:11px;color:var(--muted);line-height:1.45}
+.kpi .v.neg{color:var(--signal)} .kpi .v.pos{color:var(--ok)} .kpi .v.acc{color:var(--accent)}
+.meter{height:7px;border-radius:4px;background:var(--rule);overflow:hidden;position:relative;margin-top:5px;min-width:90px}
+.meter i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.meter i.warn{background:var(--warn)} .meter i.over{background:var(--signal)}
+.cust{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px;margin:20px 0}
+.card{border:1px solid var(--rule);border-radius:6px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.card > h4{margin:0;padding:12px 18px;background:var(--surface-2);border-bottom:1px solid var(--rule);
+  font-size:14px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card > h4 span{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--muted)}
+.card .body{padding:14px 18px 16px}
+.row{display:grid;grid-template-columns:76px 1fr 118px;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule);font-size:12.5px}
+.row:last-child{border-bottom:0}
+.row .rl{color:var(--muted);font-size:11.5px}
+.row .rv{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;font-size:12.5px}
+.axis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin:18px 0}
+.axis > div{background:var(--surface);padding:16px 18px}
+.axis h5{margin:0 0 6px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.axis h5 em{font-family:var(--f-mono);font-style:normal;font-size:11px;color:var(--accent);font-weight:600}
+.axis p{font-size:12.5px;color:var(--muted);line-height:1.62}
+.scn{border-left:3px solid var(--rule-strong);padding-left:14px;margin:14px 0}
+.scn.s1{border-left-color:var(--accent)} .scn.s2{border-left-color:var(--warn)}
+.scn b{font-size:13px}
+mark{background:var(--warn-soft);color:var(--ink);padding:1px 4px;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="mark">Internal / Confidential</div>
+    <div class="name">DataForge<br>라이선스 통합 설계서</div>
+    <div class="ver">rev 3 · 실측 확정판</div>
+  </div>
+  <nav>
+    <a href="#s0"><span class="n">00</span><span>판정 요약</span></a>
+    <a href="#s1"><span class="n">01</span><span>베스틸 실측 반영</span><span class="nb">NEW</span></a>
+    <a href="#s2"><span class="n">02</span><span>수량 ≠ 데이터량</span><span class="nb">NEW</span></a>
+    <a href="#s3"><span class="n">03</span><span>현행 라이선스 진단</span></a>
+    <a href="#s4"><span class="n">04</span><span>수치 검증</span></a>
+    <a href="#s5"><span class="n">05</span><span>Legacy 가치 교차검증</span></a>
+    <a href="#s6"><span class="n">06</span><span>전환 손익 &amp; BEP</span></a>
+    <a href="#s7"><span class="n">07</span><span>통합 체계 v3</span></a>
+    <a href="#s8"><span class="n">08</span><span>과금 지표 확정안</span></a>
+    <a href="#s9"><span class="n">09</span><span>등급표 &amp; 가드</span></a>
+    <a href="#s10"><span class="n">10</span><span>문서 대조 · 매핑</span></a>
+    <a href="#s11"><span class="n">11</span><span>계약 · 방어 조항</span></a>
+    <a href="#s12"><span class="n">12</span><span>미해결 쟁점</span></a>
+    <a href="#s13"><span class="n">13</span><span>이행 로드맵</span></a>
+  </nav>
+  <div class="rail-foot">
+    분석 대상<br>
+    문서 4종 (기획 초안 원본·개정판, 요금 산정 근거, 서비스 항목 요약)<br>
+    + 창원 · 베스틸 계약 등급 · 실사용 수량<br>
+    + <b>2사 일일 수집량 실측</b>
+  </div>
+</aside>
+
+<main class="main">
+
+<header class="masthead">
+  <div class="eyebrow"><span>내부 확정용 설계서 · rev 3</span><span class="sep"></span><span>대외 배포 금지</span></div>
+  <h1>DataForge 라이선스 체계<br>통합 설계 및 검증</h1>
+  <p class="dek">베스틸 일일 수집량 실측(평균 120 · 최대 150 GB/day)이 들어오면서 <strong>rev 2의 추정 두 개가 모두 크게 빗나갔다.</strong> 그 오차의 원인이 이번 분석의 핵심이다 — 태그·컬럼 수량은 실제 데이터량을 예측하지 못한다. 이 사실은 AS-IS 체계의 근본 결함을 드러내는 동시에, Legacy 별도 축의 필요성을 확정한다. 두 고객 실측이 모두 확보된 지금, 2축 체계와 최적 앵커율까지 수치로 확정할 수 있다.</p>
+  <dl class="meta-row">
+    <div><dt>1차 독자</dt><dd>DataForge 팀 · 경영 승인</dd></div>
+    <div><dt>대상 계약</dt><dd>세아창원특수강 · 세아베스틸</dd></div>
+    <div><dt>실측 근거</dt><dd>2사 계약·수량·수집량 확보</dd></div>
+    <div><dt>권고안</dt><dd>2축 · 앵커 80% · 2사 −5.9%</dd></div>
+  </dl>
+</header>
+
+<!-- ══════════════ 00 ══════════════ -->
+<section id="s0">
+  <div class="s-head"><span class="num">00</span><h2>판정 요약</h2><span class="tag">Executive</span></div>
+
+  <p class="lede">두 고객사의 데이터가 모두 모이자 그림이 완전히 달라졌다. <strong>베스틸은 창원보다 태그가 1.64배 많은데 데이터량은 2.17배다.</strong> 이 비례가 맞지 않는다는 사실 하나가 AS-IS 수량 과금의 정당성과 rev 2의 추정 방법론을 동시에 무너뜨린다. 대신 <strong>2축 체계의 최적 앵커율이 수치로 확정됐다 — 80%에서 두 고객의 인하폭이 0.1%p 차이로 일치한다.</strong></p>
+
+  <div class="cluster">
+    <div class="gauge"><span class="lab">베스틸 가드값</span><span class="val is-accent" style="color:var(--accent)">138</span><span class="sub">GB/day · DF-160 · 8,200만원</span></div>
+    <div class="gauge"><span class="lab">rev 2 추정 오차</span><span class="val" style="color:var(--signal)">−28 ~ −58%</span><span class="sub">S1·S2 모두 과소 추정</span></div>
+    <div class="gauge"><span class="lab">AS-IS 부담 불균형</span><span class="val" style="color:var(--signal)">1.85배</span><span class="sub">창원이 GB당 더 비싸게 부담</span></div>
+    <div class="gauge"><span class="lab">권고안 2사 매출</span><span class="val" style="color:var(--ok)">−5.9%</span><span class="sub">22.20억 → 20.88억</span></div>
+  </div>
+
+  <h3>rev 2에서 바뀐 것</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:18%">항목</th><th style="width:26%">rev 2</th><th style="width:30%">rev 3 — 실측 반영</th><th style="width:26%">영향</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>베스틸 등급</b></td>
+          <td>S1 DF-100(5,900만) 또는 S2 DF-60(4,200만) — 추정 범위가 두 등급에 걸쳐 있었다</td>
+          <td><b>DF-160 · 8,200만원</b><br>가드값 138.2 GB/day (추정 범위 136.7~139.8, 전 구간 동일 등급)</td>
+          <td><span class="pill p-ok">확정</span> 두 추정보다 2~4단계 위. 등급 자체는 이제 확정적.</td>
+        </tr>
+        <tr>
+          <td><b>전환 손익</b></td>
+          <td>단일축 −41~50%, 2축 75% 앵커로 −20% 수준 제시</td>
+          <td>단일축 <b>−28.6%</b>, 2축 80% 앵커 <b>−5.9%</b></td>
+          <td><span class="pill p-ok">개선</span> 베스틸 요금이 예상보다 커서 전체 인하폭이 완화.</td>
+        </tr>
+        <tr>
+          <td><b>최적 앵커율</b></td>
+          <td>75% 권고 (근거: 메시지가 성립하는 구간이라는 정성 판단)</td>
+          <td><b>80% 권고</b> — 두 고객 인하폭이 −5.9% / −6.0%로 <b>격차 0.1%p</b></td>
+          <td><span class="pill p-sig">변경</span> 정성 판단에서 수치 최적화로.</td>
+        </tr>
+        <tr>
+          <td><b>추정 방법론</b></td>
+          <td>태그당 8.6 MB/day 등 수량 기반 환산으로 베스틸 추정</td>
+          <td><b>폐기.</b> 2사 연립방정식이 컬럼 계수 <b>음수</b>를 낳는다 — 수량-데이터량 선형모델은 성립하지 않는다</td>
+          <td><span class="pill p-sig">근본</span> §02. AS-IS 정당성과 직결.</td>
+        </tr>
+        <tr>
+          <td><b>밴드 완충 조항</b></td>
+          <td>밴드 하단 고객이 불리하므로 완충 조항 권고</td>
+          <td><b>철회.</b> 두 고객 모두 밴드 하단(18% · 27% 지점)이라 완충 도입 시 매출만 감소. 구조적 대안은 밴드 폭 균일화</td>
+          <td><span class="pill p-sig">변경</span> §12-⑥로 분리.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>결론 5문장</h3>
+  <ul class="tight">
+    <li><strong>베스틸 가드값은 138 GB/day, DF-160(월 8,200만원)이다.</strong> 창원 분포(가드/평균 1.165, 가드/최대 0.911)를 적용한 두 방법이 각각 139.8과 136.7로 수렴하며, 이 범위 전체가 DF-160 밴드(130~160) 안에 들어온다. <strong>등급은 확정적이나 하단 130까지 여유가 6%뿐이라 실측 확인은 여전히 필요하다.</strong></li>
+    <li><strong>수량은 데이터량을 예측하지 못한다.</strong> 두 고객 실측으로 연립방정식을 세우면 컬럼 계수가 <strong>−3.03 MB/day</strong>라는 음수가 나온다. 태그당 데이터량도 창원 7.81 vs 베스틸 10.46 MB/day로 34% 차이 나며, 컬럼 기여를 양수로 가정할수록 격차는 더 벌어진다. <strong>공정 특성이 수량보다 데이터량을 더 크게 좌우한다.</strong></li>
+    <li><strong>이것이 AS-IS 체계의 근본 결함이다.</strong> 창원은 GB·day당 133만원, 베스틸은 72만원을 낸다 — <strong>창원이 1.85배 비싸게 부담</strong>하고 있다. 수량으로 과금했는데 수량이 자원 소비를 대표하지 못한 결과다. To-Be 저장량 축은 이 왜곡을 1.32배까지 줄인다(잔여 격차는 밴드 대표점 위치 효과).</li>
+    <li><strong>동시에 Legacy 별도 축의 필요성이 확정됐다.</strong> 컬럼이 4.9배 많은 창원(7,000 vs 1,430)이 데이터량은 절반 이하(63.6 vs 138.2)다. 저장량 축에서 Legacy 수집은 <strong>측정 가능한 신호를 남기지 않는다.</strong> rev 2가 추정 범위로 제시했던 "잔존율 3.9~36%"는 이제 <strong>사실상 0에 가깝다</strong>고 봐야 한다.</li>
+    <li><strong>2축 · 앵커 80%가 최적해다.</strong> 창원 8,000만(−5.9%), 베스틸 9,400만(−6.0%), 2사 합산 연 20.88억(−5.9%). 두 고객이 동일한 인하율을 받으므로 <strong>"체계를 바꾸면서 6% 인하"라는 단일 메시지로 양쪽 협상이 가능하다.</strong> 손익분기 고객사 수는 12명 기준 2.5사로, AS-IS 정당청구(2.1사)에 근접한다.</li>
+  </ul>
+</section>
+
+<!-- ══════════════ 01 ══════════════ -->
+<section id="s1">
+  <div class="s-head"><span class="num">01</span><h2>베스틸 실측 반영</h2><span class="tag">Correction</span></div>
+
+  <p class="lede">rev 2는 베스틸 등급을 두 시나리오로 추정했고, <strong>둘 다 틀렸다.</strong> 어떻게 틀렸는지를 먼저 기록한다 — 같은 방법으로 신규 고객사를 추정하면 안 되기 때문이다.</p>
+
+  <h3>가드값 산출</h3>
+  <div class="formula">
+<span class="c">창원 실측 분포 (62일)</span>
+평균 54.6 / 최대 69.8 / 상위10 평균(가드) <span class="k">63.6</span>
+  → 가드/평균 = <span class="k">1.1648</span>    가드/최대 = <span class="k">0.9112</span>    최대/평균 = 1.278
+
+<span class="c">베스틸 실측</span>
+평균 <span class="k">120.0</span> / 최대 <span class="k">150.0</span>    최대/평균 = 1.250  <span class="c">← 창원과 유사한 변동성</span>
+  방법 A  120.0 × 1.1648 = <span class="k">139.8</span> GB/day
+  방법 B  150.0 × 0.9112 = <span class="k">136.7</span> GB/day
+  ▶ 가드값 ≈ <span class="k">138.2</span> GB/day  →  <span class="k">DF-160</span> (밴드 130~160)  →  <span class="k">82,000,000원/월</span>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:26%">구분</th><th class="num">가드값</th><th style="width:14%">등급</th><th class="num">월 요금</th><th class="num">실측 대비 오차</th><th class="num">금액 차이</th></tr></thead>
+      <tbody>
+        <tr><td>rev 2 · S1 태그중심 추정</td><td class="num">99.3</td><td class="mono">DF-100</td><td class="num">59,000,000</td><td class="num" style="color:var(--signal)">−28.1%</td><td class="num">−23,000,000</td></tr>
+        <tr><td>rev 2 · S2 동일가중 추정</td><td class="num">58.6</td><td class="mono">DF-60</td><td class="num">42,000,000</td><td class="num" style="color:var(--signal)">−57.6%</td><td class="num">−40,000,000</td></tr>
+        <tr class="hi"><td><b>rev 3 · 실측 기반</b></td><td class="num"><b>138.2</b></td><td class="mono"><b>DF-160</b></td><td class="num"><b>82,000,000</b></td><td class="num">—</td><td class="num">—</td></tr>
+      </tbody>
+      <caption>두 추정 모두 <b>과소</b> 방향으로 빗나갔다. 만약 rev 2의 S2를 근거로 베스틸에 DF-60(4,200만원)을 제안했다면 월 4,000만원 · 연 4.8억원을 놓칠 뻔했다.</caption>
+    </table>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">추정이 빗나간 이유</span>
+    <p>rev 2의 두 시나리오는 모두 <strong>"수량 × 단위당 데이터량"</strong>이라는 같은 구조였고, 단위당 값을 창원 한 곳에서 역산해 베스틸에 그대로 적용했다. 이 전제가 틀렸다. 베스틸은 태그가 1.64배 많은데 데이터량은 2.17배다 — <strong>태그당 데이터량 자체가 고객사마다 다르다.</strong> 수집 주기, 데이터 타입, 공정 특성이 다르기 때문이며, 이 차이는 §02에서 정량화한다.</p>
+    <p><strong>실무적 함의:</strong> 신규 고객사의 등급을 <strong>설계 태그 수로 추정해서는 안 된다.</strong> rev 2 §12-⑦(신규 고객 첫 해 기준값)의 우선순위를 다시 올려야 하며, 답은 "수량 기반 추정"이 아니라 "초기 3개월 실측 후 소급 정산"이어야 한다.</p>
+  </div>
+
+  <h3>등급 경계 안정성</h3>
+  <div class="kpi">
+    <div><span class="k">추정 범위</span><span class="v">136.7 ~ 139.8</span><span class="s">전 구간 DF-160 — 등급 확정적</span></div>
+    <div><span class="k">하단(130) 여유</span><span class="v neg">8.2</span><span class="s">GB/day · 6% — 좁다</span></div>
+    <div><span class="k">상단(160) 여유</span><span class="v pos">21.8</span><span class="s">GB/day · 16% — 성장 여지</span></div>
+    <div><span class="k">대표점 편차</span><span class="v neg">+292만</span><span class="s">원/월 · 대표점 145 기준 초과 부담</span></div>
+  </div>
+  <p class="t-note"><strong>하단 여유 6%가 유일한 리스크다.</strong> 실제 일별 데이터로 상위 3%(또는 상위 10개) 평균을 냈을 때 130 미만이 나오면 DF-130(6,900만원)으로 내려가고, 2축 80% 적용 시 베스틸 요금은 8,100만원(−19%)이 되어 창원(−5.9%)과의 균형이 깨진다. <strong>P2 실측이 여전히 필요한 이유는 등급 확정이 아니라 이 경계 확인이다.</strong></p>
+</section>
+
+<!-- ══════════════ 02 ══════════════ -->
+<section id="s2">
+  <div class="s-head"><span class="num">02</span><h2>수량 ≠ 데이터량</h2><span class="tag">Critical Finding</span></div>
+
+  <p class="lede">두 고객사 실측이 모두 확보되면서 <strong>처음으로 검증 가능한 질문</strong>이 생겼다 — 태그 수와 컬럼 수로 데이터량을 설명할 수 있는가. 답은 명확히 아니다.</p>
+
+  <h3>연립방정식 — 컬럼 계수가 음수다</h3>
+  <div class="formula">
+<span class="c">평균 일일 수집량 기준 (MB/day), t = 태그당, c = 컬럼당</span>
+창원    6,995·t +  7,000·c =  54,600
+베스틸  11,470·t +  1,430·c = 120,000
+
+  ▶ t = <span class="k">10.84</span> MB/day/tag     c = <span class="k">−3.03</span> MB/day/column  <span class="c">← 음수</span>
+  </div>
+  <p class="prose">컬럼이 늘수록 데이터량이 <em>줄어든다</em>는 결과는 물리적으로 불가능하다. 이는 계산 오류가 아니라 <strong>모델이 틀렸다는 신호</strong>다 — 태그 수와 컬럼 수라는 두 변수만으로는 두 고객사의 데이터량을 동시에 설명할 수 없다.</p>
+
+  <h3>태그당 데이터량이 고객사마다 다르다</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:22%">컬럼 기여 가정</th><th class="num">창원 태그당</th><th class="num">베스틸 태그당</th><th class="num">격차</th><th style="width:32%">해석</th></tr></thead>
+      <tbody>
+        <tr><td>c = 0 MB/day<br><span class="ldesc" style="font-size:11px">컬럼은 데이터량 기여 없음</span></td><td class="num">7.81</td><td class="num">10.46</td><td class="num">+34%</td><td>가장 보수적인 가정에서도 34% 차이</td></tr>
+        <tr><td>c = 1 MB/day</td><td class="num">6.80</td><td class="num">10.34</td><td class="num">+52%</td><td rowspan="4" style="vertical-align:middle">컬럼 기여를 크게 잡을수록 <b>태그당 격차가 폭증</b>한다. 창원은 컬럼이 5배 많아 컬럼분을 빼면 태그분이 급감하기 때문. 어떤 c값에서도 두 고객의 t가 일치하지 않는다.</td></tr>
+        <tr><td>c = 2 MB/day</td><td class="num">5.80</td><td class="num">10.21</td><td class="num">+76%</td></tr>
+        <tr><td>c = 3 MB/day</td><td class="num">4.80</td><td class="num">10.09</td><td class="num">+110%</td></tr>
+        <tr><td>c = 4 MB/day</td><td class="num">3.80</td><td class="num">9.96</td><td class="num">+162%</td></tr>
+      </tbody>
+      <caption>평균 일일 수집량 기준. 두 고객사의 태그당 데이터량이 일치하는 c값은 존재하지 않는다 — c를 키울수록 격차가 단조 증가한다.</caption>
+    </table>
+  </div>
+
+  <div class="axis">
+    <div><h5>유닛당 데이터량 <em>가드값 기준</em></h5><p>창원 <b>4.54</b> MB/day/unit (13,995 유닛) vs 베스틸 <b>10.71</b> MB/day/unit (12,900 유닛). <b>2.36배 차이.</b> 총 수량은 오히려 창원이 많은데 데이터량은 베스틸이 2배 이상이다.</p></div>
+    <div><h5>무엇이 데이터량을 결정하는가</h5><p>수집 주기(1초 vs 1분), 데이터 타입(정수 vs 부동소수·문자열), 공정 특성(연속 조업 vs 배치), 페이로드 구조. <b>이 변수들이 수량보다 지배적이다.</b></p></div>
+  </div>
+
+  <h3>이 발견의 세 가지 함의</h3>
+
+  <div class="call sig">
+    <span class="ct">함의 ① — AS-IS 수량 과금은 부담을 불공정하게 배분해 왔다</span>
+    <p>창원은 GB·day당 <strong>1,336,478원</strong>, 베스틸은 <strong>723,589원</strong>을 낸다. 같은 자원을 쓰는 데 창원이 <strong>1.85배</strong>를 부담한다. 수량으로 과금했는데 수량이 자원 소비를 대표하지 못했기 때문이다. <strong>To-Be 저장량 축은 이 격차를 1.32배로 줄인다</strong>(잔여분은 밴드 대표점 위치 차이). 이는 To-Be 전환의 <em>공정성</em> 논거이며, 지금까지 문서 어디에도 없던 강력한 명분이다.</p>
+  </div>
+
+  <div class="call ok">
+    <span class="ct">함의 ② — 저장량 축은 옳은 선택이었다</span>
+    <p>개발 문서의 "일일 증분을 전체 사용의 단일 프록시로" 결정은 <strong>실측으로 정당화된다.</strong> 데이터량은 인프라 부하·저장 원가와 직결되지만 수량은 그렇지 않다. rev 2에서 제기한 단일 축 비판은 <em>Tag 영역에 대해서는 철회</em>한다 — 실시간 Tag 수집에 대해 저장량은 정확한 프록시다.</p>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">함의 ③ — 그러나 Legacy는 여전히 잡히지 않는다</span>
+    <p>컬럼 계수가 음수로 나온다는 것은, 뒤집어 말하면 <strong>Legacy 컬럼이 데이터량에 남기는 신호가 태그 변동에 완전히 묻힌다</strong>는 뜻이다. 창원은 컬럼이 4.9배 많은데 데이터량은 베스틸의 46%다. 저장량 축으로 Legacy를 과금하면 <strong>사실상 무료가 된다.</strong> rev 2의 "잔존율 3.9~36%"는 낙관적 추정이었고, 실제로는 <strong>측정 불가 수준</strong>으로 봐야 한다. §05·§07의 2축 설계가 이 때문에 필요하다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 03 ══════════════ -->
+<section id="s3">
+  <div class="s-head"><span class="num">03</span><h2>현행 라이선스 진단</h2><span class="tag">Baseline</span></div>
+
+  <p class="lede">두 고객사의 계약·수량·데이터량이 모두 확보됐다. <strong>창원은 컬럼 등급을 233% 초과하고 있고, 베스틸은 계약대로 청구되고 있다.</strong></p>
+
+  <div class="cust">
+    <div class="card">
+      <h4>세아창원특수강 <span>TAG-7000 + COL-3000</span></h4>
+      <div class="body">
+        <div class="row"><span class="rl">Tag 실사용</span><span><b>6,995</b> / 7,000 기준<div class="meter"><i class="warn" style="width:99.9%"></i></div></span><span class="rv">99.9%</span></div>
+        <div class="row"><span class="rl">Column 실사용</span><span><b>약 7,000</b> / 3,000 기준<div class="meter"><i class="over" style="width:100%"></i></div></span><span class="rv" style="color:var(--signal);font-weight:600">233.3%</span></div>
+        <div class="row"><span class="rl">일일 수집량</span><span class="ldesc" style="font-size:12px">평균 54.6 / 최대 69.8 / 가드 63.6</span><span class="rv">63.6 GB/d</span></div>
+        <div class="row"><span class="rl">현행 청구</span><span class="ldesc" style="font-size:12px">기본 20M + Tag 45M + Col 20M</span><span class="rv">85,000,000</span></div>
+        <div class="row"><span class="rl">적정 등급</span><span class="ldesc" style="font-size:12px">TAG-7000 + <b>COL-8000</b> (38M)</span><span class="rv">103,000,000</span></div>
+        <div class="row"><span class="rl">미청구</span><span class="ldesc" style="font-size:12px">연 216,000,000원</span><span class="rv" style="color:var(--signal);font-weight:600">+18,000,000</span></div>
+        <div class="row"><span class="rl">GB·day당</span><span class="ldesc" style="font-size:12px">현행 청구 ÷ 가드값</span><span class="rv" style="color:var(--signal)">1,336,478</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h4>세아베스틸 <span>TAG-12500 + COL-2000</span></h4>
+      <div class="body">
+        <div class="row"><span class="rl">Tag 실사용</span><span><b>11,470</b> / 12,500 기준<div class="meter"><i style="width:91.8%"></i></div></span><span class="rv">91.8%</span></div>
+        <div class="row"><span class="rl">Column 실사용</span><span><b>약 1,430</b> / 2,000 기준<div class="meter"><i style="width:71.5%"></i></div></span><span class="rv">71.5%</span></div>
+        <div class="row"><span class="rl">일일 수집량</span><span class="ldesc" style="font-size:12px">평균 120 / 최대 150 / 가드 138.2(추정)</span><span class="rv">138.2 GB/d</span></div>
+        <div class="row"><span class="rl">현행 청구</span><span class="ldesc" style="font-size:12px">기본 20M + Tag 65M + Col 15M</span><span class="rv">100,000,000</span></div>
+        <div class="row"><span class="rl">적정 등급</span><span class="ldesc" style="font-size:12px">TAG-12500 + COL-2000 — 일치</span><span class="rv">100,000,000</span></div>
+        <div class="row"><span class="rl">미청구</span><span class="ldesc" style="font-size:12px">등급 적정 · 산식과 정확히 일치</span><span class="rv" style="color:var(--ok);font-weight:600">0</span></div>
+        <div class="row"><span class="rl">GB·day당</span><span class="ldesc" style="font-size:12px">현행 청구 ÷ 가드값</span><span class="rv" style="color:var(--ok)">723,589</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>세 가지 진단</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:22%">진단</th><th style="width:44%">내용</th><th style="width:34%">To-Be가 해결하는 방식</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>① 창원 Column 계측 부재</b><br><span class="pill p-sig">연 2.16억</span></td>
+          <td>3,000 미만 등급으로 약 7,000개를 수집. 측정 오차가 아니라 <b>계측 부재</b>다. AS-IS 이슈 §1.3.1-2의 "전혀 다른 데이터임에도 같은 데이터로 보인다는 현업 의견"이 정황 증거. <b>언제부터인지 내부 확인 필요.</b></td>
+          <td>수집 설정 등록 테이블을 그대로 세는 L1-B로 자동 계측. 컬럼 동일성 판단이 과금과 무관해진다.</td>
+        </tr>
+        <tr>
+          <td><b>② 창원 Tag 99.9%</b><br><span class="pill p-sig">여유 5개</span></td>
+          <td>6,995 / 7,000. 등급 경계 바로 아래에서 관리되고 있다는 뜻이며, AS-IS 이슈의 "수량 감축 노동"과 "필요 데이터 미수집"이 <b>현재 진행형</b>임을 보여준다. 설비 한 대 추가 시 월 500만원 증가.</td>
+          <td>수량 상한 자체가 소멸. 태그를 늘려도 데이터량이 밴드 내면 요금 변동 없음. <b>이 고객에게 가장 큰 실질 가치.</b></td>
+        </tr>
+        <tr>
+          <td><b>③ 부담 불균형 1.85배</b><br><span class="pill p-sig">신규 발견</span></td>
+          <td>창원 GB·day당 133만원 vs 베스틸 72만원. 수량으로 과금했는데 수량이 자원 소비를 대표하지 못한 결과. <b>창원이 그동안 과부담해 왔다.</b></td>
+          <td>저장량 축이 격차를 1.32배로 축소. 잔여분은 밴드 대표점 위치 효과이며 §12-⑥에서 다룬다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call">
+    <span class="ct">두 고객의 프로파일 대비</span>
+    <p>창원은 <strong>Tag 6,995 : Column 7,000</strong>(1:1), 베스틸은 <strong>11,470 : 1,430</strong>(8:1)이다. 데이터량은 반대로 창원 63.6, 베스틸 138.2다. <strong>수량이 많은 쪽과 데이터량이 많은 쪽이 서로 다르다</strong> — 이 교차가 단일 축 체계로는 두 고객을 공정하게 다룰 수 없는 이유이자, 2축이 필요한 이유다. 창원은 Legacy 가치를, 베스틸은 데이터량 가치를 각각 대표한다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 04 ══════════════ -->
+<section id="s4">
+  <div class="s-head"><span class="num">04</span><h2>수치 검증</h2><span class="tag">Verification</span></div>
+
+  <p class="lede">rev 1에서 등급표 8개 전부가 산식과 일치함을 확인했고 그 검증은 유효하다. rev 2에서 밝힌 <strong>단가의 역산 구조</strong>도 그대로다. 여기서는 실측 확정으로 새로 가능해진 검증만 다룬다.</p>
+
+  <h3>검증 ① — 밴드 대표점 편차, 두 고객 모두 하단</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:16%">고객</th><th class="num">가드값</th><th style="width:14%">밴드</th><th class="num">대표점</th><th class="num">밴드 내 위치</th><th class="num">대표점 편차</th><th>방향</th></tr></thead>
+      <tbody>
+        <tr><td><b>창원</b></td><td class="num">63.6</td><td class="mono">60 ~ 80</td><td class="num">70</td><td class="num">하단 18%</td><td class="num">+2,752,000</td><td><span class="pill p-ok">VNTG 유리</span></td></tr>
+        <tr><td><b>베스틸</b></td><td class="num">138.2</td><td class="mono">130 ~ 160</td><td class="num">145</td><td class="num">하단 27%</td><td class="num">+2,924,000</td><td><span class="pill p-ok">VNTG 유리</span></td></tr>
+      </tbody>
+      <caption>편차 = (대표점 − 가드값) × 430,000원. 양수는 고객이 실사용보다 많은 기준으로 청구된다는 뜻.</caption>
+    </table>
+  </div>
+  <div class="call warn">
+    <span class="ct">rev 2 권고 철회 — 밴드 완충 조항</span>
+    <p>rev 2는 "창원이 밴드 하단이라 불리하다"며 완충 조항을 권고했다. <strong>두 고객 모두 하단인 것이 확인된 지금, 완충 조항은 순수한 매출 감소</strong>다(2사 합산 월 567만원 · 연 6,800만원). 두 고객이 모두 하단에 위치한 것이 우연인지 구조적인지는 표본 2개로 판단할 수 없다.</p>
+    <p><strong>rev 3 권고: 완충 조항 도입하지 않음.</strong> 다만 대표점 방식의 공정성 약점 자체는 남아 있으므로, 구조적 대안으로 <strong>밴드 폭 균일화</strong>(DF-130/160/200의 폭 30·30·40을 20으로 재분할)를 §12-⑥ 의사결정으로 올린다. 균일화 시 베스틸은 DF-140(120~140, 대표점 130)에 안착해 월 7,600만원이 되므로 <strong>매출 영향이 크다</strong>(월 −600만원). 공정성과 매출의 트레이드오프를 명시적으로 결정해야 한다.</p>
+  </div>
+
+  <h3>검증 ② — 단가 역산 구조 (rev 2 유효)</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:36%">목표 금액 (창원 DF-80 기준)</th><th class="num" style="width:22%">필요 단가</th><th style="width:42%">2사 합산 연매출 (단일축)</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td>50,000,000원 <span class="pill p-acc">개발문서 채택</span></td><td class="num">428,571</td><td>15.84억 (−28.6%)</td></tr>
+        <tr><td>85,000,000원 (창원 AS-IS 실제)</td><td class="num">928,571</td><td>약 30.7억 (+38%) — 베스틸 과청구</td></tr>
+      </tbody>
+      <caption>단가 상향안(rev 2 §12-①의 선택지 c)은 <b>실측 확정으로 사실상 폐기된다.</b> 창원 기준으로 단가를 올리면 베스틸이 AS-IS의 1.4배를 내게 되어 협상이 불가능하다. <b>가격 수준 조정은 단가가 아니라 L1-B로 해야 한다.</b></caption>
+    </table>
+  </div>
+  <p class="t-note">이는 rev 2 대비 <strong>의사결정 선택지가 하나 줄었다</strong>는 뜻이다. 단가 430,000원은 유지하고, 매출 조정은 Legacy 축의 앵커율로 수행한다.</p>
+</section>
+
+<!-- ══════════════ 05 ══════════════ -->
+<section id="s5">
+  <div class="s-head"><span class="num">05</span><h2>Legacy 가치 — 2사 교차 검증</h2><span class="tag">Critical</span></div>
+
+  <p class="lede">rev 2는 창원 한 곳의 데이터로 Legacy 기여도를 추정 범위(3.9~36%)로 제시했다. 두 고객 실측이 확보된 지금, <strong>그 범위조차 낙관적이었음</strong>이 드러난다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:20%">비교</th><th class="num">창원</th><th class="num">베스틸</th><th class="num">비율</th><th style="width:34%">해석</th></tr></thead>
+      <tbody>
+        <tr><td>Column 수</td><td class="num">7,000</td><td class="num">1,430</td><td class="num">4.9배</td><td rowspan="2" style="vertical-align:middle">컬럼이 <b>4.9배 많은</b> 창원의 데이터량이 <b>절반 이하</b>다. 컬럼과 데이터량 사이에 양의 관계가 관측되지 않는다.</td></tr>
+        <tr><td>일일 수집량 (가드)</td><td class="num">63.6</td><td class="num">138.2</td><td class="num">0.46배</td></tr>
+        <tr><td>Tag 수</td><td class="num">6,995</td><td class="num">11,470</td><td class="num">0.61배</td><td>태그 비율(0.61)과 데이터량 비율(0.46)도 일치하지 않는다 — 태그만으로도 설명 불가.</td></tr>
+        <tr><td>AS-IS Column 등급 금액</td><td class="num">38,000,000</td><td class="num">15,000,000</td><td class="num">2.5배</td><td>AS-IS는 Legacy 가치를 컬럼 수에 비례해 인정했다.</td></tr>
+        <tr class="hi"><td><b>저장량 축 환산 가치</b></td><td class="num" colspan="2" style="text-align:center">측정 불가 — 신호가 태그 변동에 묻힘</td><td class="num">—</td><td><b>단일 축에서 Legacy는 사실상 무료.</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">rev 2 추정의 수정</span>
+    <p>rev 2는 개발 문서의 "태그당 8.6 MB/day" 전제로 창원의 컬럼 기여를 3.44 GB/day(잔존율 3.9%)로 계산했다. 이제 그 전제 자체가 무효다 — 베스틸 실측이 태그당 10.46 MB/day를 보이므로 8.6은 창원 전용 값이었다. <strong>컬럼 기여를 분리 측정할 방법이 현재 없으며, 연립방정식은 음수 해를 낳는다.</strong></p>
+    <p>결론은 rev 2보다 강해진다. <strong>"Legacy 가치가 3.9~36%로 붕괴한다"가 아니라, "저장량 축은 Legacy 가치를 측정하지 못한다"</strong>가 맞는 서술이다. 창원의 컬럼 7,000개는 AS-IS에서 3,800만원의 가치를 인정받았고, 저장량 축에서는 그 가치를 표현할 지표 자체가 없다.</p>
+  </div>
+
+  <h3>왜 Legacy 비용은 데이터량과 무관한가</h3>
+  <div class="axis">
+    <div><h5>커넥터 개발·유지 <em>소스 시스템 단위</em></h5><p>L2·MES·ERP·SCM 각각의 접속 방식, 인증, 배치 스케줄, 실패 재처리를 구현·유지한다. 소스 시스템 개수에 비례하며 바이트 수와 무관하다.</p></div>
+    <div><h5>스키마 변경 대응 <em>테이블 단위</em></h5><p>Legacy 시스템은 계속 변한다. 컬럼 추가·삭제·타입 변경마다 파이프라인과 카탈로그를 맞춰야 한다. <b>테이블 수에 비례</b>한다.</p></div>
+    <div><h5>표준 용어 매칭 <em>컬럼 단위 · 1회성</em></h5><p>현업 용어를 비즈니스 표준 용어에 매칭. 창원의 7,000개 컬럼은 여기서 상당한 누적 공수를 이미 소비했다.</p></div>
+    <div><h5>품질·중복 판정 <em>운영 상시</em></h5><p>AS-IS 이슈 §1.3.1-2의 "같은 데이터로 보인다" 논쟁이 소비한 공수. 저장량 축은 이를 사용자 책임으로 넘겨 <b>분쟁</b>은 없애지만 <b>공수</b>는 없애지 못한다.</p></div>
+  </div>
+
+  <div class="call ok">
+    <span class="ct">대응 — 테이블 수 기반 L1-B</span>
+    <p>Legacy를 별도 축으로 세우되 과금 단위를 <strong>컬럼이 아니라 테이블</strong>로 잡는다. ① 테이블 수는 수십~수백 수준이라 계측·검증이 간단하다. ② AS-IS의 "같은 데이터인가" 논쟁은 <strong>컬럼 단위에서</strong> 벌어졌으므로 테이블 단위면 여지가 급감한다. ③ <strong>스키마 변경 대응이라는 실제 비용 동인과 정합</strong>한다. ④ 기획 초안 §2.1.1이 이미 <code>n = Table 수</code>로 정의해 둔 단위다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 06 ══════════════ -->
+<section id="s6">
+  <div class="s-head"><span class="num">06</span><h2>전환 손익 &amp; 손익분기</h2><span class="tag">Business Case</span></div>
+
+  <p class="lede">두 고객 실측이 모두 확보되어 <strong>추정 없이 손익을 계산할 수 있다.</strong> 네 개 안을 나란히 놓는다.</p>
+
+  <h3>앵커율 탐색 — 두 고객 인하폭이 만나는 지점</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th class="num">앵커</th><th class="num">창원 L1-B</th><th class="num">창원 합계</th><th class="num">창원 증감</th><th class="num">베스틸 L1-B</th><th class="num">베스틸 합계</th><th class="num">베스틸 증감</th><th class="num">격차</th><th class="num">2사 연매출</th></tr></thead>
+      <tbody>
+        <tr><td class="num">60%</td><td class="num">23,000,000</td><td class="num">73,000,000</td><td class="num">−14.1%</td><td class="num">9,000,000</td><td class="num">91,000,000</td><td class="num">−9.0%</td><td class="num">5.1p</td><td class="num">19.68억</td></tr>
+        <tr><td class="num">70%</td><td class="num">27,000,000</td><td class="num">77,000,000</td><td class="num">−9.4%</td><td class="num">10,000,000</td><td class="num">92,000,000</td><td class="num">−8.0%</td><td class="num">1.4p</td><td class="num">20.28억</td></tr>
+        <tr><td class="num">75%</td><td class="num">28,000,000</td><td class="num">78,000,000</td><td class="num">−8.2%</td><td class="num">11,000,000</td><td class="num">93,000,000</td><td class="num">−7.0%</td><td class="num">1.2p</td><td class="num">20.52억</td></tr>
+        <tr class="hi"><td class="num"><b>80%</b> <span class="pill p-acc">권고</span></td><td class="num"><b>30,000,000</b></td><td class="num"><b>80,000,000</b></td><td class="num"><b>−5.9%</b></td><td class="num"><b>12,000,000</b></td><td class="num"><b>94,000,000</b></td><td class="num"><b>−6.0%</b></td><td class="num" style="color:var(--ok);font-weight:600">0.1p</td><td class="num"><b>20.88억</b></td></tr>
+        <tr><td class="num">85%</td><td class="num">32,000,000</td><td class="num">82,000,000</td><td class="num">−3.5%</td><td class="num">13,000,000</td><td class="num">95,000,000</td><td class="num">−5.0%</td><td class="num">1.5p</td><td class="num">21.24억</td></tr>
+        <tr><td class="num">90%</td><td class="num">34,000,000</td><td class="num">84,000,000</td><td class="num">−1.2%</td><td class="num">14,000,000</td><td class="num">96,000,000</td><td class="num">−4.0%</td><td class="num">2.8p</td><td class="num">21.60억</td></tr>
+        <tr><td class="num">100%</td><td class="num">38,000,000</td><td class="num">88,000,000</td><td class="num" style="color:var(--signal)">+3.5%</td><td class="num">15,000,000</td><td class="num">97,000,000</td><td class="num">−3.0%</td><td class="num">6.5p</td><td class="num">22.20억</td></tr>
+      </tbody>
+      <caption>L1-B = AS-IS Column 등급 금액 × 앵커율, 100만원 단위 반올림. 창원 COL-8000(3,800만) / 베스틸 COL-2000(1,500만) 기준. 증감은 AS-IS <b>실제청구</b> 대비(창원 8,500만 · 베스틸 1억).</caption>
+    </table>
+  </div>
+
+  <div class="call ok">
+    <span class="ct">80%가 최적인 이유</span>
+    <p>두 고객의 인하폭이 <strong>−5.9%와 −6.0%로 0.1%p 차이</strong>다. 이 균등성은 협상에서 실질적 가치를 갖는다 — <strong>"체계를 단순화하면서 6% 인하"라는 단일 메시지로 양쪽을 동시에 다룰 수 있고</strong>, 그룹사 내에서 요금 정보가 오갈 때 "왜 저쪽은 더 깎아줬냐"는 문제가 생기지 않는다. 100% 앵커는 매출 중립이지만 창원이 <strong>+3.5% 인상</strong>이 되어 "체계 바꿨더니 요금 올랐다"가 되므로 채택 불가다.</p>
+  </div>
+
+  <h3>4개 안 비교</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:20%">안</th><th class="num">창원</th><th class="num">베스틸</th><th class="num">2사 연매출</th><th class="num">AS-IS 실제 대비</th><th class="num">BEP 12명</th><th class="num">현재 2사 수지</th></tr></thead>
+      <tbody>
+        <tr><td>단일축 (L1-A만)</td><td class="num">50,000,000<br><span class="ldesc" style="font-size:11px">−41.2%</span></td><td class="num">82,000,000<br><span class="ldesc" style="font-size:11px">−18.0%</span></td><td class="num">15.84억</td><td class="num" style="color:var(--signal)">−28.6%</td><td class="num">3.3사</td><td class="num" style="color:var(--signal)">−10.08억</td></tr>
+        <tr><td>2축 · 앵커 75%</td><td class="num">78,000,000<br><span class="ldesc" style="font-size:11px">−8.2%</span></td><td class="num">93,000,000<br><span class="ldesc" style="font-size:11px">−7.0%</span></td><td class="num">20.52억</td><td class="num">−7.6%</td><td class="num">2.5사</td><td class="num" style="color:var(--warn)">−5.40억</td></tr>
+        <tr class="hi"><td><b>2축 · 앵커 80%</b> <span class="pill p-acc">권고</span></td><td class="num"><b>80,000,000</b><br><span class="ldesc" style="font-size:11px">−5.9%</span></td><td class="num"><b>94,000,000</b><br><span class="ldesc" style="font-size:11px">−6.0%</span></td><td class="num"><b>20.88억</b></td><td class="num"><b>−5.9%</b></td><td class="num"><b>2.5사</b></td><td class="num" style="color:var(--warn)">−5.04억</td></tr>
+        <tr><td>2축 · 앵커 100%</td><td class="num">88,000,000<br><span class="ldesc" style="font-size:11px">+3.5%</span></td><td class="num">97,000,000<br><span class="ldesc" style="font-size:11px">−3.0%</span></td><td class="num">22.20억</td><td class="num" style="color:var(--ok)">±0.0%</td><td class="num">2.3사</td><td class="num" style="color:var(--warn)">−3.72억</td></tr>
+        <tr><td class="mono" style="color:var(--muted)">참고 · AS-IS 정당청구</td><td class="num" style="color:var(--muted)">103,000,000</td><td class="num" style="color:var(--muted)">100,000,000</td><td class="num" style="color:var(--muted)">24.36억</td><td class="num" style="color:var(--muted)">+9.7%</td><td class="num" style="color:var(--muted)">2.1사</td><td class="num" style="color:var(--muted)">−1.56억</td></tr>
+      </tbody>
+      <caption>인건비 = 12명 × KOSA 2024 응용SW개발 특급 노임단가 1,800만원/월 × 12개월 = 연 25.92억. <b>30여 억원 선투자 회수는 미반영.</b> 15명 기준 BEP는 각각 4.1 / 3.2 / 3.1 / 2.9사.</caption>
+    </table>
+  </div>
+
+  <div class="kpi">
+    <div><span class="k">권고안 2사 연매출</span><span class="v acc">20.88억</span><span class="s">AS-IS 22.20억 대비 −1.32억</span></div>
+    <div><span class="k">단일축 대비 회복</span><span class="v pos">+5.04억</span><span class="s">15.84억 → 20.88억</span></div>
+    <div><span class="k">BEP 고객사 (12명)</span><span class="v">2.5사</span><span class="s">단일축 3.3사에서 개선</span></div>
+    <div><span class="k">인하폭 격차</span><span class="v pos">0.1%p</span><span class="s">창원 −5.9% / 베스틸 −6.0%</span></div>
+  </div>
+
+  <div class="call sig">
+    <span class="ct">경영 판단이 필요한 지점 — rev 2 대비 완화</span>
+    <p>rev 2는 To-Be 전환이 <strong>−41%</strong>의 매출 감소를 낳고 BEP가 4.0사로 뛴다고 보고했다. 베스틸 실측과 2축 최적화를 반영한 지금, 권고안의 감소폭은 <strong>−5.9%</strong>, BEP는 <strong>2.5사</strong>다. AS-IS 정당청구 기준 BEP 2.1사와 비교하면 <strong>0.4사 증가에 그친다.</strong></p>
+    <p>즉 <strong>"체계 전환이 곧 대규모 매출 감소"라는 rev 2의 경고는 철회된다.</strong> 감소는 체계 자체가 아니라 <em>단일 축 선택</em>에서 나왔고, Legacy 축을 세우면 회복된다. 다만 2개 고객사로는 여전히 BEP 미달(12명 기준 −5.04억)이며, 이는 AS-IS에서도 마찬가지(−1.56억)였다. <strong>확장 계획은 여전히 필요하지만, 그 필요성이 전환 때문에 생긴 것은 아니다.</strong></p>
+  </div>
+</section>
+
+<!-- ══════════════ 07 ══════════════ -->
+<section id="s7">
+  <div class="s-head"><span class="num">07</span><h2>통합 라이선스 체계 v3</h2><span class="tag">Architecture</span></div>
+
+  <p class="lede">rev 2의 6계층 구조를 유지하되 <strong>L1-B 앵커율을 80%로 확정</strong>하고, 실측이 뒷받침하는 근거로 각 계층의 정당화를 다시 쓴다.</p>
+
+  <div class="layers">
+    <div class="layer">
+      <span class="lid">L0</span>
+      <div><div class="lname">Base — 최소 기본료</div><div class="ldesc">DF-Stream · DF-Port <b>소프트웨어 사용권(IP)</b> + 상시 운영지원(장애 대응, 문의 대응, 정기 업데이트·보안 패치, 매뉴얼, 정기 점검). <b>초기 구축 제외</b>(카탈로그 원칙) → L4로 이관.</div></div>
+      <div class="lprice"><b>사업장당 월 20,000,000원</b><br><span class="ldesc">청구서 2줄 분리(사용권 / 운영지원), 번들 필수. 구축 제외로 빠진 논거는 "수량 상한 없는 확장 권리 + 플랫폼 기능 상시 이용"으로 대체.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L1-A</span>
+      <div><div class="lname">Volume — 수집 밴드 <span class="pill p-acc">1차 축</span></div><div class="ldesc">실시간 Tag 수집의 <b>일일 논리 증분(GB/day)</b>. <b>실측으로 정당화됨</b>(§02) — 데이터량은 인프라 부하·저장 원가와 직결되지만 태그 수는 그렇지 않다. AS-IS Tag 등급을 대체.</div></div>
+      <div class="lprice"><b>대표점 × 430,000원</b><br><span class="ldesc">DF-20 ~ DF-200 8단계. 기본 보존 1년 포함. 창원 DF-80(5,000만) / 베스틸 DF-160(8,200만).</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L1-B</span>
+      <div><div class="lname">Integration — Legacy 연동 밴드 <span class="pill p-sig">앵커 80%</span></div><div class="ldesc">L2·MES·ERP·SCM 등에서 <b>정기 수집하는 소스 테이블 수</b> 밴드. 과금 근거는 데이터량이 아니라 <b>커넥터 운영 + 스키마 변경 대응 공수</b>. 저장량 축이 Legacy 신호를 전혀 잡지 못하므로(§05) 별도 축이 필수다.</div></div>
+      <div class="lprice"><b>AS-IS Column 등급 × 80%</b><br><span class="ldesc">창원 3,000만 / 베스틸 1,200만. 테이블 수 밴드는 이 값에 안착하도록 역산 설계(§13 P3).</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L2</span>
+      <div><div class="lname">Guard — 가드 밴드 (상한 · 과금축 아님)</div><div class="ldesc">초당 수집 피크(G1), API 전송량(G2), 가상 Tag·스케줄러 동시 실행 수(G3), DW 쿼리 스캔량(G4·조건부), 보존기간(G5), 테이블당 컬럼 수(G6). 3개월 연속 초과 시 상위 등급 전환 또는 플러그인 활성.</div></div>
+      <div class="lprice"><b>등급별 밴드 정의</b><br><span class="ldesc">throughput을 1차 과금축으로 쓰지 않아 부풀리기 인센티브 없음.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L3</span>
+      <div><div class="lname">Plugin — 기능 모듈</div><div class="ldesc">소재 ID 트래킹·매칭, 외부 시스템 연계, AI·LLM, ML·예측, 확장 백업·복구, 통합 관제(Zabbix), 복잡형 가상 Tag, 데이터 가공·변환 도구. 카탈로그의 Expansion Services와 대응.</div></div>
+      <div class="lprice"><b>모듈별 기본료 % 또는 정액</b><br><span class="ldesc">서비스 티어 폐기, 모듈 단위 확정. Self BI는 기본 제공.</span></div>
+    </div>
+    <div class="layer">
+      <span class="lid">L4</span>
+      <div><div class="lname">Project — 1회성 공수</div><div class="ldesc"><b>초기 구축(Setup)</b>, 맞춤형 ML 모델 개발, 3D 대시보드·포털 맞춤 구현, KepServer 외 OPC 장치 연결, 커스텀 개발·SI, 심화 교육·온보딩·워크숍.</div></div>
+      <div class="lprice"><b>M/M 공수 산정 · 별도 SOW</b><br><span class="ldesc">"라이선스는 운영 및 자원 사용 비용, 구축은 프로젝트 비용"(카탈로그 주요 원칙).</span></div>
+    </div>
+    <div class="layer excl">
+      <span class="lid">밖</span>
+      <div><div class="lname">Infra — 라이선스 범위 밖</div><div class="ldesc">GCP 프로젝트를 고객이 소유·관리하고 청구서도 고객이 수령. 카탈로그 청구서의 "Cloud 사용 비용"은 정보 표시인지 VNTG 청구인지 명확화 필요(§12-③).</div></div>
+      <div class="lprice"><b>고객 직접 계약</b><br><span class="ldesc">compute 어뷰징 우려 구조적 소멸.</span></div>
+    </div>
+  </div>
+
+  <h3>고객사별 최종 요금 구성</h3>
+  <div class="cust">
+    <div class="card">
+      <h4>세아창원특수강 <span>−5.9%</span></h4>
+      <div class="body">
+        <div class="row"><span class="rl">L0 기본료</span><span class="ldesc" style="font-size:12px">사용권 + 운영지원</span><span class="rv">20,000,000</span></div>
+        <div class="row"><span class="rl">L1-A 수집</span><span class="ldesc" style="font-size:12px">DF-80 · 가드 63.6 GB/day</span><span class="rv">30,000,000</span></div>
+        <div class="row"><span class="rl">L1-B 연동</span><span class="ldesc" style="font-size:12px">Legacy 테이블 밴드 (앵커 80%)</span><span class="rv">30,000,000</span></div>
+        <div class="row"><span class="rl"><b>월 합계</b></span><span class="ldesc" style="font-size:12px">AS-IS 85,000,000 대비</span><span class="rv" style="font-weight:700;font-size:14px">80,000,000</span></div>
+        <div class="row"><span class="rl">연 환산</span><span class="ldesc" style="font-size:12px">−6,000만원/년</span><span class="rv">960,000,000</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h4>세아베스틸 <span>−6.0%</span></h4>
+      <div class="body">
+        <div class="row"><span class="rl">L0 기본료</span><span class="ldesc" style="font-size:12px">사용권 + 운영지원</span><span class="rv">20,000,000</span></div>
+        <div class="row"><span class="rl">L1-A 수집</span><span class="ldesc" style="font-size:12px">DF-160 · 가드 138.2 GB/day</span><span class="rv">62,000,000</span></div>
+        <div class="row"><span class="rl">L1-B 연동</span><span class="ldesc" style="font-size:12px">Legacy 테이블 밴드 (앵커 80%)</span><span class="rv">12,000,000</span></div>
+        <div class="row"><span class="rl"><b>월 합계</b></span><span class="ldesc" style="font-size:12px">AS-IS 100,000,000 대비</span><span class="rv" style="font-weight:700;font-size:14px">94,000,000</span></div>
+        <div class="row"><span class="rl">연 환산</span><span class="ldesc" style="font-size:12px">−7,200만원/년</span><span class="rv">1,128,000,000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="call">
+    <span class="ct">L1-B가 AS-IS Column 등급의 회귀가 아닌 이유</span>
+    <p>세 가지가 다르다. ① <strong>단위가 컬럼이 아니라 테이블</strong>이다 — "이 컬럼과 저 컬럼이 같은 데이터인가"라는 AS-IS 최대 분쟁이 사라진다. ② <strong>밴드가 넓고 자동 계측</strong>된다 — 수집 설정의 테이블 목록을 그대로 세므로 증명 노동이 없다. ③ <strong>L1-A와 독립</strong>이라 Legacy 테이블을 늘려도 수집 등급에 영향이 없고 그 반대도 마찬가지다 — AS-IS에서 두 등급이 서로 영향을 주며 만들던 최적화 게임이 없어진다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 08 ══════════════ -->
+<section id="s8">
+  <div class="s-head"><span class="num">08</span><h2>과금 지표 확정안</h2><span class="tag">Metering</span></div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:12%">축</th><th style="width:20%">지표</th><th style="width:36%">확정 정의</th><th style="width:32%">근거 · 변경</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="pill p-acc">L1-A</span></td>
+          <td><b>일일 논리 증분</b><br>GB/day</td>
+          <td>BigQuery <b>logical bytes</b> 기준 <code>max(0, 당일 − 전일)</code>. <code>gap_days = 1</code> 구간만 유효. 백필·재처리·스테이징 제외(<code>is_billable</code>). 기준값 = 유효 측정일 <b>상위 3%(최소 5일·최대 20일) 평균</b>.</td>
+          <td>rev 1~2와 동일. <b>§02로 지표 선택 자체가 정당화됨.</b> logical 기준 명문화는 여전히 계약서 필수.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-sig">L1-B</span></td>
+          <td><b>Legacy 소스 테이블 수</b><br>EA</td>
+          <td>DF-Stream이 <b>정기 수집 설정에 등록한</b> Legacy 소스 테이블의 수. 계약 기간 중 등록 테이블 수의 <b>상위 3% 시점 값</b>. 일회성 조회·임시 추출 제외. Dataset/Mart 생성물은 소스가 아니므로 제외.</td>
+          <td>rev 2 신설, rev 3에서 <b>앵커 80% 확정</b>. 기획 초안 §2.1.1의 <code>n = Table 수</code> 단위 채택.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-mute">대조</span></td>
+          <td><b>Kafka · 커넥터 처리량</b></td>
+          <td>청구 근거 아님. L1-A와의 괴리 발생 시 우회 여부 조사 조항 발동.</td>
+          <td>JSON 오버헤드로 청구 근거 부적합.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-ok">확정</span></td>
+          <td><b>기본 보존기간</b></td>
+          <td><b>1년(12개월)</b>. 최소 보존기간 미만 설정 불가. 1년 초과 보존은 <b>연 단위</b> 저장 확장 요금.</td>
+          <td>카탈로그 "보관 기본 1년" 채택. 타 문서의 "기본 1개월", "연장 2개월 이상" 표기는 전 문서 정정 대상.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-sig">변경</span></td>
+          <td><b>신규 고객 초기값</b></td>
+          <td><b>설계 수량 기반 추정 금지.</b> 초기 3개월 실측 후 기준값 확정, 그 시점부터 소급 정산. 계약 첫 3개월은 잠정 등급(고객 제시 예상치 기준)으로 청구.</td>
+          <td><b>rev 3 신설.</b> §02가 수량→데이터량 추정의 불가능성을 입증했으므로 rev 2 §12-⑦의 우선순위를 올린다.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-ok">확정</span></td>
+          <td><b>과금 단위</b></td>
+          <td><code>business_place_mt</code> 단위. 사업장 분할·통합으로 기본료 회피 불가 명시.</td>
+          <td>창원·베스틸은 별도 사업장이므로 각각 L0 부과.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call warn">
+    <span class="ct">L1-B 계측의 남은 허점 — 와이드 테이블</span>
+    <p>테이블 단위로 바꾸면 컬럼 논쟁은 사라지지만, <strong>컬럼 500개짜리 테이블 하나와 10개짜리 테이블 하나가 같은 값으로 계산된다.</strong> 창원의 7,000 컬럼이 몇 개 테이블에 담겨 있는지에 따라 L1-B 요금이 크게 달라진다. 완충책은 (a) <strong>테이블당 컬럼 수 상한</strong>(예: 100컬럼)을 가드 G6로 두고 초과 테이블은 2개로 카운트, (b) 밴드를 테이블 수와 총 컬럼 수의 둘 중 큰 쪽으로 판정. <strong>(a) 권고</strong>이나 실제 분포 확인이 선행돼야 한다(§13 P3).</p>
+  </div>
+</section>
+
+<!-- ══════════════ 09 ══════════════ -->
+<section id="s9">
+  <div class="s-head"><span class="num">09</span><h2>등급표 &amp; 가드 밴드</h2><span class="tag">Pricing</span></div>
+
+  <h3>L1-A · 수집 밴드</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>등급</th><th class="num">일일 수집량 (GB/day)</th><th class="num">기본료 (L0)</th><th class="num">수집 사용료 (L1-A)</th><th class="num">소계</th><th>고객</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">DF-20</td><td class="num">20 이하</td><td class="num">20,000,000</td><td class="num">4,000,000</td><td class="num">24,000,000</td><td></td></tr>
+        <tr><td class="mono">DF-40</td><td class="num">20 ~ 40</td><td class="num">20,000,000</td><td class="num">13,000,000</td><td class="num">33,000,000</td><td></td></tr>
+        <tr><td class="mono">DF-60</td><td class="num">40 ~ 60</td><td class="num">20,000,000</td><td class="num">22,000,000</td><td class="num">42,000,000</td><td></td></tr>
+        <tr class="hi"><td class="mono">DF-80</td><td class="num">60 ~ 80</td><td class="num">20,000,000</td><td class="num">30,000,000</td><td class="num">50,000,000</td><td><b>창원</b> 63.6</td></tr>
+        <tr><td class="mono">DF-100</td><td class="num">80 ~ 100</td><td class="num">20,000,000</td><td class="num">39,000,000</td><td class="num">59,000,000</td><td></td></tr>
+        <tr><td class="mono">DF-130</td><td class="num">100 ~ 130</td><td class="num">20,000,000</td><td class="num">49,000,000</td><td class="num">69,000,000</td><td><span class="ldesc" style="font-size:11px">베스틸 하방 리스크</span></td></tr>
+        <tr class="hi"><td class="mono">DF-160</td><td class="num">130 ~ 160</td><td class="num">20,000,000</td><td class="num">62,000,000</td><td class="num">82,000,000</td><td><b>베스틸</b> 138.2</td></tr>
+        <tr><td class="mono">DF-200</td><td class="num">160 ~ 200</td><td class="num">20,000,000</td><td class="num">77,000,000</td><td class="num">97,000,000</td><td><span class="ldesc" style="font-size:11px">초과 시 Enterprise Custom</span></td></tr>
+      </tbody>
+      <caption>기본 보존 1년 포함. 단가 430,000원/(GB·day) 유지 — §04에서 단가 상향안이 폐기됐다.</caption>
+    </table>
+  </div>
+
+  <h3>L1-B · Legacy 연동 밴드 — 캘리브레이션 목표</h3>
+  <div class="formula">
+<span class="c">앵커 산식 (확정)</span>
+L1-B = <span class="k">AS-IS Column 등급 금액 × 0.80</span>  <span class="c">→ 100만원 단위 반올림</span>
+
+   창원  COL-8000  38,000,000 × 0.80 = <span class="k">30,000,000</span>  <span class="c">← 이 값이 나오도록 테이블 밴드 설계</span>
+   베스틸 COL-2000  15,000,000 × 0.80 = <span class="k">12,000,000</span>
+  </div>
+  <div class="call warn">
+    <span class="ct">밴드 수치는 실측 후 확정</span>
+    <p>테이블 수 밴드를 지금 임의로 제시하면 근거 없는 숫자가 고정된다. 확정에 필요한 데이터는 셋이다 — ① 고객사별 정기 수집 Legacy 테이블 수, ② 테이블당 컬럼 수 분포(와이드 테이블 유무), ③ 소스 시스템 수(L2·MES·ERP·SCM 등). <strong>창원 3,000만 / 베스틸 1,200만이라는 두 개의 앵커점이 있으므로, 두 점을 지나는 밴드 곡선을 역산하면 된다</strong> — rev 2 시점에는 앵커점이 하나뿐이라 불가능했던 작업이다.</p>
+  </div>
+
+  <h3>L2 · 가드 밴드</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:20%">가드</th><th style="width:42%">잡는 것</th><th style="width:32%">초과 시</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">G1</td><td><b>초당 수집 피크</b></td><td>실시간 인프라 부하(Kafka·Benthos·커넥터 사이징). 짧은 보존 + 초고빈도면 저장량은 작은데 인프라는 크다. <b>§02가 보여준 고객사별 데이터 밀도 차이가 이 가드의 필요성을 뒷받침한다.</b></td><td>3개월 연속 초과 시 상위 인프라 등급</td></tr>
+        <tr><td class="mono">G2</td><td><b>API 전송량</b></td><td>데이터를 밖으로 빼는 활동. 수집 증분에 안 잡힌다. 카탈로그가 전송량 통계를 청구서 항목으로 신설해 계측 기반 확보.</td><td>API 전송 플러그인 활성(L3)</td></tr>
+        <tr><td class="mono">G3</td><td><b>가상 Tag · 스케줄러<br>동시 실행 수</b></td><td>가상 Tag의 CPU 연산 부하. 저장량과 무관.</td><td>도커 단위 Plugin 추가 구매</td></tr>
+        <tr><td class="mono">G4</td><td><b>DW 쿼리 스캔량</b> <span class="pill p-warn">조건부</span></td><td>대시보드 새로고침 쿼리 스캔 비용. BigQuery는 저장보다 스캔이 비싸다.</td><td>compute 고객 GCP면 미적용. VNTG 계정 운영 시 MSP Bypass 청구</td></tr>
+        <tr><td class="mono">G5</td><td><b>보존기간</b></td><td>같은 증분이라도 보존 2배면 총 저장량 2배.</td><td>기본 1년 초과 시 연 단위 저장 확장 요금</td></tr>
+        <tr><td class="mono">G6</td><td><b>테이블당 컬럼 수</b></td><td>L1-B 테이블 단위 과금의 와이드 테이블 허점.</td><td>상한(예: 100컬럼) 초과 테이블은 2개로 카운트</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════ 10 ══════════════ -->
+<section id="s10">
+  <div class="s-head"><span class="num">10</span><h2>문서 대조 · 카탈로그 매핑</h2><span class="tag">Reference</span></div>
+
+  <p class="lede">문서 4종 간 충돌·해소는 rev 2에서 정리했고 <strong>실측으로 바뀐 것은 없다.</strong> 요약만 남긴다.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:18%">항목</th><th style="width:44%">쟁점</th><th style="width:12%">판정</th><th style="width:26%">확정</th></tr></thead>
+      <tbody>
+        <tr><td><b>기본 보존기간</b></td><td>기획 초안 "기본 1개월" vs 카탈로그 "기본 1년"</td><td><span class="pill p-ok">해소</span></td><td><b>1년 확정.</b> 1개월 표기 전 문서 정정(저장 원가 12배 차이).</td></tr>
+        <tr><td><b>저장 연장 서비스</b></td><td>기본 1년인데 연장이 "2개월 이상"이면 연장이 축소가 된다</td><td><span class="pill p-sig">정정</span></td><td>"1년 초과분, 연 단위"로 수정.</td></tr>
+        <tr><td><b>초기 구축비</b></td><td>개발 문서는 기본료 포함, 카탈로그는 "라이선스 아님"</td><td><span class="pill p-ok">해소</span></td><td><b>카탈로그 채택</b> → L4. 개발 문서 §3.4에서 "설치·구축" 삭제.</td></tr>
+        <tr><td><b>Compute·Cloud 비용</b></td><td>고객 GCP 이관인데 카탈로그 청구서에 "Cloud 사용 비용" 항목</td><td><span class="pill p-sig">미결</span></td><td>정보 표시 vs VNTG 청구 명확화 → §12-③</td></tr>
+        <tr><td><b>전송량 과금</b></td><td>기획 초안은 전송 밴드 요구, 개발 문서는 플러그인 분리</td><td><span class="pill p-ok">해소</span></td><td>Basic 포함 + 밴드 초과분 과금 = 가드 G2.</td></tr>
+        <tr><td><b>SLA 계측 기반</b></td><td>기존 문서 모두 공백</td><td><span class="pill p-ok">해소</span></td><td>카탈로그 "수집·전송 품질 및 손실 통계"가 근거 제공.</td></tr>
+        <tr><td><b>Self BI Tool</b></td><td>개발 문서는 기본 제공, @김성만은 모듈 과금 대상</td><td><span class="pill p-ok">해소</span></td><td>카탈로그가 Basic으로 확정(Grafana·Metabase).</td></tr>
+        <tr><td><b>서비스 계층</b></td><td>티어(이재훈) vs 모듈(김성만) vs 3분류(기획 초안)</td><td><span class="pill p-ok">확정</span></td><td>카탈로그 <b>Basic / Expansion / Custom</b> 채택.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>카탈로그 ↔ 과금 계층 매핑</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:16%">카탈로그 계층</th><th style="width:18%">제품</th><th style="width:36%">서비스 항목</th><th style="width:12%">과금</th><th style="width:18%">비고</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4"><b>Basic<br>Services</b></td><td>DF-Stream Pipeline</td><td>Tag 수집(물리·가상), Legacy Data 수집 + Dataset 생성, Data Cataloging, DW/Mart(보관 1년), Data 전송</td><td><span class="pill p-acc">L1-A<br>L1-B</span></td><td>Tag → L1-A / Legacy → <b>L1-B</b>. 카탈로그는 한 묶음, 과금은 2축.</td></tr>
+        <tr><td>DF-Stream Portal</td><td>포탈 운영 관리, 데이터 관리, 운영 통계, 청구서, 시스템 관리</td><td><span class="pill p-mute">L0</span></td><td>청구서·통계는 기본료 가치 논거.</td></tr>
+        <tr><td>DF-Port</td><td>사용자 포탈, 데이터 조회, Self BI Tool(Grafana·Metabase)</td><td><span class="pill p-mute">L0</span></td><td>Self BI 기본 제공 확정.</td></tr>
+        <tr><td>DF-Stream Infra</td><td>기본 Logging &amp; Monitoring(1개월), 수집 상태 알람·자동 재구동, 기본 백업(1개월)</td><td><span class="pill p-mute">L0</span></td><td>기획 초안 "라이선스 제외 서비스"와 동일 범위.</td></tr>
+        <tr><td rowspan="3"><b>Expansion<br>Services</b></td><td>자원 제공</td><td>ML/AI 서비스(LLM 대시보드 생성), DW 저장 기간 연장</td><td><span class="pill p-sig">L3</span></td><td>AI·LLM은 공수 + 추론 실비 고객 부담. ML은 정찰가 금지.</td></tr>
+        <tr><td>Plugin 서비스</td><td>복잡형 가상 Tag(함수·모델), 데이터 가공/변환 도구</td><td><span class="pill p-sig">L3</span></td><td>도커 단위 수량 과금. 가드 G3 연동.</td></tr>
+        <tr><td>운영 지원</td><td>통합 관제(Zabbix), 확장 백업/복구</td><td><span class="pill p-sig">L3</span></td><td>관제는 정액 권고.</td></tr>
+        <tr><td><b>Custom ·<br>Professional</b></td><td>맞춤형 구현</td><td><b>초기 구축(Setup)</b>, 맞춤형 ML 모델, 3D 대시보드·포털 맞춤, KepServer 외 OPC 연결</td><td><span class="pill p-warn">L4</span></td><td>구축이 여기로 온 것이 카탈로그의 핵심 변경.</td></tr>
+        <tr><td><b>범위 밖</b></td><td>Infra</td><td>GCP 프로젝트·청구, BigQuery 스캔·slot·egress·VM</td><td><span class="pill p-mute">—</span></td><td>고객 직접 계약.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call">
+    <span class="ct">영업 자료와 청구서의 표현 일치</span>
+    <p>카탈로그는 Tag 수집과 Legacy 수집을 <strong>둘 다 Basic Services</strong>로 넣었는데 과금은 2축이다. 영업 자료에서는 "기본 서비스에 포함", 청구서에서는 "수집 밴드 / 연동 밴드 2줄"이 되므로 설명 논리를 맞춰 둔다.</p>
+    <p><strong>권고 문구:</strong> <em>"수집과 연동은 모두 기본 서비스입니다. 요금은 실시간 수집량과 연동 규모 두 가지를 각각 봅니다 — 하나가 늘어도 다른 하나는 영향받지 않습니다."</em></p>
+  </div>
+</section>
+
+<!-- ══════════════ 11 ══════════════ -->
+<section id="s11">
+  <div class="s-head"><span class="num">11</span><h2>계약 · 방어 조항</h2><span class="tag">Contract</span></div>
+
+  <p class="lede">rev 1~2의 방어 로직(어뷰징 7종, 정당한 비용 통제, 비대칭 조정, 신규 조항)은 유효하다. 실측이 새로 요구하는 것만 다룬다.</p>
+
+  <h3>전환 시점 처리 — 창원 컬럼 초과분</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:18%">선택지</th><th style="width:34%">내용</th><th style="width:24%">얻는 것</th><th style="width:24%">잃는 것 · 리스크</th></tr></thead>
+      <tbody>
+        <tr><td><b>A. 소급 정산</b></td><td>초과 사용 기간에 대해 COL-8000 차액 소급 청구</td><td>연 2.16억 × 초과 기간</td><td><b>관계 파탄 위험.</b> 계측·통보 책임이 VNTG에 있었다는 반론이 가능하고 전환 협상이 좌초할 수 있다.</td></tr>
+        <tr class="hi"><td><b>B. 리셋 프레이밍</b> <span class="pill p-acc">권고</span></td><td>소급 없이 To-Be 전환. 신규 체계에서 실사용이 자동 계측된다는 점만 안내</td><td>협상 원활. 창원 인하폭이 −5.9%로 작은 것에 대한 <b>암묵적 설명</b>이 된다</td><td>과거 미청구분 포기. 애초에 청구 가능성이 낮았던 금액이다.</td></tr>
+        <tr><td><b>C. 조건부 유예</b></td><td>소급분을 명시하되 다년 계약 조건으로 면제</td><td>계약 기간 지렛대</td><td>초과 사실을 테이블에 올리는 순간 <b>"왜 안 알려줬나"</b>로 역공. 계측 실패를 자백하는 셈.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="t-note"><strong>권고 B의 실행 요령:</strong> 창원에 "AS-IS 8,500만 → To-Be 8,000만, 6% 인하"로만 제시한다. 컬럼 233% 초과나 적정 등급 1억 300만원은 <strong>내부 수치로만 유지</strong>한다. <strong>두 고객의 인하율이 6%로 같다는 점이 이 프레이밍을 강하게 만든다</strong> — 그룹사 내에서 요금이 비교되어도 차별 논란이 없다.</p>
+
+  <h3>신규 필수 조항</h3>
+  <ul class="tight">
+    <li><strong>등급 판정 주기와 통보 의무.</strong> 창원 사례의 근본 원인은 <em>등급이 실사용을 따라가지 않았다</em>는 것이다. To-Be는 자동 계측이지만 <strong>판정 결과의 통보 시점과 적용 시점</strong>이 계약에 없으면 같은 일이 반복된다. 권고: 분기 1회 계측 리포트 자동 발송(카탈로그의 청구서·운영 통계 기능 활용), 등급 변동 시 익월 적용, 상향은 2개월 전 사전 통보.</li>
+    <li><strong>신규 고객 초기 3개월 실측 조항.</strong> §02가 수량 기반 추정의 불가능성을 입증했으므로, 신규 계약은 <strong>잠정 등급으로 시작해 3개월 실측 후 확정·소급 정산</strong>한다. 이 조항이 없으면 영업 단계에서 태그 수로 견적을 내다가 큰 오차가 발생한다 — rev 2에서 베스틸을 2~4단계 낮게 추정했던 것이 그 예다.</li>
+    <li><strong>L1-B 테이블 목록 확정 절차.</strong> 수집 설정 등록 테이블이 곧 과금 기준이므로 <strong>등록·해제 권한과 승인 절차</strong>를 명문화한다. 고객의 임의 대량 등록과 VNTG의 임의 카운트 증가를 모두 차단.</li>
+    <li><strong>초기 구축 범위 정의.</strong> 카탈로그가 구축을 라이선스에서 분리했으므로 <strong>어디까지가 구축이고 어디부터가 운영인지</strong>를 SOW 템플릿에 고정한다. 모호하면 "이건 운영 아니냐"는 무상 요청이 상시 유입된다.</li>
+    <li><strong>보존기간 정정 소급.</strong> 기존 계약서·제안서에 "기본 1개월"이 있다면 1년으로 정정하되 <strong>가격 인상 사유가 아님을 명시</strong>한다(원래 의도가 1년이었다는 입장).</li>
+  </ul>
+
+  <div class="call warn">
+    <span class="ct">대외 노출 금지</span>
+    <p>① <strong>실효단가</strong>(GB·day당 43만원) ② <strong>M/M 원가와 인건비 산정 근거</strong> ③ <strong>선투자 회수 논리</strong> ④ <strong>창원 컬럼 233% 초과 사실과 미청구 연 2.16억</strong> ⑤ <strong>단가 430,000원이 5,000만원 목표에서 역산됐다는 사실</strong> ⑥ <strong>두 고객의 GB·day당 부담 격차 1.85배</strong> — 창원이 알면 소급 보상을, 베스틸이 알면 "우리가 싸게 쓰고 있었다"는 인식과 함께 인상 저항이 생긴다. 공정성 개선은 <em>결과로</em> 보여주고 숫자로 설명하지 않는다.</p>
+  </div>
+</section>
+
+<!-- ══════════════ 12 ══════════════ -->
+<section id="s12">
+  <div class="s-head"><span class="num">12</span><h2>미해결 쟁점 — 의사결정 요청</h2><span class="tag">Decisions</span></div>
+
+  <p class="lede">rev 2의 8건 중 <strong>2건이 실측으로 해소</strong>됐고(베스틸 등급, 단가 상향안), <strong>1건은 권고가 뒤집혔다</strong>(밴드 완충). 남은 것과 새로 생긴 것을 합쳐 7건이다.</p>
+
+  <div class="dec">
+    <div class="dec-item">
+      <span class="dn">1</span>
+      <div><div class="dq">2축 체계와 앵커 80%를 승인할 것인가</div>
+      <div class="dd">단일축은 2사 합산 <b>−28.6%</b>(BEP 3.3사), 2축 80%는 <b>−5.9%</b>(BEP 2.5사). 두 고객 인하폭이 −5.9% / −6.0%로 균등해 단일 메시지 협상이 가능하다. <b>권고 — 2축 · 앵커 80% 채택.</b> 반대 논거는 "체계 단순화 취지 훼손"이나, L1-B는 테이블 단위·자동 계측·L1-A와 독립이라 AS-IS 2등급과 구조가 다르다.</div></div>
+      <div class="dw"><span class="pill p-sig">경영 승인</span><span class="pill p-sig">최우선</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">2</span>
+      <div><div class="dq">베스틸 가드값을 실측으로 확정할 것인가</div>
+      <div class="dd">추정 138.2(범위 136.7~139.8)는 전 구간 DF-160이지만 <b>하단 130까지 여유가 6%</b>다. 130 미만이면 DF-130(6,900만)으로 내려가 2축 80% 적용 시 8,100만(−19%)이 되어 창원(−5.9%)과의 균형이 깨진다. <b>계약 확정 전 62일 이상 일별 실측 필수.</b></div></div>
+      <div class="dw"><span class="pill p-warn">즉시 착수</span><span class="pill p-mute">개발</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">3</span>
+      <div><div class="dq">카탈로그 청구서의 "Cloud 사용 비용"은 무엇인가</div>
+      <div class="dd">compute를 고객 GCP로 이관한다면 <b>이 청구서는 누가 무엇을 청구하는가.</b> (a) 정보 표시용이면 문제없음, (b) VNTG 대납 후 재청구면 개발 문서가 명시적으로 금지한 구조다. rev 2에서 이월.</div></div>
+      <div class="dw"><span class="pill p-warn">즉시 확인</span><span class="pill p-mute">개발</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">4</span>
+      <div><div class="dq">창원 컬럼 초과분을 어떻게 처리할 것인가</div>
+      <div class="dd">소급 정산(A) / 리셋 프레이밍(B, 권고) / 조건부 유예(C). <b>B 권고</b> — 계측·통보 책임 소재가 불리하고, 초과 사실을 꺼내는 순간 역공당한다. <b>두 고객 인하율이 6%로 같아 프레이밍이 더 견고해졌다.</b> 다만 언제부터 초과였는지는 내부 확인 필요.</div></div>
+      <div class="dw"><span class="pill p-sig">경영 · 영업</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">5</span>
+      <div><div class="dq">초기 구축을 기본료에서 분리할 것인가</div>
+      <div class="dd">카탈로그는 분리, 개발 문서 §3.4는 포함. <b>권고 — 분리(카탈로그 채택).</b> 1회성 구축을 월정액에 넣으면 갱신 때 "5년째 왜 구축비를 내나" 반박을 부른다. 기본료 정당화 논거에서 한 항목이 빠지므로 <b>대체 논거</b>(수량 상한 없는 확장 권리, 플랫폼 기능 상시 이용)를 협상 자료에 반영.</div></div>
+      <div class="dw"><span class="pill p-acc">팀 합의</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">6</span>
+      <div><div class="dq">밴드 폭을 균일화할 것인가</div>
+      <div class="dd"><b>rev 2 권고 철회 후 재설계.</b> 두 고객 모두 밴드 하단(18% · 27%)이라 완충 조항은 순수 매출 감소(연 6,800만원)다. 구조적 대안은 DF-130/160/200의 폭 30·30·40을 <b>20으로 재분할</b>하는 것. 단 베스틸이 DF-140(대표점 130)에 안착해 <b>월 600만원 감소</b>한다. <b>공정성 vs 매출의 명시적 트레이드오프.</b></div></div>
+      <div class="dw"><span class="pill p-acc">개발 · 팀</span></div>
+    </div>
+    <div class="dec-item">
+      <span class="dn">7</span>
+      <div><div class="dq">다사업장 기본료를 어떻게 부과할 것인가</div>
+      <div class="dd">창원·베스틸은 별도 계약이라 L0가 각각 부과된다. 향후 한 법인이 복수 사업장을 운영하는 경우 정책이 미정. <b>권고 — 사업장당 부과 + 2번째부터 감면율.</b> 감면율 수치 결정 필요. rev 1에서 이월.</div></div>
+      <div class="dw"><span class="pill p-acc">영업 · 팀</span></div>
+    </div>
+  </div>
+
+  <h3>실측으로 종결된 쟁점</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:30%">쟁점</th><th style="width:18%">결과</th><th style="width:52%">근거</th></tr></thead>
+      <tbody>
+        <tr><td>베스틸 등급 확정 (rev 2 §12-①의 입력)</td><td><span class="pill p-ok">해소</span></td><td>DF-160 확정. 추정 범위 전체가 동일 밴드.</td></tr>
+        <tr><td>단가 상향안 (rev 2 §12-① 선택지 c)</td><td><span class="pill p-ok">폐기</span></td><td>창원 기준 단가 상향 시 베스틸이 AS-IS의 1.4배 → 협상 불가.</td></tr>
+        <tr><td>Legacy 축 신설 여부 (rev 2 §12-②)</td><td><span class="pill p-ok">확정</span></td><td>연립방정식 음수 해로 Legacy가 저장량 축에서 측정 불가임이 입증.</td></tr>
+        <tr><td>밴드 완충 조항 (rev 2 §12-⑦)</td><td><span class="pill p-sig">철회 후 재설계</span></td><td>두 고객 모두 하단 → 완충은 순수 매출 감소. §12-⑥ 밴드 균일화로 대체.</td></tr>
+        <tr><td>가드값 기간 정규화 (rev 2 §12-⑧)</td><td><span class="pill p-ok">확정</span></td><td>상위 3%(최소 5일·최대 20일) 평균 채택. 두 고객 모두 이 정의로 재계산해 등급 확인.</td></tr>
+        <tr><td>신규 고객 첫 해 기준값 (rev 2 §12-⑦)</td><td><span class="pill p-ok">확정</span></td><td>수량 기반 추정 금지 → <b>초기 3개월 실측 후 소급 정산</b>(§08). §02가 근거.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════ 13 ══════════════ -->
+<section id="s13">
+  <div class="s-head"><span class="num">13</span><h2>이행 로드맵</h2><span class="tag">Rollout</span></div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:8%">단계</th><th style="width:26%">산출물</th><th style="width:42%">내용</th><th style="width:24%">선행 · 상태</th></tr></thead>
+      <tbody>
+        <tr><td class="mono"><span class="pill p-ok">P0</span></td><td>수집 밴드 등급표 · 산정 SQL</td><td>일일 증분 계측 로직, 등급 자동 판정, 창원 실측 검증</td><td><b>완료</b></td></tr>
+        <tr><td class="mono"><span class="pill p-ok">P1</span></td><td>AS-IS 등급 · 수량 확인</td><td>창원 TAG-7000+COL-3000 / 베스틸 TAG-12500+COL-2000, 실사용 대비 진단</td><td><b>완료</b> — §03</td></tr>
+        <tr><td class="mono"><span class="pill p-ok">P2</span></td><td>2사 수집량 확보</td><td>창원 62일 실측 / 베스틸 평균 120 · 최대 150 → 가드값 138.2, DF-160</td><td><b>완료</b> — §01</td></tr>
+        <tr><td class="mono"><span class="pill p-sig">P3</span></td><td><b>베스틸 일별 실측 · 가드값 확정</b></td><td>62일 이상 일별 데이터로 상위 3% 평균 산출. 130 경계 확인이 목적(현재 여유 6%).</td><td><b>최우선</b> — 계약 확정 전 필수</td></tr>
+        <tr><td class="mono"><span class="pill p-sig">P4</span></td><td><b>Legacy 테이블·컬럼 실측</b></td><td>2사 정기 수집 소스 테이블 수, 테이블당 컬럼 분포, 소스 시스템 수. <b>앵커점 2개(3,000만 / 1,200만)를 지나는 밴드 곡선 역산.</b></td><td><b>최우선</b> — §12-①</td></tr>
+        <tr><td class="mono">P5</td><td>2축 · 앵커율 경영 승인</td><td>단일축 / 2축 75% / 2축 80% / 2축 100% 4개 안과 각 BEP를 놓고 결정</td><td>P3·P4</td></tr>
+        <tr><td class="mono">P6</td><td>L1-B 밴드 확정</td><td>창원 3,000만 / 베스틸 1,200만에 안착하는 테이블 수 밴드, G6 컬럼 상한 결정</td><td>P4·P5</td></tr>
+        <tr><td class="mono">P7</td><td>가드 밴드 실측 수치</td><td>G1 초당 피크(2사 데이터 밀도 차이 반영), G2 전송량, G3 가상 Tag 동시 실행 수</td><td>인프라 모니터링</td></tr>
+        <tr><td class="mono">P8</td><td>플러그인 단가표</td><td>트래킹 모듈 기능 매트릭스별 기본료 %, 관제·확장백업 정액, AI/LLM 공수 템플릿</td><td>P5</td></tr>
+        <tr><td class="mono">P9</td><td>계약서 부속 — 계측 정의서</td><td>logical bytes, 증분·공백·제외, 상위 3% 산식, L1-B 테이블 정의·등록 절차, 보존 1년, 등급 판정 주기·통보 의무, <b>신규 고객 3개월 실측 조항</b>, SLA, 에스컬레이션</td><td>P5·P6</td></tr>
+        <tr><td class="mono">P10</td><td>문서 정정</td><td>보존기간 1개월 → 1년 통일, "연장 2개월 이상" → "1년 초과 연 단위", 기본료 정의에서 "설치·구축" 삭제, <b>태그당 8.6 MB/day 환산 논리 전면 삭제</b>(§02로 무효화)</td><td>P5</td></tr>
+        <tr><td class="mono">P11</td><td>대외 설명 자료 · 전환 협상</td><td>요금 테이블만 노출, 2축 설명 논리, "6% 인하" 단일 메시지, 창원 리셋 프레이밍</td><td>P9·P10</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>전환 메시지 — 고객별</h3>
+  <div class="cust">
+    <div class="card">
+      <h4>세아창원특수강 <span>−5.9% · 8,000만원</span></h4>
+      <div class="body">
+        <p style="font-size:13px;line-height:1.7;color:var(--ink-2);margin-bottom:10px"><b>핵심 메시지:</b> "태그 수를 세는 일이 없어집니다."</p>
+        <ul class="tight" style="margin:0">
+          <li>태그 사용률 99.9%(6,995/7,000) → 신규 설비 추가 시 <b>등급 상향 걱정 없이 수집 가능</b>. 이 고객에게 가장 큰 실질 가치다.</li>
+          <li>수집량과 연동 규모를 <b>따로 보므로</b> 한쪽이 늘어도 다른 쪽은 영향 없음.</li>
+          <li>요금 6% 인하 + 태그 정리 작업 소멸 + 보존 1년 명시.</li>
+          <li><span class="pill p-sig">주의</span> 컬럼 초과 사실은 먼저 꺼내지 않는다(§11 선택지 B).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <h4>세아베스틸 <span>−6.0% · 9,400만원</span></h4>
+      <div class="body">
+        <p style="font-size:13px;line-height:1.7;color:var(--ink-2);margin-bottom:10px"><b>핵심 메시지:</b> "쓴 만큼 내고, 예측 가능합니다."</p>
+        <ul class="tight" style="margin:0">
+          <li>데이터량이 창원의 2.17배인데 AS-IS에서는 GB당 절반만 냈다 — <b>이 사실은 언급하지 않는다.</b> 인하 자체가 협상 카드다.</li>
+          <li>태그 여유 1,030개(91.8%)로 창원보다 압박이 덜하지만, 수량 상한 소멸은 동일한 가치.</li>
+          <li>DF-160 밴드 상단까지 <b>21.8 GB/day(16%) 여유</b> → 추가 비용 없는 성장 구간으로 제시.</li>
+          <li><span class="pill p-warn">주의</span> 가드값 138.2는 추정. <b>P3 실측 전 등급 확정 금지</b> — 130 미만이면 DF-130으로 내려가 인하폭이 −19%가 된다.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="footer">
+  본 문서는 DataForge 라이선스 관련 문서 4종(DF 라이선스 체계 수립 기획 초안 원본·개정판, DataForge 라이선스 요금 산정 근거, 라이선스 체계 개선 및 서비스 항목 요약)과 세아창원특수강·세아베스틸의 현행 라이선스 계약 등급·실사용 수량·일일 수집량을 대조·검증해 통합한 <b>내부 확정용 설계서 rev 3</b>다. 요금 산식·등급표·실측치는 원본 인용 후 독립 재계산으로 검증했으며, 검증 판정과 보정안·미해결 쟁점은 본 문서의 분석이다.
+  <br><br>
+  <b>대외 노출 금지:</b> 실효단가, 원가·M/M, 선투자 논리, 창원 컬럼 초과 사실 및 미청구액, 단가 430,000원의 역산 구조, 두 고객의 GB·day당 부담 격차 1.85배.
+  <br><br>
+  <b>추정치 표기:</b> 베스틸 가드값 138.2 GB/day는 평균 120·최대 150과 창원 분포 비율로 산출한 <b>추정치</b>이며, 그에 따른 DF-160 등급과 모든 손익 수치도 추정에 기반한다. Legacy 소스 테이블 수, 가드 밴드 실측 수치는 아직 확보되지 않은 값이며 §13 로드맵의 선행 과제다.
+</p>
+
+</main>
+</div>
+
+</body>
+</html>
