@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataForge팀 연간 과제 수행 성과 (2025.09~2026.08)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; background: #f8fafc; color: #1e293b; font-size: 14px; }
+.header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 24px 32px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13px; opacity: 0.85; }
+.header-meta { display: flex; gap: 24px; margin-top: 12px; font-size: 12px; opacity: 0.8; flex-wrap: wrap; }
+.tabs { display: flex; background: white; border-bottom: 2px solid #e2e8f0; padding: 0 24px; flex-wrap: wrap; }
+.tab { padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+.tab:hover { color: #2563eb; }
+.tab.active { color: #2563eb; border-bottom-color: #2563eb; background: white; }
+.content { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); text-align: center; border-top: 4px solid; }
+.stat-card.total { border-color: #2563eb; }
+.stat-card.done { border-color: #16a34a; }
+.stat-card.progress { border-color: #f59e0b; }
+.stat-card.wg { border-color: #8b5cf6; }
+.stat-num { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.stat-card.total .stat-num { color: #2563eb; }
+.stat-card.done .stat-num { color: #16a34a; }
+.stat-card.progress .stat-num { color: #f59e0b; }
+.stat-card.wg .stat-num { color: #8b5cf6; }
+.stat-label { font-size: 12px; color: #64748b; font-weight: 600; }
+.card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 20px; }
+.card-title { font-size: 14px; font-weight: 700; color: #1e3a8a; border-left: 4px solid #2563eb; padding-left: 10px; margin-bottom: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #1e3a8a; color: white; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; }
+td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+tr:hover td { background: #f8fafc; }
+tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge-done    { background: #dcfce7; color: #166534; }
+.badge-progress{ background: #dbeafe; color: #1e40af; }
+.badge-review  { background: #fef3c7; color: #92400e; }
+.badge-plan    { background: #ede9fe; color: #5b21b6; }
+.badge-pending { background: #f1f5f9; color: #475569; }
+.highlight-box { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+.highlight-box h3 { font-size: 13px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px; }
+.highlight-box ul { list-style: none; padding: 0; }
+.highlight-box li { font-size: 13px; color: #1e40af; padding: 3px 0; padding-left: 18px; position: relative; }
+.highlight-box li::before { content: "✦"; position: absolute; left: 0; color: #2563eb; font-size: 10px; top: 4px; }
+.month-item { background: white; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 4px solid #cbd5e1; }
+.month-item.current { border-left-color: #16a34a; background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+.month-item h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1e3a8a; }
+.month-item.current h3 { color: #16a34a; }
+.month-stats { display: flex; gap: 12px; margin-bottom: 8px; font-size: 12px; flex-wrap: wrap; }
+.month-stats span { padding: 2px 8px; border-radius: 12px; }
+.ms-total { background: #dbeafe; color: #1e40af; }
+.ms-done { background: #dcfce7; color: #166534; }
+.ms-prog { background: #fef3c7; color: #92400e; }
+.month-item ul { list-style: none; padding: 0; }
+.month-item li { font-size: 12px; color: #475569; padding: 2px 0; padding-left: 14px; position: relative; }
+.month-item li::before { content: "·"; position: absolute; left: 4px; }
+.kpi-item { margin-bottom: 16px; }
+.kpi-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.kpi-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.kpi-pct { font-size: 13px; font-weight: 700; color: #2563eb; }
+.kpi-bar-bg { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
+.kpi-bar { height: 100%; border-radius: 5px; }
+.kpi-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+.special-card { background: linear-gradient(135deg, #fefce8, #fef9c3); border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+.special-card h3 { font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+.special-card li { font-size: 12px; color: #78350f; padding: 2px 0; padding-left: 14px; position: relative; list-style: none; }
+.special-card li::before { content: "·"; position: absolute; left: 4px; }
+.section-note { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+.next-plan { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd; border-radius: 8px; padding: 14px 16px; margin-top: 16px; }
+.next-plan h4 { font-size: 12px; font-weight: 700; color: #0369a1; margin-bottom: 8px; }
+.next-plan li { font-size: 12px; color: #0369a1; padding: 2px 0; padding-left: 14px; position: relative; list-style: none; }
+.next-plan li::before { content: "→"; position: absolute; left: 0; }
+.footer { text-align: center; padding: 24px; color: #94a3b8; font-size: 11px; border-top: 1px solid #e2e8f0; margin-top: 20px; }
+.dir-box { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 20px; border-left: 4px solid #2563eb; }
+.dir-box .dir-label { font-size: 11px; font-weight: 700; color: #2563eb; letter-spacing: 1px; margin-bottom: 6px; }
+.dir-box .dir-main { font-size: 17px; font-weight: 700; color: #1e3a8a; line-height: 1.5; margin-bottom: 8px; }
+.dir-box .dir-sub { font-size: 13px; color: #475569; line-height: 1.6; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mini-stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.mini-card { background: white; border-radius: 8px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); text-align: center; border-top: 3px solid #2563eb; }
+.mini-num { font-size: 24px; font-weight: 800; color: #1e3a8a; }
+.mini-label { font-size: 11px; color: #64748b; font-weight: 600; margin-top: 2px; }
+.theme { margin-bottom: 18px; }
+.theme h4 { font-size: 13px; font-weight: 700; color: #1e3a8a; margin-bottom: 6px; }
+.theme ul { list-style: none; padding: 0; }
+.theme li { font-size: 12.5px; color: #374151; padding: 3px 0; padding-left: 14px; position: relative; line-height: 1.5; }
+.theme li::before { content: "·"; position: absolute; left: 4px; color: #2563eb; font-weight: 700; }
+.key { color: #64748b; font-size: 11px; }
+ul.plain { list-style: none; padding: 0; }
+ul.plain li { font-size: 13px; color: #374151; padding: 3px 0 3px 16px; position: relative; line-height: 1.6; }
+ul.plain li::before { content: "▪"; position: absolute; left: 2px; color: #2563eb; font-size: 10px; top: 6px; }
+@media (max-width: 1100px){ .stat-grid,.mini-stat{grid-template-columns:repeat(2,1fr)} .two-col{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📈 DataForge팀 연간 과제 수행 성과 — 2025.09 ~ 2026.08</h1>
+  <p>전년도 성과 및 추후 계획 보고 — 고객사(세아베스틸 / 세아창원특수강) 기준 정리</p>
+  <div class="header-meta">
+    <span>📅 대상기간: 2025-09-01 ~ 2026-08-31 (12개월)</span>
+    <span>📋 데이터 출처: JIRA(DataForge, DF-849~DF-1279) + Confluence(DPE) + '26 H2 경영전략회의 자료</span>
+    <span>🗓 작성일: 2026-09-06</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-t="t1">📊 종합 성과</div>
+  <div class="tab" data-t="t2">🏭 세아베스틸</div>
+  <div class="tab" data-t="t3">🏭 세아창원특수강</div>
+  <div class="tab" data-t="t4">🧩 공통·플랫폼·국책</div>
+  <div class="tab" data-t="t5">🚀 추후 계획</div>
+</div>
+
+<div class="content">
+
+<!-- ===================== TAB 1 ===================== -->
+<div class="tab-content active" id="t1">
+
+  <div class="dir-box">
+    <div class="dir-label">연간 과제 방향성</div>
+    <div class="dir-main">"운영은 무중단으로, 데이터는 전 공정으로, 서비스는 제품으로"</div>
+    <div class="dir-sub">
+      ① <b>안정 운영</b> — 세아베스틸·세아창원특수강 양 사이트 수집 무중단 유지 및 통합 모니터링(Zabbix/로그) 체계 확립<br>
+      ② <b>수집 범위 확대</b> — 신규 공장 온보딩과 Tag 표준화로 제강–압연–정정–단조 전 공정 데이터 커버리지 확보<br>
+      ③ <b>고객 활용성 증대</b> — Metabase·Grafana 기반 품질(CPK)·설비 가동률 모니터링 제공, 고객 요청(WG) 적시 처리<br>
+      ④ <b>제품화·사업 확장</b> — DataForge Package(수집 자동화 Pack, DF-Stream) 개발 및 대외 사업(PoC·국책과제) 참여
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card total"><div class="stat-num">429</div><div class="stat-label">총 수행 과제(JIRA 이슈)</div></div>
+    <div class="stat-card done"><div class="stat-num">324</div><div class="stat-label">완료 (75.5%)</div></div>
+    <div class="stat-card wg"><div class="stat-num">173</div><div class="stat-label">고객 요청(WG) 처리 건수</div></div>
+    <div class="stat-card progress"><div class="stat-num">286</div><div class="stat-label">고객사 직접 과제 (베스틸+창특+양사)</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">고객사별 수행 성과 비교</div>
+    <table>
+      <tr><th>구분</th><th>총 과제</th><th>완료</th><th>진행 중</th><th>대기</th><th>완료율</th><th>WG 고객요청</th><th>핵심 성격</th></tr>
+      <tr>
+        <td><b>세아베스틸(군산)</b></td><td>128건</td><td>111건</td><td>12건</td><td>5건</td>
+        <td><span class="badge badge-done">86.7%</span></td><td>66건 (완료 62)</td>
+        <td>Tag 수집 확대 · 신규 공장 온보딩 · HW 장애 대응</td>
+      </tr>
+      <tr>
+        <td><b>세아창원특수강</b></td><td>149건</td><td>131건</td><td>16건</td><td>2건</td>
+        <td><span class="badge badge-done">87.9%</span></td><td>71건 (완료 64)</td>
+        <td>품질(CPK) 시각화 · 소재ID 트래킹 · 신사업 인프라</td>
+      </tr>
+      <tr>
+        <td><b>양 사 공통(인프라 동시적용)</b></td><td>9건</td><td>7건</td><td>1건</td><td>1건</td>
+        <td><span class="badge badge-done">77.8%</span></td><td>—</td>
+        <td>백업정책 · PostgreSQL 파티션 · Zabbix 템플릿</td>
+      </tr>
+      <tr>
+        <td><b>공통 · 플랫폼 · 국책 · 팀운영</b></td><td>143건</td><td>75건</td><td>28건</td><td>40건</td>
+        <td><span class="badge badge-review">52.4%</span></td><td>39건</td>
+        <td>DataForge Package · Edge 정기점검 · 국책과제 · 팀 기획</td>
+      </tr>
+      <tr style="background:#f1f5f9"><td><b>합계</b></td><td><b>429건</b></td><td><b>324건</b></td><td><b>57건</b></td><td><b>48건</b></td><td><b>75.5%</b></td><td><b>176건</b></td><td>—</td></tr>
+    </table>
+    <div class="section-note" style="margin-top:10px">※ 공통 영역의 완료율이 낮은 것은 <b>DataForge Package 개발·통합 로그 모니터링 등 연중 지속 과제</b>가 포함되어 있기 때문 (진행 중 상태 유지가 정상)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">주요 추진 목표 및 달성 결과</div>
+    <table>
+      <tr><th style="width:22%">추진 목표</th><th style="width:38%">주요 추진 과제</th><th style="width:32%">달성 결과</th><th style="width:8%">평가</th></tr>
+      <tr>
+        <td><b>① 서비스 무중단 운영</b><br><span class="key">가동률 99% 유지</span></td>
+        <td>HyperFlex HW 장애 대응, PLC/NiFi 통신 장애 조치, 백업 정책(Bacula·Duplicati·GCS) 재정비, 쿠버네티스 인증서·SSL 갱신</td>
+        <td>장애 23건 대응 — <b>21건 조치 완료 / 2건 진행</b> (디스크 고장 11건 포함), Edge 정기점검 <b>12개월 연속 수행</b>, 수집 무중단 유지</td>
+        <td><span class="badge badge-done">달성</span></td>
+      </tr>
+      <tr>
+        <td><b>② 데이터 수집 범위 확대</b><br><span class="key">전 공정 커버리지</span></td>
+        <td>Tag 표준화·신규 수집(82건), 전력량계 Tag 수집 표준화, 신규 공장 DB/스키마 생성, NiFi 서버 증설</td>
+        <td>베스틸 <b>소형단조·BT정정·대형단조·대형정정·소형정정·대형압연</b> 온보딩, 창특 <b>소형정정·대형정정</b> NiFi 서버 구축</td>
+        <td><span class="badge badge-done">달성</span></td>
+      </tr>
+      <tr>
+        <td><b>③ 고객 활용성 증대</b><br><span class="key">WG 요청 적시 처리</span></td>
+        <td>Metabase·Grafana 대시보드 관련 과제(102건), 품질 CPK 지표 표준화, 소재ID 트래킹</td>
+        <td>WG 고유 요청번호 <b>173건</b> 접수, 관련 이슈 176건 중 <b>157건 완료(89.2%)</b>, 창특 품질 CPK 대시보드 체계 확립, 베스틸 생산실적 마트 구축</td>
+        <td><span class="badge badge-done">달성</span></td>
+      </tr>
+      <tr>
+        <td><b>④ 통합 모니터링 구축</b><br><span class="key">Zabbix 기반 관제</span></td>
+        <td>Zabbix VMware/PLC포트/NiFi 멀티라인 로그, Bacula–Zabbix 연동, Mage.ai 파이프라인 상태 연동</td>
+        <td>양 사이트 Zabbix 템플릿 18건 적용 완료, 통합 로그 모니터링 아키텍처 구축 (대시보드 통합은 H2 잔여)</td>
+        <td><span class="badge badge-progress">진행</span></td>
+      </tr>
+      <tr>
+        <td><b>⑤ DataForge 제품화</b><br><span class="key">Package 상품화</span></td>
+        <td>수집 Pipeline 자동화 Pack, DF-Stream 통합개발, DF-Port 사용자 포탈, GKE 전환, Sales Kit 기반</td>
+        <td>GCP <b>GKE 전환 완료(4월)</b>, DF-Stream 백엔드 통합개발 완료, CTO/CEO 보고 완료(5/24), 정식 릴리즈는 3Q 이월</td>
+        <td><span class="badge badge-progress">진행</span></td>
+      </tr>
+      <tr>
+        <td><b>⑥ 대외 사업 확대</b><br><span class="key">신규 매출 기반</span></td>
+        <td>세아홀딩스 CIO팀 데이터 플랫폼 PoC, 베스틸 FeMS 이관, 동국제강 참여, 국책과제 탄소발자국 3차년도</td>
+        <td>데이터 플랫폼 PoC 빅쿼리 구축 완료(6/10~15) 및 R&amp;R 확정(6/18), FeMS 이관 기획 착수(4/13~), 국책 3차년도 행정·인프라 완료</td>
+        <td><span class="badge badge-progress">진행</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">월별 과제 수행 추이 (고객사 구분)</div>
+    <table>
+      <tr><th>월</th><th>세아베스틸</th><th>세아창원특수강</th><th>양사공통</th><th>공통·플랫폼</th><th>합계</th><th>주요 이벤트</th></tr>
+      <tr><td>2025.09</td><td>10</td><td>7</td><td>—</td><td>11</td><td><b>28</b></td><td>연주·제강 Tag 확대 착수, Grafana 교육 실시</td></tr>
+      <tr><td>2025.10</td><td>11</td><td>20</td><td>—</td><td>10</td><td><b>41</b></td><td>창특 산세·2단조 CPK 요청 급증, 소재ID 트래킹 정비</td></tr>
+      <tr><td>2025.11</td><td>11</td><td>11</td><td>—</td><td>13</td><td><b>35</b></td><td>쿠버네티스 인증서 갱신, Agentic AI Self-BI PoC GCP 구성</td></tr>
+      <tr><td>2025.12</td><td>8</td><td>6</td><td>—</td><td>14</td><td><b>28</b></td><td>common NiFi 서버 구축, 26년 수행과제 계획 수립</td></tr>
+      <tr><td>2026.01</td><td>11</td><td>19</td><td>1</td><td>12</td><td><b>43</b></td><td>26년 경영계획·팀/팀원 KPI 수립, 통합 로그 모니터링 착수</td></tr>
+      <tr><td>2026.02</td><td>11</td><td>13</td><td>1</td><td>26</td><td><b>51</b></td><td>연초 8대 과제 등록, 월간운영보고서 규격 확정, 팀장 인수인계</td></tr>
+      <tr><td>2026.03</td><td>15</td><td>22</td><td>1</td><td>15</td><td><b>53</b></td><td>Zabbix 확대 적용, 베스틸 소형단조 신규 공장 온보딩</td></tr>
+      <tr><td>2026.04</td><td>10</td><td>10</td><td>—</td><td>7</td><td><b>27</b></td><td>GKE 전환 완료, BT정정 온보딩, FeMS 이관 기획 착수</td></tr>
+      <tr><td>2026.05</td><td>11</td><td>9</td><td>1</td><td>11</td><td><b>32</b></td><td>DF-Stream 개발 착수, 탄소배출 관리 플랫폼 기술검토</td></tr>
+      <tr><td>2026.06</td><td>13</td><td>18</td><td>1</td><td>7</td><td><b>39</b></td><td>세아홀딩스 CIO팀 데이터 플랫폼 PoC 수행, SHE 연동 착수</td></tr>
+      <tr><td>2026.07</td><td>11</td><td>8</td><td>4</td><td>7</td><td><b>30</b></td><td>NiFi Zabbix 템플릿 양사 적용, 대형정정·압연 스키마 생성</td></tr>
+      <tr class="" style="background:#f0fdf4"><td><b>2026.08</b></td><td>6</td><td>6</td><td>—</td><td>10</td><td><b>22</b></td><td>Mage.ai Zabbix 연동, 소재ID 매칭 GCP 비용 최적화 착수</td></tr>
+    </table>
+    <div class="section-note" style="margin-top:10px">※ 등록 기준(created) 집계. 2026.02~03의 공통 영역 증가는 연초 KPI 과제 일괄 등록에 따른 것</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">담당자별 수행 과제 분포</div>
+    <table>
+      <tr><th>담당</th><th>처리 건수</th><th>주 담당 영역</th></tr>
+      <tr><td>김경립</td><td>112건</td><td>인프라·클라우드 운영, HyperFlex/Zabbix/백업, 양 사이트 장애 대응, 데이터 플랫폼 PoC 엔지니어링</td></tr>
+      <tr><td>하민규</td><td>89건</td><td>세아베스틸 수집 개발·WG 대응, Tag 표준화, MES/SAP 마트, SHE 연동, Mage.AI 파이프라인</td></tr>
+      <tr><td>이재훈(위스)</td><td>79건</td><td>세아창원특수강 WG 대응, Metabase/Grafana 대시보드, 소재ID 트래킹, 국책 Interface 개발</td></tr>
+      <tr><td>유성열</td><td>33건</td><td>NiFi·데이터 파이프라인, Grafana 모니터링, 표준 단어/용어 사전, 데이터 거버넌스</td></tr>
+      <tr><td>안종성</td><td>19건</td><td>Edge 정기점검, 상암IDC 서버, 백업 정책, 환율 데이터 수집 자동화, 장애 문서화</td></tr>
+      <tr><td>변중환 실장</td><td>16건</td><td>국책과제(탄소발자국) 총괄 및 팀 기획 (※ 서비스개발실 실장, 팀 직속 인원 아님)</td></tr>
+      <tr><td>유병재</td><td>13건</td><td>팀 기획·운영 총괄, KPI 수립, 월간운영보고서 체계, 청구서 프로세스, 계약·성과 보고</td></tr>
+      <tr><td>김성만</td><td>12건</td><td>WG User·조직연동, 청구서/서비스 통계 개발, DF-Port 사용자 포탈, Sales Kit</td></tr>
+      <tr><td>이지중</td><td>8건</td><td>DataForge Package(DF-Stream) 개발, GKE·sdp-data 클러스터, GitLab 업그레이드</td></tr>
+      <tr><td>(미지정)</td><td>48건</td><td>고객 원(原)요청 접수 건 — WG 번호 부여 후 담당자 배정되어 별도 이슈로 수행</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 2 : 베스틸 ===================== -->
+<div class="tab-content" id="t2">
+
+  <div class="dir-box">
+    <div class="dir-label">세아베스틸 (군산) — 과제 방향성</div>
+    <div class="dir-main">"제강–압연–정정–단조 전 공정으로 수집 범위를 넓히고, 확대된 인프라를 무중단으로 지킨다"</div>
+    <div class="dir-sub">
+      기존 수집 대상이던 제강·압연 중심에서 <b>정정·단조 등 신규 공장으로 커버리지를 확장</b>하고, 확장에 따라 늘어난
+      HyperFlex·PostgreSQL·NiFi 인프라의 <b>장애 대응 및 예방 점검 체계</b>를 동시에 강화. 축적된 데이터를 기반으로
+      <b>이상탐지·소재ID 트래킹·SHE 연동 등 AI/시스템 연계 과제</b>로 활용 단계를 끌어올리는 방향.
+    </div>
+  </div>
+
+  <div class="mini-stat">
+    <div class="mini-card"><div class="mini-num">128</div><div class="mini-label">총 수행 과제</div></div>
+    <div class="mini-card"><div class="mini-num">111</div><div class="mini-label">완료 (86.7%)</div></div>
+    <div class="mini-card"><div class="mini-num">66</div><div class="mini-label">WG 고객요청 (완료 62)</div></div>
+    <div class="mini-card"><div class="mini-num">6</div><div class="mini-label">신규 공장 온보딩</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">추진 목표</div>
+    <ul class="plain">
+      <li><b>① 신규 공장 온보딩 완료</b> — 소형단조·BT정정·대형단조·대형정정·소형정정·대형압연 DB/스키마 및 수집 기반 확보</li>
+      <li><b>② 전력량계 Tag 수집 표준화</b> — 공장별 전력 데이터를 표준 체계로 수집, 탄소발자국 국책과제 데이터 기반 마련</li>
+      <li><b>③ 무중단 운영 유지</b> — HyperFlex 디스크 장애 및 PostgreSQL Failover 등 HW/DB 이슈 상시 대응</li>
+      <li><b>④ MES/SAP 연계 마트 및 생산실적 대시보드 제공</b> — 대형정정 생산실적을 중심으로 Metabase 마트 정착</li>
+      <li><b>⑤ AI·타 시스템 연계 확대</b> — 대형압연 HPC 이상탐지 운영 배포, SHE 시스템 연동, AX TF 협업, FeMS 이관 기획</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">주요 추진 과제 및 수행 내역</div>
+
+    <div class="theme">
+      <h4>① 데이터 수집 확대 · Tag 표준화 <span class="key">(39건 · 전체의 30%)</span></h4>
+      <ul>
+        <li><b>제강 계열</b> — 1제강 집진 퍼징 TAG, 1·2제강 전기로 POT(Power On Time) 모니터링, 2제강 BLT#2 몰드냉각수 온도, 2제강 BLT#2 쿨링배드·집진 링블로워 태그(긴급), EAF#1 변압기 TAP 태그, 전기로#1 CARBON TANK LEVEL <span class="key">(WG-546/678/665/706/660/649)</span></li>
+        <li><b>연주 계열</b> — 에지히터 거리 감지 센서 아날로그 데이터, 오실레이션 실린더 포지션 TAG 등록·수정, 2연주 프리히터#1 적산량 <span class="key">(WG-538/549/558/588)</span></li>
+        <li><b>압연·정정 계열</b> — 대형압연 핫스카핑 산소 압력, 마킹로봇 데이터, 핫쏘 태그, SCR#2 진동센서 Tag명 수정, 가열로 1기 데이터 추가, 소형압연 Kock mill CMS 수집중지·RRT구간 모터 재수집 <span class="key">(WG-536/645/663/606/650/565/631)</span></li>
+        <li><b>전력량계 표준 수집(7건)</b> — 소형/대형단조, BT정정, 냉간단조·2차가공, 대형압연·제품·소형정정, 대형정정·품질보증 공장 순차 등록·수집 <span class="key">(WG-686/656/658/688/693/694)</span></li>
+        <li><b>에버가드 연계</b> — 소형압연 에버가드 서버 tag 등록·전송, 대형정정 에버가드 태그 재전송, 군산 소형정정 에버가드 수집 이전 작업</li>
+        <li>InfluxDB 통합 요청 처리, 그라파나 태그 임시등록·등록 요청 다수 처리 <span class="key">(WG-659/600/604/653)</span></li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>② 데이터 마트 구축 · 생산실적 대시보드 <span class="key">(17건)</span></h4>
+      <ul>
+        <li><b>대형정정 생산실적 대시보드</b> — Metabase DB 등록 → 집계 테이블 등록 → 수집 컬럼 변경/추가 → DB 업데이트 로직·스케줄 변경까지 <b>6단계 연속 고도화</b> 수행 <span class="key">(WG-569/577/613/621/625/629)</span></li>
+        <li><b>SAP·MES 연계</b> — SAP ZSDR6000 재고현황 수집, MES 20768 SAP 재고조회 화면 데이터, MES 6462 HEAT별 화학성분현황, m5333_m5466_shipment_mt 출하 데이터 <span class="key">(WG-561/582/676/572)</span></li>
+        <li>대형단조 실적 집계 대시보드 Metabase 테이블 등록 <span class="key">(WG-581)</span></li>
+        <li>창녕 소형정정 MLFT/UT 불량현황 Metabase 테이블 등록 <span class="key">(WG-664)</span></li>
+        <li><b>2제강공장 실시간 생산 모니터링 대시보드</b> 개발 <span class="badge badge-progress">진행</span> <span class="key">(WG-684)</span></li>
+        <li>1제강 DataExport 기능 개발, 1·2제강 그라파나 신규 화면 구성 및 ALERT RULE 수정</li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>③ 신규 공장 온보딩 · 수집 인프라 증설</h4>
+      <ul>
+        <li>26.03 <b>소형단조</b> DB 생성 (PostgreSQL, BigQuery)</li>
+        <li>26.04 <b>BT정정</b> DB 생성 (PostgreSQL, BigQuery, InfluxDB)</li>
+        <li>26.07 <b>대형단조</b> 스키마 생성 / <b>대형정정·소형정정·대형압연</b> 스키마 생성</li>
+        <li>25.12 · 26.01 common NiFi 서버 구축 (수집 파이프라인 이중화 기반)</li>
+        <li>26.05 Hyperflex VLAN 추가 설정, 26.05 Mage AI 서버 자원 증설</li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>④ 인프라 운영 · 장애 대응 <span class="key">(37건 · 장애 11건 중 10건 조치 완료)</span></h4>
+      <ul>
+        <li><b>HyperFlex 디스크 고장 9건 조치</b> — Node1(25.09, 26.08 12번), Node2(25.09 12번 / 26.02 6번·7번 / 26.03 8번 / 26.06 16번), Node3(26.03 3번·5번) — 서비스 중단 없이 전량 교체·복구</li>
+        <li><b>PostgreSQL DB 1번서버 TCP Socket 고갈 Failover</b> 대응 (26.08) <span class="badge badge-progress">진행</span> — 재발방지 조치 가이드 문서화 병행</li>
+        <li><b>Zabbix 관제 확대</b> — VMware vSphere 모니터링, PLC 상태 체크 포트 감시 트리거, NiFi 멀티라인 로그 수집 개선, Bacula 백업–Zabbix 연동 자동화, Mage.ai 파이프라인 상태 연동, 2제강 모니터링 추가</li>
+        <li><b>백업 체계 재정비</b> — Bacula &amp; Duplicati 백업 정책 변경, GCS 백업 스토리지 정책 변경, Duplicati Volume Size 조정, Kafka 로그 용량 관리 및 일자별 자동 백업, Bacula→InfluxDB 데이터 복구 테스트</li>
+        <li><b>통신·연계 장애</b> — 소형압연 Kepserver↔IBA 통신 오류, IBA-Kepware 통신 장애 해결 테스트, 1제강 캡서버 UDP 5000 포트 모니터링, Kubernetes PMM-Agent 메모리 이상 조치</li>
+        <li>쿠버네티스 인증서 갱신, Ubuntu 24.04 자동 업데이트 비활성화, NiFi DBCP 커넥션 설정 최적화 가이드, Intersight 알람 처리</li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>⑤ AI 과제 · 신규 사업 연계</h4>
+      <ul>
+        <li><b>대형압연 HPC 예지보전/이상탐지</b> — 웹게이트웨이 이상지수 리셋 기능 구현 → 모델 테스트 운영 요청 대응 → <b>신규 분류모델 운영환경 배포 완료</b> <span class="key">(WG-551/666/696)</span></li>
+        <li><b>DataForge–SHE 시스템 연동 개발</b> <span class="badge badge-progress">진행</span> — 안전보건 시스템과의 데이터 연계</li>
+        <li><b>베스틸 AX TF 과제 협업</b> <span class="badge badge-progress">진행</span></li>
+        <li><b>FeMS 이관</b> — 기존 시스템 분석·재구축 R&amp;R 및 기능 확인용 개발 착수(4/13~), 이관 업무협의 회의(6월), 견적 정리 회의(8월)</li>
+        <li>에버가드 OPC 서버 출장 회의, 폐수장 유량계·수질 IOT 연계 논의 <span class="badge badge-progress">진행</span></li>
+        <li>DF GCS 비용 급증 원인 분석 및 최적화 방안 도출 (26.03)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 3 : 창특 ===================== -->
+<div class="tab-content" id="t3">
+
+  <div class="dir-box">
+    <div class="dir-label">세아창원특수강 — 과제 방향성</div>
+    <div class="dir-main">"수집된 데이터를 현업이 매일 보는 품질·가동률 지표로 바꾸고, 신사업의 데이터 인프라를 선점한다"</div>
+    <div class="dir-sub">
+      Tag 수집 자체보다 <b>현업 부서가 직접 활용하는 품질 지표(CPK)·설비 가동률 대시보드</b>로 전환하는 데 무게중심을 둠.
+      1단조·산세·가공·연주 등 <b>공장별 모니터링 체계를 Metabase/Grafana로 표준화</b>하고, 소재 ID 트래킹으로 데이터 정합성을 확보.
+      동시에 Agentic AI Self-BI, 탄소배출 관리 플랫폼, 시편 추적관리 등 <b>신사업 과제의 GCP 인프라를 선제 지원</b>하는 방향.
+    </div>
+  </div>
+
+  <div class="mini-stat">
+    <div class="mini-card"><div class="mini-num">149</div><div class="mini-label">총 수행 과제</div></div>
+    <div class="mini-card"><div class="mini-num">131</div><div class="mini-label">완료 (87.9%)</div></div>
+    <div class="mini-card"><div class="mini-num">71</div><div class="mini-label">WG 고객요청 (완료 64)</div></div>
+    <div class="mini-card"><div class="mini-num">45</div><div class="mini-label">시각화·대시보드 과제</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">추진 목표</div>
+    <ul class="plain">
+      <li><b>① 공장별 품질지표(CPK) 대시보드 표준화</b> — 2단조·산세·연주·가공·샷블래스트 등 주요 공정의 품질 모니터링 체계 확립</li>
+      <li><b>② OPC UA Tag 표준화 및 국책 전력 데이터 수집 기반 확보</b></li>
+      <li><b>③ 소재 ID 트래킹·매칭 정합성 확보</b> — 1단조·소형압연 중심 트래킹 데이터 품질 개선 및 GCP 비용 최적화</li>
+      <li><b>④ 신규 공장 NiFi 서버 증설 및 수집 안정화</b> — 소형정정·대형정정 라인 확장</li>
+      <li><b>⑤ 신사업 GCP 인프라 선제 지원</b> — Agentic AI Self-BI PoC, 탄소배출 관리 플랫폼, 시편 추적관리, 생성형 AI 지식화 시스템</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">주요 추진 과제 및 수행 내역</div>
+
+    <div class="theme">
+      <h4>① 품질·설비 모니터링 시각화 <span class="key">(Metabase 16건 + Grafana 13건 + 마트 7건)</span></h4>
+      <ul>
+        <li><b>단조</b> — 2단조 프레스 Tag 수집 및 일일 CPK 대시보드, 2단조 100Ton M/P 요청, 2단조 신규 대시보드 추가, 1단조 10톤 MP 품질 모니터링, 1단조 Press SPM 대시보드 <span class="key">(WG-555/596/626/671/700)</span></li>
+        <li><b>산세</b> — STC Soaking Zone 온도 CPK, C-2 연속분위기로 '24년 Low Data, C-3 균열존 대시보드 수정 <span class="key">(WG-594/599/647)</span></li>
+        <li><b>연주·제강</b> — 2·3연주 Tundish Preheater 온도 도달 달성률, 2연주 Strand별 Stroke(변경·추가 구성), 3연주 1·2 STR SR Roll Force 달성률, 3연주 SR Force 편차 Grafana 알람, 2·3제강 VD 진공도 CPK, 합금철 BIN 잔여무게 5KG 달성률, 제강설비팀 대시보드 6건 일괄 구성 <span class="key">(WG-622/616/662/635/654/617/636)</span></li>
+        <li><b>가공·기타</b> — 가공 열처리로 실시간 모니터링(화면 변경·로직 검토·가동률 패널 추가), 가공공장 필링설비 가동율 Monitoring, 선반 가동률 대시보드, 샷블래스트 모터전류 히스토그램 일일 CPK 로직 수정, RFM SPM 속도 품질관리·MP 수정 <span class="key">(WG-585/670/667/669/677/689)</span></li>
+        <li><b>소형압연</b> — 가열로 빌렛 일품별 가열패턴 실시간 모니터링 로직 수정, 가열로 지수화 과제 데이터 업데이트 <span class="key">(WG-574/614)</span></li>
+        <li>대형압연 Hot Saw / FBM Metabase 신규 생성·수정, 압연설비팀 모니터링·가열로 TMS 화면 그래프 추가 <span class="key">(WG-630/634/638/682)</span></li>
+        <li>25.09 <b>Grafana 초급·중급 교육 실시</b> — 현업 자립 활용 기반 마련</li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>② Tag 표준화 · 수집 확대 <span class="key">(29건)</span></h4>
+      <ul>
+        <li><b>OPC UA 표준화</b> — 전력 Tag 표준화 및 수집, OPC UA 서버 Tag 표준화, <b>탄소발자국 국책과제용 OPC UA Tag 표준화·수집</b> <span class="key">(WG-540/556/562)</span></li>
+        <li><b>산세공장</b> — C-1 열처리 DATA 신규, 니켈회수설비 tag 표준화(2회), C-3 신규 Tag, 수처리 pump 신규 태그, waste_water_treatment PLC 신규 태그, 2산세 케미칼 온도 신규 설비 TAG <span class="key">(WG-554/560/573/603/612/692/703)</span></li>
+        <li><b>1단조</b> — 데이터 수집 요청, Tag 표준화/수집, 모니터링 과제 관련 요청 4회 대응, 과거데이터 BigQuery 이관 <span class="key">(WG-545/632/605/609/639)</span></li>
+        <li><b>압연·정정·가공</b> — 대형압연 Hot Saw Tag 수집·표준화, FBM 신규 Tag, BM 전류·토크값, BM 태그 수집, 소형압연 RSM Clutch Monitoring·Descaler 분사압력, 소형정정 B-2/B-3 열처리로 PLC 등록, 가공공장 연속고용화로 온도 PLC 등록, 가공팀 신규 I/O 등록, 특수제강 수직열처리로 신규 tag <span class="key">(WG-602/628/624/701/568/610/627/642/680/633)</span></li>
+        <li>3제강 열처리로·조괴 data 추가, TMS 오류 태그 수집 제외, 미사용 GEEMS 데이터 수집 중단 <span class="key">(WG-548)</span></li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>③ 소재 ID 트래킹 · 데이터 정합성</h4>
+      <ul>
+        <li>소형압연 소재ID 트래킹 관련 데이터 재입력, 수집데이터체크 소재트래킹 로직 변경 (25.10)</li>
+        <li><b>STS 선재 ID 매칭 데이터 추출</b> <span class="key">(WG-553)</span></li>
+        <li>MES 소형압연 지시/실적 오라클 쿼리 튜닝 — 수집 성능 개선</li>
+        <li><b>소재 ID 매칭 GCP 비용 최적화</b> <span class="badge badge-progress">진행</span> — 빅쿼리 데이터 <b>75.38TiB</b>, 월간 순증량 1,597GiB 분석 후 최적화 방안 수립 중 (26.08)</li>
+        <li>MES 데이터 정합성 로그 처리 기능 개발 <span class="badge badge-progress">진행</span></li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>④ 인프라 운영 · 장애 대응 <span class="key">(34건 · 장애 10건 중 9건 조치 완료)</span></h4>
+      <ul>
+        <li><b>PLC·수집 장애</b> — 1단조 예열로 2호기 PLC 통신 단절, 2단조 열처리로 8호기 PLC 통신 장애, 주키퍼 단절 후 NiFi OPC 프로세서 NPE, 소형압연 NiFi 노드2 다운, Aidentyx 서버 재기동</li>
+        <li><b>HW 이슈</b> — HyperFlex Node4 디스크 고장(25.09), Node2 2번 디스크 고장(26.07), Node2 장애(26.08 <span class="badge badge-progress">진행</span>), #1 DB서버 메모리 오류 로그 확인, Intersight/DIMM 알람 처리 3회</li>
+        <li><b>수집 인프라 증설</b> — 소형정정 NiFi 서버 구축(26.03), 대형정정 NiFi 서버 구축(26.05), 대형정정 DB 생성(26.06), Kepware 테스트 서버 구성(26.05), common NiFi 서버 구축(25.12)</li>
+        <li><b>모니터링·백업</b> — Zabbix VMware vSphere 추가, NiFi 멀티라인 로그 개선, Bacula–Zabbix 연동 자동화, pgpool-II Zabbix 7.0 설정, NiFi Zabbix 템플릿 생성·적용, Mage.ai 파이프라인 Zabbix 연동 및 템플릿 변경, Grafana 상세 로그 활성화·Ops Agent 통합 수집, GCS/Bacula/Duplicati 백업 정책 변경</li>
+        <li>Mage AI 시스템 메모리 점유 문제 분석, Grafana 로그 분석 보고서, BigQuery 외부 테이블 연동, 쿠버네티스 인증서 갱신</li>
+      </ul>
+    </div>
+
+    <div class="theme">
+      <h4>⑤ 신사업 · PoC 인프라 지원</h4>
+      <ul>
+        <li><b>Agentic AI Self-BI PoC</b> — GCP 프로젝트 구성(25.11), 빅쿼리 조회권한 부여 <span class="key">(WG-575)</span></li>
+        <li><b>국책과제 인이지 협업</b> — 업체용 GCP 구성, VM 생성 및 외부인원 VPN 사외접속 방안 안내, WG 서버 GCP 이관·거버넌스 자료 제공 <span class="key">(WG-608/607)</span></li>
+        <li><b>GCP 탄소 배출 관리 플랫폼</b> — 기술 검토 및 지원 요청 대응(26.05), Cloud SQL 할당·VPC 연동(26.06), 프로젝트 지원 지속(26.06·26.07), 신규인원 VM SSH 접속방안 안내 <span class="key">(WG-657)</span></li>
+        <li><b>시편 가공 프로세스 추적관리 시스템</b> — 시스템 검토 의뢰 대응, 보안·네트워크 연동 검토, 시편 미채취 알람 시스템 Cloud Run·Cloud SQL 보안검토 및 조치 <span class="key">(WG-672/674)</span></li>
+        <li>Cloud Run·Cloud SQL 로컬망 연동 구축(26.06), Kepware↔sdp-data VPC 연결, Grafana 테스트 서버 pgvector 설치, Text to SQL 서비스 정보 확인</li>
+        <li><b>생성형 AI 기반 표준규격 지식화 시스템</b> GCP VM 포트 오픈 검토 <span class="badge badge-review">검토</span> (26.08)</li>
+        <li>DataForge 청구서 처리 프로세스 수립 <span class="badge badge-progress">진행</span>, 창특 공장별 조업 기준 정리, PC1팀 데이터 전송 해결 회의, 스마트팩토리팀 출장 회의</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 4 : 공통 ===================== -->
+<div class="tab-content" id="t4">
+
+  <div class="dir-box">
+    <div class="dir-label">공통 · 플랫폼 · 국책 — 과제 방향성</div>
+    <div class="dir-main">"고객사별 개별 대응을 재사용 가능한 제품(Package)과 표준 운영 체계로 수렴시킨다"</div>
+    <div class="dir-sub">
+      두 고객사에 반복 적용되던 수집 구성을 <b>DataForge Package로 제품화</b>하고, 운영은 <b>월간 운영보고서·Edge 정기점검·통합 모니터링</b>이라는
+      고정 사이클로 표준화. 국책과제(탄소발자국)와 대외 PoC를 통해 <b>기존 2개사 외부로의 사업 확장 기반</b>을 마련.
+    </div>
+  </div>
+
+  <div class="mini-stat">
+    <div class="mini-card"><div class="mini-num">143</div><div class="mini-label">공통·플랫폼 과제</div></div>
+    <div class="mini-card"><div class="mini-num">12</div><div class="mini-label">Edge 정기점검 (12개월 전량)</div></div>
+    <div class="mini-card"><div class="mini-num">5</div><div class="mini-label">월간 운영보고서 발행 (4~8월)</div></div>
+    <div class="mini-card"><div class="mini-num">9</div><div class="mini-label">양사 공통 인프라 개선</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">① DataForge Package 제품화</div>
+    <ul class="plain">
+      <li><b>GCP GKE 전환 완료(26.04)</b> — Pack 3차 GKE 배포 후 Pod 자동 배포 개발, sdp-data 클러스터 운영</li>
+      <li><b>DF-Stream 통합 개발(모노레포)</b> — OPC → Benthos → Schema Registry → Kafka 백엔드 완료, 이후 지속 개발 <span class="badge badge-progress">진행</span></li>
+      <li><b>수집 Pipeline 생성 자동화 Pack 구현</b> — 태그 생성 템플릿화를 위한 공장 계층 구조 추상화(ISA-95 기반) 수행</li>
+      <li><b>DF-Port 사용자 포탈 개발</b> 착수(26.07), <b>Sales Kit 기반</b> 마련 — 표준 단어/용어 사전 개발</li>
+      <li>GCP sdp-data 내 DataForge Package 테스트 <span class="badge badge-progress">진행</span>, Pack 정책 수립, DF-Package 갱신 계약 회의로 <b>라이선스 정책 구체화</b>(26.08)</li>
+      <li><b>CTO/CEO 경영진 보고 완료(26.05.24)</b></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">② 운영 표준화 · 통합 모니터링</div>
+    <ul class="plain">
+      <li><b>Edge 월간 정기점검 12개월 연속 수행</b> — 25.09 ~ 26.08 단 한 차례 누락 없이 실시</li>
+      <li><b>통합 로그 모니터링 시스템 구축</b> <span class="badge badge-progress">진행</span> — 아키텍처·수집 에이전트 구성 완료, 대시보드·임계치 알람 규칙은 H2 완성 예정</li>
+      <li><b>Backup 통합 GUI 화면 개발</b> <span class="badge badge-progress">진행</span> — 이기종 백업 SW 통합 모니터링·복구 워크플로우 자동화</li>
+      <li><b>양사 공통 인프라 개선(9건)</b> — 창특/베스틸 PostgreSQL 파티션 생성 프로그램 수정 및 Mage 이관, GCS 소프트 삭제 보관기간 축소, PostgreSQL 접속 오류 로그 분석, NiFi·pgpool-II Zabbix 템플릿 동시 적용, 창원/군산 ESXi 라이선스 갱신</li>
+      <li>상암IDC 개발서버 초기화·OS 설치(25.11) 및 181번 서버 점검 조치(26.06), GitLab v13→v18 업그레이드, GLPI 자산관리 Agent 설치 대상 선정, *.dataforge.co.kr SSL 인증서 갱신(6개 도메인), Zabbix DB VACUUM 수행 및 결과 분석</li>
+      <li>NiFi Python 스크립트 프로세서 버그 수정 테스트, PostgreSQL 저장 프로세서 부동소숫점 자릿수 불일치 조치, CloudFunction 정리, 환율 데이터 수집 자동화 서비스 GCP 방화벽·Cloud Run 네트워크 설정 <span class="key">(WG-695/697)</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">③ 데이터 거버넌스 · 서비스 운영</div>
+    <ul class="plain">
+      <li><b>Data 표준화 수립</b> 및 표준 단어/용어 사전 개발, 데이터 거버넌스 확보를 위한 DB/DW 디스크립션 작업</li>
+      <li>pg ↔ bq 테이블 목록 동기화 개선, bq–pg 테이블 매칭, 수집 프로세스 최신화, SAP 설비정보의 DF용 변환</li>
+      <li><b>청구서·서비스 통계</b> — DataForge 청구서 수집 프로세스 변경 및 WG 개발 <span class="badge badge-progress">진행</span>, 서비스 통계/청구서 데이터 수정, GCP 프로젝트·서비스별 청구금액 출력 화면, 메타베이스/그라파나 접속통계 화면 <span class="badge badge-pending">대기</span> <span class="key">(WG-611/643/646)</span></li>
+      <li>WG User 조직연동 개발, 세아웍스 조직·사용자 정보 연동, 관리자용 Tag 정보 상세조회 기능/권한 <span class="key">(WG-576)</span></li>
+      <li>ITS 서비스 요청(MES/L2) 카테고리 추가, 컨설팅 방법론 수립, 매뉴얼 업데이트</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">④ 대외 사업 참여</div>
+    <ul class="plain">
+      <li><b>세아홀딩스 CIO팀 데이터 플랫폼 PoC</b> — 빅쿼리 구축 완료(26.06.10~06.15), PoC R&amp;R·WBS 재조정 회의(6/18) 데이터 엔지니어링=김경립, ERP2팀 2명 참여 확정</li>
+      <li><b>베스틸 FeMS 이관 기획 착수</b>(26.04.13~) — 기존 시스템 분석·재구축 R&amp;R 및 기능 확인용 개발 진행</li>
+      <li><b>동국제강</b> — 탄소배출 추적 데이터 목록 분석·협의(26.04.30~05.29), DT 플랫폼 제안 참여 준비</li>
+      <li>밍글위크 조직소개 가이드 등 제안·소개 자산 정리, 26년 WorkShop 추진</li>
+    </ul>
+  </div>
+
+  <div class="special-card">
+    <h3>🏛️ 국책과제 — 탄소발자국 3차년도 (서비스개발실 변중환 실장 총괄 / 실무: 하민규·김경립·이재훈)</h3>
+    <ul>
+      <li>3차년도 과제 추진 계획 수립 — 탄소배출량 예측 모델 입력 Dataset 생성, 공정별 에너지 사용량 추적 체계 설계</li>
+      <li>RCMS/IRIS 행정 처리 및 GCP 카드 연결(sdp-data) 완료(26.05.18), 1~5월 인건비(현금·현물) 처리, GCP 국책 테스트 환경 구성</li>
+      <li>PLC 태그 전달 API 개발(25.09), 창특 OPC UA 서버 Tag 표준화·수집(WG-562), 신규 전력데이터 연계시스템 Tag 수집(WG-698)</li>
+      <li>국책과제 L2실적 및 추가 태그데이터 전달을 위한 Interface 추가개발 <span class="badge badge-progress">진행</span> (26.08)</li>
+      <li>국책과제 GCP Cloud 비용 처리 가이드 작성</li>
+      <li><b>미흡 사항</b> — 탄소배출량 모델 구동 개발은 <b>데이터 공유 협의 지연</b>으로 일부 보류, H2 완수 목표</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⑤ 팀 운영 · 관리 체계</div>
+    <ul class="plain">
+      <li>25.11 26년 수행과제 계획 수립 → 26.01 <b>26년 경영계획·팀/팀원 KPI 수립</b> → 개인별 평가 방안 수립(과제 40% / 개인역량 60%)</li>
+      <li>26.02 <b>월간 운영보고서 문서 규격 확정</b> → 26.04부터 <b>정기 발행 체계 정착</b> (4·5·6·7·8월 발행)</li>
+      <li>26.02 팀장 업무 인수인계 완료, 26.07 1on1 정례화, 완료 수행과제 발표 및 평가 진행</li>
+      <li>DF팀 추가 인력 채용 절차 추진, 하반기 리더 워크샵 참여</li>
+      <li>26.08 <b>25년 성과 보고 및 26년 계획 수립</b> 착수 <span class="badge badge-progress">진행</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 5 : 추후 계획 ===================== -->
+<div class="tab-content" id="t5">
+
+  <div class="highlight-box">
+    <h3>추후 계획 수립 기준</h3>
+    <ul>
+      <li>2026년 하반기(H2) 계획은 <b>'26 H2 경영전략회의 자료(작성 2026.07, 데이터 기준 2026-06-29)</b>의 확정 계획을 기준으로 정리</li>
+      <li>2027년 계획은 H1/H2 성과와 잔여 과제를 근거로 한 <b>초안(제안)</b>이며, 경영계획 수립 시 확정 필요</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2026년 하반기(H2) 5대 추진 과제 — 확정</div>
+    <table>
+      <tr><th style="width:18%">과제</th><th style="width:40%">핵심 실행 계획</th><th style="width:26%">월별 마일스톤</th><th style="width:16%">목표 / Owner</th></tr>
+      <tr>
+        <td><b>① Package 제품화 완성</b></td>
+        <td>DF-Stream 수집 릴리즈(3Q) — 운영 추상화 완료, 1단조 RFM 테스트 후 정식 릴리즈 / Web Admin 고도화 / Sales Kit 구현(License 구성 설계, SLA, 소개서, 데모시스템) / 확장 릴리즈(4Q, TimescaleDB 플러그인·Mart 수집 자동화)</td>
+        <td>7~8월 GKE 클러스터 재구성·드라이버 확장 / 9월 수집 파이프라인 자동화 정식 릴리즈·데모시스템 오픈 / 10~11월 Sales Kit·License 설계 / 12월 확장 릴리즈</td>
+        <td>수집 릴리즈+Sales Kit+확장 릴리즈 달성<br><span class="key">이지중·김성만·유성열</span></td>
+      </tr>
+      <tr>
+        <td><b>② 대외 사업 본격화</b></td>
+        <td>세아홀딩스 데이터 플랫폼 PoC→본사업 전환 / 베스틸 FeMS 이관 재구축(백엔드·프론트엔드 ~12월) / 동국제강 DT 플랫폼 제안 및 탄소배출 데이터 연계 / 산출물 자산화</td>
+        <td>7월 FeMS 아키텍처·범위 확정, 동국 Top 서버 설치 / 8~10월 본사업 착수·FeMS 단계별 개발 / 11~12월 FeMS 검수·이관, 제안 산출물 자산화</td>
+        <td>사업 수행 2건 + 산출물 자산화<br><span class="key">유병재·김경립</span></td>
+      </tr>
+      <tr>
+        <td><b>③ Data 서비스 과제 심화</b></td>
+        <td>국책과제 탄소발자국 3차년도 — 탄소 데이터 수집·전송 완성, 탄소배출량 모델 구동 개발 / DI총괄 제안 과제(ACM 구동 휠·Feeding 이상 예측, BLM ID 품질 트래킹) / AI 설비관리 지식베이스 / 데이터 에이전트</td>
+        <td>7월 동국 Top 서버 설치·탄소 데이터 수집 환경 / 8~10월 모델 구동·ACM/BLM 예측 시스템 구축 / 11~12월 국책 3차년도 완수·성과 정리, AI 설비관리 적용</td>
+        <td>프로젝트 참여 4건 + DF Pack 적용 2건<br><span class="key">국책=변중환 실장 / DI총괄=유성열·이재훈</span></td>
+      </tr>
+      <tr>
+        <td><b>④ 고객 활용성 고도화</b></td>
+        <td>ID Tracking &amp; Matching 완성(베스틸 대형압연·창특 1단조·베스틸 소형압연 Time 보정) / WG 요청 100% 이행 및 홀딩 건 해소 / GCP 수집 누락 자동 업로드·이상 감지 알람·5분/ID 단위 통계 BigQuery / SHE 시스템 연동 및 신규 대시보드</td>
+        <td>7~8월 대형압연 트래킹 완성, 홀딩 WG 해소(PLC 재연결) / 9~10월 1단조·소형압연 트래킹 구현, 통계 마트 확대 / 11~12월 이상 감지·알람 고도화, 요청 이행률 마무리</td>
+        <td>고객 요구 100% 이행, ID 트래킹 3개 공장<br><span class="key">이재훈(창특)·하민규(베스틸) / 협업 유성열</span></td>
+      </tr>
+      <tr>
+        <td><b>⑤ 운영 안정성·효율화</b></td>
+        <td>통합 로그 모니터링 완성(아키텍처·수집 에이전트·대시보드·임계치 알람) / Backup 통합 GUI / Cloud Run 전환(Cloud Function 1세대 → Cloud Run 3세대) / 예방 점검 강화(HW 이중화·디스크 장애 대응 체계)</td>
+        <td>7~8월 베스틸 Mage Zabbix 연동 완료·Cloud Run 전환 적용 / 9~10월 통합 로그 대시보드·알람 구축 / 11~12월 Backup 통합 GUI 완성, 안정성 검증</td>
+        <td>무중단·품질 유지 수집 99% 이상, 통합 모니터링 구축 완료<br><span class="key">김경립·안종성</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">고객사별 H2 중점 사항</div>
+    <div class="two-col">
+      <div>
+        <div class="theme">
+          <h4>🏭 세아베스틸</h4>
+          <ul>
+            <li>대형압연 소재ID 트래킹 완성 → 소형압연 Time 보정 구현(9~10월)</li>
+            <li>PostgreSQL Failover 근본 원인 조치 및 재발 방지 체계 수립</li>
+            <li>DataForge–SHE 시스템 연동 개발 완료 및 실시간 생산 모니터링 확대</li>
+            <li>FeMS 이관 재구축 수행(~12월) — 백엔드·프론트엔드 구현 및 검수·이관</li>
+            <li>WG-707 대형단조 MES/SAP 수집, WG-705 소형압연 품질 모니터링 완료</li>
+            <li>수질 IOT·폐수장 유량계 연계 논의 결론화</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="theme">
+          <h4>🏭 세아창원특수강</h4>
+          <ul>
+            <li>1단조 소재ID 트래킹 구현(9~10월) 및 통계 마트 확대</li>
+            <li>HyperFlex Node2 장애 근본 조치, PostgreSQL·Edge 패스워드 변경 계획 이행</li>
+            <li>소재 ID 매칭 <b>GCP 비용 최적화 방안 확정·적용</b> (빅쿼리 75TiB 규모 대응)</li>
+            <li>WG-703 산세 신규 TAG, WG-704 가공공장 열처리 데이터 오류 개선대책 시행</li>
+            <li>생성형 AI 기반 표준규격 지식화 시스템 인프라 지원 확정</li>
+            <li>탄소배출 관리 플랫폼 운영 이관 및 창특 웹앱 Cloud Run 전환 검토</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2027년 방향성 초안 <span class="badge badge-plan">제안</span></div>
+    <table>
+      <tr><th style="width:22%">방향</th><th>내용</th><th style="width:22%">전제 / 선행 조건</th></tr>
+      <tr>
+        <td><b>① Package 상용화 단계 진입</b></td>
+        <td>26년 완성된 DF-Stream·Sales Kit·License 체계를 기반으로 <b>세아 그룹 외 신규 고객 대상 수주 활동</b> 전개. 표준 SLA 기반 유지보수 상품화 및 레퍼런스 기반 영업 자산 확충</td>
+        <td>26년 4Q 확장 릴리즈 및 License 정책 확정</td>
+      </tr>
+      <tr>
+        <td><b>② 운영 자동화로 인력 레버리지 확보</b></td>
+        <td>Tag 등록·마트 생성·대시보드 구성의 <b>셀프서비스화</b>(Web Admin 고도화)로 WG 단순 요청 비중 축소, 팀 리소스를 제품·신사업으로 재배치</td>
+        <td>통합 모니터링·Backup GUI 완성, WG 유형별 자동화 대상 선별</td>
+      </tr>
+      <tr>
+        <td><b>③ AI/분석 서비스 본격 수익화</b></td>
+        <td>이상탐지(HPC)·예측 모니터링(ACM)·소재ID 트래킹 등 검증된 모델을 <b>DF Pack 적용 상품으로 패키징</b>. 데이터 에이전트·Text to SQL 기반 현업 셀프 분석 확산</td>
+        <td>26년 DI총괄 과제 본격 참여 성과 및 국책 3차년도 완수</td>
+      </tr>
+      <tr>
+        <td><b>④ 탄소·ESG 데이터 사업 확장</b></td>
+        <td>국책과제 3차년도 산출물(탄소배출량 예측 모델·공정별 에너지 추적)을 <b>그룹 계열사 공통 서비스로 전개</b>, 동국제강 등 대외 확산</td>
+        <td>26년 탄소배출량 모델 구동 완수 및 데이터 공유 협의 정상화</td>
+      </tr>
+      <tr>
+        <td><b>⑤ HW 이중화 기반 SLA 상향</b></td>
+        <td>연 11건 발생한 HyperFlex 디스크 장애 이력을 근거로 <b>노후 HW 교체·이중화 투자 제안</b> 및 가동률 SLA 명문화</td>
+        <td>26년 장애 이력·영향도 분석 자료 정리</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="next-plan">
+    <h4>보고서 활용 시 유의사항</h4>
+    <ul>
+      <li>과제 건수는 JIRA DataForge 프로젝트 등록(created) 기준이며, 고객사 구분은 이슈 제목의 표기(베스틸/군산, 창특/창원)를 기준으로 분류했습니다.</li>
+      <li>고객사 표기가 없는 WG 원(原)요청 접수 건은 '공통·플랫폼'으로 분류되어 있어, 고객사별 실제 요청량은 표기 기준 수치보다 다소 클 수 있습니다.</li>
+      <li>국책과제 관련 내용은 서비스개발실 변중환 실장 총괄 사항으로, 팀원별 실적 집계에서는 분리하여 표기했습니다.</li>
+    </ul>
+  </div>
+
+</div>
+
+</div>
+
+<div class="footer">
+  DataForge팀 연간 과제 수행 성과 보고 | 대상기간 2025.09 ~ 2026.08 | 작성일 2026-09-06 | 출처: JIRA(DataForge) · Confluence(DPE) · '26 H2 경영전략회의 자료
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.tab-content').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    document.getElementById(t.dataset.t).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
