@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>산업 데이터 지식 그래프 구성도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 설계 도면처럼 읽히는 단일 컬럼. 도면(figure) → 규격 카드 → 질의 추적 → 공통 키 순서.
+   색은 규격(출처)을 뜻한다: ISA-95 청색, OPC UA 청록, AAS 황토, RAG 보라, 시멘틱 녹색, 계측·이력 회색. */
+:root {
+  --bg: #F3F5F7; --surface: #FFFFFF; --ink: #18212B; --muted: #5A6673; --line: #CBD3DB; --soft: #E8ECF0;
+  --isa: #2B5A88; --isa-bg: #E2EBF5;
+  --opc: #0E766E; --opc-bg: #DAF0EC;
+  --aas: #9A5B17; --aas-bg: #F5E8D6;
+  --rag: #66489A; --rag-bg: #ECE5F6;
+  --sem: #3B7330; --sem-bg: #E3EFDD;
+  --mes: #56616D; --mes-bg: #EAEDF0;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161C; --surface: #182029; --ink: #E3E8ED; --muted: #9AA6B3; --line: #354150; --soft: #212A34;
+    --isa: #84B3E2; --isa-bg: #1B2B3C; --opc: #5DC7BB; --opc-bg: #12302D; --aas: #E1A75C; --aas-bg: #372816;
+    --rag: #B89DE4; --rag-bg: #292137; --sem: #8DC777; --sem-bg: #1D2D18; --mes: #AAB4BE; --mes-bg: #232B33;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161C; --surface: #182029; --ink: #E3E8ED; --muted: #9AA6B3; --line: #354150; --soft: #212A34;
+  --isa: #84B3E2; --isa-bg: #1B2B3C; --opc: #5DC7BB; --opc-bg: #12302D; --aas: #E1A75C; --aas-bg: #372816;
+  --rag: #B89DE4; --rag-bg: #292137; --sem: #8DC777; --sem-bg: #1D2D18; --mes: #AAB4BE; --mes-bg: #232B33;
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.65 var(--sans); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
+h2 { font-size: 22px; font-weight: 700; line-height: 1.35; }
+h3 { font-size: 16px; font-weight: 600; }
+p { margin: 0; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+header { display: grid; gap: 16px; }
+.lede { max-width: 68ch; color: var(--muted); font-size: 16px; }
+.inventory { display: flex; flex-wrap: wrap; gap: 8px 20px; font: 400 13px/1.4 var(--mono); color: var(--muted);
+  border-top: 1px solid var(--line); padding-top: 14px; font-variant-numeric: tabular-nums; }
+.inventory b { color: var(--ink); font-weight: 500; }
+
+section { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 6px; max-width: 76ch; }
+.sec-head p { color: var(--muted); }
+
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.scroll { overflow-x: auto; padding: 20px; }
+figure svg { display: block; width: 100%; min-width: 980px; height: auto; }
+figcaption { border-top: 1px solid var(--line); padding: 14px 20px; color: var(--muted); font-size: 14px; max-width: 110ch; }
+
+/* --- SVG 공통 --- */
+svg text { font-family: var(--sans); fill: var(--ink); }
+.tt { font-size: 13.5px; font-weight: 600; }
+.ts { font-size: 12px; fill: var(--muted); }
+.tm { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.tmm { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); }
+.tag { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; }
+.lbl { font-size: 11.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.lblm { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.flow { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.dash { stroke-dasharray: 5 4; }
+.ah { fill: var(--muted); }
+.box { stroke-width: 1.4; }
+.ext { stroke-dasharray: 6 4; }
+.b-isa { fill: var(--isa-bg); stroke: var(--isa); } .c-isa { fill: var(--isa); }
+.b-opc { fill: var(--opc-bg); stroke: var(--opc); } .c-opc { fill: var(--opc); }
+.b-aas { fill: var(--aas-bg); stroke: var(--aas); } .c-aas { fill: var(--aas); }
+.b-rag { fill: var(--rag-bg); stroke: var(--rag); } .c-rag { fill: var(--rag); }
+.b-sem { fill: var(--sem-bg); stroke: var(--sem); } .c-sem { fill: var(--sem); }
+.b-mes { fill: var(--mes-bg); stroke: var(--mes); } .c-mes { fill: var(--mes); }
+.b-plain { fill: var(--surface); stroke: var(--line); }
+.b-ink { fill: var(--soft); stroke: var(--ink); }
+.b-in { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+
+/* --- 규격 카드 --- */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--k); border-radius: 6px;
+  padding: 18px 20px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.card .k { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.card .std { font: 500 11px/1 var(--mono); letter-spacing: 0.06em; color: var(--k); text-transform: uppercase; }
+.card dl { margin: 0; display: grid; gap: 10px; }
+.card dt { font: 500 11.5px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.03em; }
+.card dd { margin: 2px 0 0; font-size: 14px; }
+.card ul { margin: 2px 0 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.k-isa { --k: var(--isa); } .k-opc { --k: var(--opc); } .k-aas { --k: var(--aas); }
+.k-rag { --k: var(--rag); } .k-sem { --k: var(--sem); } .k-ont { --k: var(--ink); }
+
+.pill { display: inline-block; font: 500 11px/1 var(--mono); padding: 4px 7px; border-radius: 3px; white-space: nowrap; }
+.p-done { background: var(--sem-bg); color: var(--sem); }
+.p-part { background: var(--aas-bg); color: var(--aas); }
+.p-ext { background: var(--soft); color: var(--muted); border: 1px dashed var(--muted); padding: 3px 6px; }
+
+/* --- 표 --- */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+th { font: 500 12px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.03em; background: var(--soft); }
+tr:last-child td { border-bottom: 0; }
+td.n { font: 500 13px var(--mono); color: var(--muted); width: 36px; font-variant-numeric: tabular-nums; }
+tr.planned td { color: var(--muted); }
+.lay { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; white-space: nowrap; }
+.dot { width: 9px; height: 9px; border-radius: 2px; background: var(--k); flex: none; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); padding: 0 20px 16px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 14px; height: 10px; border-radius: 2px; border: 1.4px solid var(--k); background: color-mix(in srgb, var(--k) 16%, var(--surface)); }
+.sw.dsh { border-style: dashed; background: transparent; border-color: var(--muted); }
+
+.note { font-size: 14px; color: var(--muted); max-width: 90ch; border-left: 3px solid var(--line); padding-left: 14px; }
+
+@media (max-width: 980px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } .wrap { gap: 44px; } }
+</style>
+<style>*,*::before,*::after{box-sizing:border-box} body{margin:0} img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">isa95-neo4j-agent · 샘플 구현 구성</span>
+  <h1>산업 데이터 지식 그래프 구성도</h1>
+  <p class="lede">ISA-95 역할 계층을 뼈대로 한 Neo4j 그래프에 OPC UA 태그, AAS 식별자, RAG 문서 포인터를 같은 엔티티 ID로 묶고, AI Agent는 목적형 도구를 통해서만 이 그래프에 접근합니다. 실선은 샘플 코드에 구현된 부분, 점선은 외부 시스템과 이어지는 연동 지점입니다.</p>
+  <div class="inventory" aria-label="샘플 데이터 규모">
+    <span>Equipment <b>14</b></span><span>PhysicalAsset <b>7</b></span><span>Manufacturer <b>3</b></span>
+    <span>MeasurementPoint <b>8</b></span><span>Tag <b>10</b></span><span>Document <b>4</b></span>
+    <span>Event <b>4</b></span><span>FEEDS <b>7</b></span><span>에이전트 도구 <b>12</b></span><span>그래프 검증 규칙 <b>12</b></span>
+  </div>
+</header>
+
+<!-- ================================================================ 1. 시스템 구성 -->
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">01 · 시스템 구성</span>
+    <h2>구성 요소와 데이터 흐름</h2>
+    <p>위에서 아래로 질문이 내려가고 근거가 올라옵니다. 그래프는 가운데에서 모든 계층의 색인 역할을 하고, 실시간 값과 문서 본문, AAS 원본은 그래프 밖에 둡니다.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 880" role="img" aria-label="AI Agent가 시멘틱 접근 계층의 도구 12개로 Neo4j 지식 그래프를 읽고, 그래프는 OPC UA 태그, AAS 생성기, RAG 벡터 DB, 적재 파이프라인과 연결된다">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <!-- 1행: 질문 · 에이전트 · 답변 -->
+  <rect class="box b-plain" x="40" y="24" width="240" height="72" rx="5"/>
+  <text class="tt" x="60" y="54">사용자 질문</text>
+  <text class="ts" x="60" y="76">“공압기 2호기가 멈추면?”</text>
+
+  <rect class="box b-ink" x="440" y="24" width="320" height="72" rx="5"/>
+  <text class="tag" x="460" y="44" fill="currentColor" style="fill:var(--muted)">AI AGENT</text>
+  <text class="tt" x="460" y="64">에이전트 루프 · 규칙 6개</text>
+  <text class="tmm" x="460" y="84">example_agent.py · Claude Messages API</text>
+
+  <rect class="box b-plain" x="920" y="24" width="240" height="72" rx="5"/>
+  <text class="tt" x="940" y="54">답변</text>
+  <text class="ts" x="940" y="76">근거 엔티티 ID를 괄호로 표기</text>
+
+  <path class="flow" d="M280,60 H436" marker-end="url(#a1)"/>
+  <text class="lbl" x="358" y="52" text-anchor="middle">자연어</text>
+  <path class="flow" d="M760,60 H916" marker-end="url(#a1)"/>
+  <text class="lbl" x="838" y="52" text-anchor="middle">근거와 함께 응답</text>
+
+  <!-- 에이전트 ↔ 도구 -->
+  <path class="flow" d="M570,96 V136" marker-end="url(#a1)"/>
+  <text class="lbl" x="562" y="122" text-anchor="end">tool_use · 파라미터만</text>
+  <path class="flow" d="M630,140 V100" marker-end="url(#a1)"/>
+  <text class="lbl" x="638" y="122">JSON 결과 + hint</text>
+
+  <!-- 2행: 시멘틱 접근 계층 -->
+  <rect class="box b-sem" x="40" y="140" width="1120" height="150" rx="6"/>
+  <text class="tag c-sem" x="60" y="162">SEMANTIC ACCESS LAYER</text>
+  <text class="tt" x="248" y="163">agent_tools.py · GraphTools · 용어 → 엔티티 → 고정 질의</text>
+
+  <g>
+    <rect class="b-in" x="60" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="72" y="198" style="font-size:12.5px">엔티티 해석</text>
+    <text class="tm" x="72" y="220">resolve_entity</text>
+    <text class="tmm" x="72" y="240">별칭 · 시리얼 · AAS ID</text>
+    <text class="tmm" x="72" y="258">cjk 전문 검색</text>
+
+    <rect class="b-in" x="242" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="254" y="198" style="font-size:12.5px">구조 · 흐름</text>
+    <text class="tm" x="254" y="220">get_entity</text>
+    <text class="tm" x="254" y="238">get_children</text>
+    <text class="tm" x="254" y="256">get_flow</text>
+
+    <rect class="b-in" x="424" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="436" y="198" style="font-size:12.5px">계측 · 태그</text>
+    <text class="tm" x="436" y="220">get_measurement_points</text>
+    <text class="tm" x="436" y="238">get_tag_history</text>
+    <text class="tmm" x="436" y="258">시점(at) 반영</text>
+
+    <rect class="b-in" x="606" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="618" y="198" style="font-size:12.5px">이력</text>
+    <text class="tm" x="618" y="220">get_asset_history</text>
+    <text class="tm" x="618" y="238">get_events</text>
+    <text class="tmm" x="618" y="258">설비 교체 전후</text>
+
+    <rect class="b-in" x="788" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="800" y="198" style="font-size:12.5px">문서 · AAS</text>
+    <text class="tm" x="800" y="220">find_documents</text>
+    <text class="tm" x="800" y="238">get_aas_reference</text>
+    <text class="tmm" x="800" y="258">외부 원본의 주소</text>
+
+    <rect class="b-in" x="970" y="178" width="170" height="96" rx="4"/>
+    <text class="tt" x="982" y="198" style="font-size:12.5px">자유 질의 (보조)</text>
+    <text class="tm" x="982" y="220">get_schema</text>
+    <text class="tm" x="982" y="238">run_cypher</text>
+    <text class="tmm" x="982" y="258">가드→EXPLAIN→검사</text>
+  </g>
+
+  <!-- 도구 → 그래프 -->
+  <path class="flow" d="M580,290 V336" marker-end="url(#a1)"/>
+  <text class="lbl" x="588" y="318">읽기 전용 Cypher · 파라미터 바인딩</text>
+
+  <!-- 3행 왼쪽: OPC UA, TSDB -->
+  <rect class="box b-opc ext" x="40" y="340" width="200" height="110" rx="5"/>
+  <text class="tag c-opc" x="56" y="362">OPC UA</text>
+  <text class="tt" x="56" y="384">수집 서버</text>
+  <text class="tm" x="56" y="404">KEPServerEX-GS01</text>
+  <text class="tmm" x="56" y="424">NodeId · 실시간 값</text>
+  <text class="tmm" x="56" y="440">전력계 · 압력</text>
+
+  <path class="flow dash" d="M140,450 V496" marker-end="url(#a1)"/>
+  <text class="lbl" x="148" y="478">구독 · 수집</text>
+
+  <rect class="box b-mes ext" x="40" y="500" width="200" height="110" rx="5"/>
+  <text class="tag c-mes" x="56" y="522">SEMANTIC · METRIC</text>
+  <text class="tt" x="56" y="544">TSDB · 지표 정의</text>
+  <text class="tmm" x="56" y="564">시계열 값 · 집계</text>
+  <text class="tmm" x="56" y="582">query_metric (계획)</text>
+  <text class="tmm" x="56" y="598">원단위 등 KPI 계산식</text>
+
+  <!-- 도구층 → TSDB (계획) : 왼쪽 통로 -->
+  <path class="flow dash" d="M270,290 V555 H244" marker-end="url(#a1)"/>
+  <text class="lbl" x="270" y="474" text-anchor="middle">지표 조회</text>
+
+  <!-- 3행 가운데: Neo4j -->
+  <rect class="box b-plain" x="300" y="340" width="560" height="270" rx="6" style="stroke:var(--ink)"/>
+  <text class="tag" x="316" y="362" style="fill:var(--muted)">ONTOLOGY · NEO4J LPG</text>
+  <text class="tt" x="500" y="363">지식 그래프 · 온톨로지 인스턴스</text>
+
+  <g>
+    <rect class="box b-isa" x="316" y="378" width="168" height="54" rx="4"/>
+    <text class="tt" x="328" y="400" style="font-size:12.5px">Equipment 계층</text>
+    <text class="tmm" x="328" y="420">ISA-95 · 5단계 · 14</text>
+
+    <rect class="box b-isa" x="494" y="378" width="168" height="54" rx="4"/>
+    <text class="tt" x="506" y="400" style="font-size:12.5px">PhysicalAsset</text>
+    <text class="tmm" x="506" y="420">실물 7 · AAS 식별자</text>
+
+    <rect class="box b-aas" x="672" y="378" width="168" height="54" rx="4"/>
+    <text class="tt" x="684" y="400" style="font-size:12.5px">Manufacturer</text>
+    <text class="tmm" x="684" y="420">AAS · 제조사 3 · 주소</text>
+
+    <rect class="box b-mes" x="316" y="442" width="168" height="54" rx="4"/>
+    <text class="tt" x="328" y="464" style="font-size:12.5px">MeasurementPoint</text>
+    <text class="tmm" x="328" y="484">계측 8 · 물리량 · 단위</text>
+
+    <rect class="box b-opc" x="494" y="442" width="168" height="54" rx="4"/>
+    <text class="tt" x="506" y="464" style="font-size:12.5px">Tag</text>
+    <text class="tmm" x="506" y="484">OPC UA 10 · node_id</text>
+
+    <rect class="box b-rag" x="672" y="442" width="168" height="54" rx="4"/>
+    <text class="tt" x="684" y="464" style="font-size:12.5px">Document</text>
+    <text class="tmm" x="684" y="484">RAG 포인터 4 · uri</text>
+
+    <rect class="box b-mes" x="316" y="506" width="168" height="54" rx="4"/>
+    <text class="tt" x="328" y="528" style="font-size:12.5px">Event</text>
+    <text class="tmm" x="328" y="548">알람 · 정비 4</text>
+
+    <rect class="box b-isa" x="494" y="506" width="168" height="54" rx="4"/>
+    <text class="tt" x="506" y="528" style="font-size:12.5px">FEEDS</text>
+    <text class="tmm" x="506" y="548">전력 · 압축공기 7</text>
+
+    <rect class="box b-isa" x="672" y="506" width="168" height="54" rx="4"/>
+    <text class="tt" x="684" y="528" style="font-size:12.5px">기간 관계</text>
+    <text class="tmm" x="684" y="548">FULFILLS · SOURCE_OF</text>
+  </g>
+  <text class="tmm" x="316" y="586">schema.cypher 제약·인덱스 · 파생 속성 ancestor_ids, path_text</text>
+  <text class="tmm" x="316" y="600">검증 12규칙: 레벨 순서, 기간 중복, 제조사 연결 …</text>
+
+  <!-- Tag ↔ OPC UA -->
+  <path class="flow dash" d="M300,404 H244" marker-end="url(#a1)"/>
+  <text class="lblm" x="272" y="396" text-anchor="middle">node_id</text>
+
+  <!-- 3행 오른쪽: AAS -->
+  <rect class="box b-aas" x="920" y="340" width="240" height="110" rx="5"/>
+  <text class="tag c-aas" x="936" y="362">AAS · IEC 63278</text>
+  <text class="tt" x="936" y="384">aas_nameplate.py</text>
+  <text class="tmm" x="936" y="404">AAS + Digital Nameplate</text>
+  <text class="tmm" x="936" y="422">IDTA 02006-3-0 · basyx</text>
+  <text class="tmm" x="936" y="440">필수 항목·semanticId 검사</text>
+
+  <path class="flow" d="M860,380 H916" marker-end="url(#a1)"/>
+  <text class="lbl" x="888" y="372" text-anchor="middle">자산 읽기</text>
+  <path class="flow" d="M920,428 H864" marker-end="url(#a1)"/>
+  <text class="lbl" x="892" y="420" text-anchor="middle">ID 기록</text>
+
+  <rect class="box b-aas" x="920" y="490" width="150" height="54" rx="4"/>
+  <text class="tt" x="934" y="512" style="font-size:12.5px">AASX · JSON</text>
+  <text class="tmm" x="934" y="532">out/*.aasx</text>
+  <path class="flow" d="M995,450 V486" marker-end="url(#a1)"/>
+  <text class="lbl" x="1003" y="474">출력·재검증</text>
+
+  <rect class="box b-aas ext" x="920" y="560" width="240" height="50" rx="4"/>
+  <text class="tt" x="934" y="582" style="font-size:12.5px">AAS Repository</text>
+  <text class="tmm" x="934" y="600">BaSyx · FA³ST · /shells</text>
+  <path class="flow dash" d="M1120,450 V556" marker-end="url(#a1)"/>
+  <text class="lblm" x="1128" y="510">REST</text>
+  <text class="lblm" x="1128" y="524">v3</text>
+
+  <!-- 4행: 적재 파이프라인 + 벡터 DB -->
+  <rect class="box b-plain" x="40" y="680" width="200" height="72" rx="5"/>
+  <text class="tt" x="56" y="706">sample_data.json</text>
+  <text class="tmm" x="56" y="726">설비·자산·태그·문서·이벤트</text>
+  <text class="tmm" x="56" y="742">다국어 {en, ko}</text>
+
+  <rect class="box b-plain" x="300" y="680" width="320" height="72" rx="5" style="stroke:var(--ink)"/>
+  <text class="tt" x="316" y="706">build_graph.py</text>
+  <text class="ts" x="316" y="728">사전검증 → 스키마 → 적재 → 파생 → 검증</text>
+  <text class="tmm" x="316" y="744">MERGE 기반 · 반복 실행 안전</text>
+
+  <path class="flow" d="M240,716 H296" marker-end="url(#a1)"/>
+  <text class="lbl" x="268" y="708" text-anchor="middle">입력</text>
+  <path class="flow" d="M460,680 V614" marker-end="url(#a1)"/>
+  <text class="lbl" x="468" y="652">MERGE 적재</text>
+
+  <rect class="box b-rag ext" x="660" y="680" width="500" height="72" rx="5"/>
+  <text class="tag c-rag" x="676" y="702">RAG · VECTOR DB</text>
+  <text class="tt" x="806" y="703">문서 본문 · 청크 · 임베딩</text>
+  <text class="ts" x="676" y="724">Confluence DPE · S3 매뉴얼 → 청크 메타데이터에 document_id, equipment_id</text>
+  <text class="tmm" x="676" y="742">find_documents 결과로 필터링한 뒤 유사도 검색</text>
+  <path class="flow dash" d="M760,610 V676" marker-end="url(#a1)"/>
+  <text class="lblm" x="768" y="650">document_id 필터</text>
+
+  <!-- 범례 -->
+  <g transform="translate(40,800)">
+    <rect class="box b-isa" x="0" y="0" width="16" height="11" rx="2"/><text class="ts" x="22" y="10">ISA-95</text>
+    <rect class="box b-opc" x="86" y="0" width="16" height="11" rx="2"/><text class="ts" x="108" y="10">OPC UA</text>
+    <rect class="box b-aas" x="176" y="0" width="16" height="11" rx="2"/><text class="ts" x="198" y="10">AAS</text>
+    <rect class="box b-rag" x="242" y="0" width="16" height="11" rx="2"/><text class="ts" x="264" y="10">RAG</text>
+    <rect class="box b-sem" x="308" y="0" width="16" height="11" rx="2"/><text class="ts" x="330" y="10">시멘틱 접근</text>
+    <rect class="box b-mes" x="408" y="0" width="16" height="11" rx="2"/><text class="ts" x="430" y="10">계측 · 이력 · 지표</text>
+    <path class="flow" d="M560,6 H600"/><text class="ts" x="608" y="10">구현된 흐름</text>
+    <path class="flow dash" d="M700,6 H740"/><text class="ts" x="748" y="10">연동 지점 (샘플 범위 밖)</text>
+    <rect class="box b-plain ext" x="910" y="0" width="16" height="11" rx="2"/><text class="ts" x="932" y="10">외부 시스템</text>
+  </g>
+</svg>
+    </div>
+    <figcaption>에이전트는 그래프를 직접 조회하지 않고 시멘틱 접근 계층의 도구를 호출합니다. 그래프는 실시간 값(OPC UA·TSDB), 문서 본문(벡터 DB), AAS 원본(Repository)의 위치를 가리키는 색인이며, 이 세 곳으로 가는 길은 모두 그래프의 엔티티 ID에서 시작합니다.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================ 2. 온톨로지 스키마 -->
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">02 · 온톨로지</span>
+    <h2>노드와 관계: 무엇이 무엇과 어떻게 이어지는가</h2>
+    <p>각 상자의 회색 줄은 실제 속성, 마지막 줄은 샘플 데이터의 인스턴스입니다. 화살표 방향이 관계의 의미이고, 중괄호는 관계에 붙은 속성입니다.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1200 600" role="img" aria-label="ISA-95 Equipment 계층을 중심으로 PhysicalAsset이 FULFILLS로, MeasurementPoint가 MEASURES로, Document가 ABOUT으로, Event가 OCCURRED_AT으로 연결되고, Tag는 SOURCE_OF로 MeasurementPoint에, PhysicalAsset은 MADE_BY로 Manufacturer에 연결된다">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <!-- Equipment 계층 -->
+  <rect class="box b-isa" x="470" y="30" width="260" height="330" rx="6"/>
+  <text class="tag c-isa" x="486" y="52">ISA-95 · ROLE HIERARCHY</text>
+  <text class="tt" x="486" y="72">Equipment</text>
+  <g>
+    <rect class="b-in" x="490" y="86" width="220" height="38" rx="3"/>
+    <text class="tmm" x="502" y="102">Enterprise</text><text class="ts" x="502" y="117" style="fill:var(--ink)">샘플제조(주)</text>
+    <rect class="b-in" x="490" y="136" width="220" height="38" rx="3"/>
+    <text class="tmm" x="502" y="152">Site</text><text class="ts" x="502" y="167" style="fill:var(--ink)">군산공장</text>
+    <rect class="b-in" x="490" y="186" width="220" height="38" rx="3"/>
+    <text class="tmm" x="502" y="202">Area</text><text class="ts" x="502" y="217" style="fill:var(--ink)">유틸리티동 · PC 공정동</text>
+    <rect class="b-in" x="490" y="236" width="220" height="38" rx="3"/>
+    <text class="tmm" x="502" y="252">WorkCenter</text><text class="ts" x="502" y="267" style="fill:var(--ink)">압축공기설비 · PC2 라인</text>
+    <rect class="b-in" x="490" y="286" width="220" height="38" rx="3" style="stroke:var(--isa);stroke-width:1.4"/>
+    <text class="tmm" x="502" y="302">WorkUnit</text><text class="ts" x="502" y="317" style="fill:var(--ink)">공압기 2호기 · 사출기 …</text>
+    <!-- PART_OF (자식 → 부모) -->
+    <path class="flow" d="M680,286 V278" marker-end="url(#a2)"/>
+    <path class="flow" d="M680,236 V228" marker-end="url(#a2)"/>
+    <path class="flow" d="M680,186 V178" marker-end="url(#a2)"/>
+    <path class="flow" d="M680,136 V128" marker-end="url(#a2)"/>
+    <text class="lblm" x="672" y="132" text-anchor="end" style="stroke:var(--isa-bg)">PART_OF ↑</text>
+  </g>
+  <text class="tmm" x="486" y="346">id · level · aliases · ancestor_ids · path_text</text>
+
+  <!-- Document -->
+  <rect class="box b-rag" x="60" y="30" width="280" height="112" rx="5"/>
+  <text class="tag c-rag" x="76" y="52">RAG POINTER</text>
+  <text class="tt" x="76" y="72">Document</text>
+  <text class="tmm" x="76" y="92">title · doc_type · uri</text>
+  <text class="tm" x="76" y="114">DOC-INC-2026-031</text>
+  <text class="ts" x="76" y="131">공압기 2호기 과전류 장애보고서</text>
+
+  <!-- PhysicalAsset -->
+  <rect class="box b-isa" x="60" y="220" width="280" height="150" rx="5"/>
+  <text class="tag c-isa" x="76" y="242">ISA-95 · PHYSICAL ASSET</text>
+  <text class="tt" x="76" y="262">PhysicalAsset</text>
+  <text class="tmm" x="76" y="282">serial · model · installed_at</text>
+  <text class="tmm" x="76" y="298">order_code · date_of_manufacture …</text>
+  <rect class="b-aas" x="68" y="308" width="264" height="36" rx="3" style="stroke-width:1"/>
+  <text class="tmm" x="78" y="323" style="fill:var(--aas)">global_asset_id · aas_id</text>
+  <text class="tmm" x="78" y="337" style="fill:var(--aas)">nameplate_submodel_id · aas_endpoint</text>
+  <text class="tm" x="76" y="362">AS-COMP-B200 · AC-2026-0112</text>
+
+  <!-- Manufacturer -->
+  <rect class="box b-aas" x="60" y="450" width="280" height="100" rx="5"/>
+  <text class="tag c-aas" x="76" y="472">AAS · NAMEPLATE SOURCE</text>
+  <text class="tt" x="76" y="492">Manufacturer</text>
+  <text class="tmm" x="76" y="512">name_&lt;lang&gt; · uri · 주소 4항목</text>
+  <text class="tm" x="76" y="536">MFR-SAMPLEAIR · 샘플에어(주)</text>
+
+  <!-- MeasurementPoint -->
+  <rect class="box b-mes" x="880" y="206" width="270" height="112" rx="5"/>
+  <text class="tag c-mes" x="896" y="228">MEASUREMENT</text>
+  <text class="tt" x="896" y="248">MeasurementPoint</text>
+  <text class="tmm" x="896" y="268">quantity · unit</text>
+  <text class="tm" x="896" y="290">MP-COMP02-KW</text>
+  <text class="ts" x="896" y="307">유효전력 · kW</text>
+
+  <!-- Tag -->
+  <rect class="box b-opc" x="880" y="420" width="270" height="130" rx="5"/>
+  <text class="tag c-opc" x="896" y="442">OPC UA</text>
+  <text class="tt" x="896" y="462">Tag</text>
+  <text class="tmm" x="896" y="482">server · node_id · data_type</text>
+  <text class="tm" x="896" y="504">TAG-PM0110-P</text>
+  <text class="tmm" x="896" y="522">ns=2;s=PowerMeters.PM0110</text>
+  <text class="tmm" x="896" y="538">.ActivePower</text>
+
+  <!-- Event -->
+  <rect class="box b-mes" x="470" y="450" width="260" height="100" rx="5"/>
+  <text class="tag c-mes" x="486" y="472">HISTORY</text>
+  <text class="tt" x="486" y="492">Event</text>
+  <text class="tmm" x="486" y="512">type · severity · occurred_at</text>
+  <text class="tm" x="486" y="536">EV-2026-0412 · 과전류 트립</text>
+
+  <!-- 관계 -->
+  <!-- Document → Equipment -->
+  <path class="flow" d="M340,86 H466" marker-end="url(#a2)"/>
+  <text class="lblm" x="403" y="78" text-anchor="middle">ABOUT</text>
+  <!-- Document → PhysicalAsset -->
+  <path class="flow" d="M200,142 V216" marker-end="url(#a2)"/>
+  <text class="lblm" x="208" y="184">ABOUT</text>
+  <!-- PhysicalAsset → WorkUnit -->
+  <path class="flow" d="M340,305 H486" marker-end="url(#a2)"/>
+  <text class="lblm" x="413" y="296" text-anchor="middle">FULFILLS</text>
+  <text class="lblm" x="413" y="322" text-anchor="middle">{valid_from, valid_to}</text>
+  <!-- PhysicalAsset → Manufacturer -->
+  <path class="flow" d="M200,370 V446" marker-end="url(#a2)"/>
+  <text class="lblm" x="208" y="412">MADE_BY</text>
+  <!-- MeasurementPoint → Equipment -->
+  <path class="flow" d="M880,250 H734" marker-end="url(#a2)"/>
+  <text class="lblm" x="807" y="242" text-anchor="middle">MEASURES</text>
+  <!-- FEEDS self loop on WorkUnit -->
+  <path class="flow" d="M710,296 C790,272 790,340 714,316" marker-end="url(#a2)"/>
+  <text class="lblm" x="800" y="304">FEEDS</text>
+  <text class="lblm" x="800" y="318">{medium}</text>
+  <!-- Tag → MeasurementPoint -->
+  <path class="flow" d="M1015,420 V322" marker-end="url(#a2)"/>
+  <text class="lblm" x="1023" y="362">SOURCE_OF</text>
+  <text class="lblm" x="1023" y="376">{valid_from, valid_to}</text>
+  <!-- Event → WorkUnit -->
+  <path class="flow" d="M600,450 V364" marker-end="url(#a2)"/>
+  <text class="lblm" x="608" y="412">OCCURRED_AT</text>
+  <!-- Event → PhysicalAsset -->
+  <path class="flow" d="M470,486 L344,366" marker-end="url(#a2)"/>
+  <text class="lblm" x="392" y="446" text-anchor="middle">INVOLVES</text>
+</svg>
+    </div>
+    <figcaption>역할(Equipment)과 실물(PhysicalAsset), 측정 대상(MeasurementPoint)과 수집 수단(Tag)을 분리하고, 그 사이를 기간이 있는 관계로 잇습니다. 그래서 2026-06-01 공압기 실물 교체와 2026-06-15 전력계 교체 이후에도 “공압기 2호기”의 과거·현재 데이터가 끊기지 않습니다. AAS 식별자는 실물에만 붙습니다.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================ 3. 규격·개념별 -->
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">03 · 규격과 개념별 적용</span>
+    <h2>각 계층이 담는 정보와 제공하는 기능</h2>
+    <p>상태 표시: <span class="pill p-done">구현</span> 샘플 코드에서 동작, <span class="pill p-part">일부</span> 핵심만 구현, <span class="pill p-ext">연동 지점</span> 외부 시스템이 필요.</p>
+  </div>
+  <div class="cards">
+
+    <article class="card k-isa">
+      <div class="k"><h3>ISA-95 (IEC 62264)</h3><span class="pill p-done">구현</span></div>
+      <span class="std">공장 내부 운영 구조</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>Equipment</code> 5단계 라벨, <code>PhysicalAsset</code>, <code>FULFILLS</code> · <code>sample_data.json</code>, <code>build_graph.py</code></dd></div>
+        <div><dt>담는 정보</dt><dd><ul>
+          <li>Enterprise › Site › Area › WorkCenter › WorkUnit (14개)</li>
+          <li>WorkCenter 유형: ProductionLine, ProcessCell</li>
+          <li>역할과 실물의 분리, 기간별 담당 관계</li>
+          <li>설비 간 공급 관계 <code>FEEDS</code> (전력, 압축공기)</li>
+        </ul></dd></div>
+        <div><dt>제공 기능</dt><dd><code>get_children</code>, <code>get_flow</code>, <code>get_asset_history</code>, 레벨 순서·기간 중복 검증</dd></div>
+      </dl>
+    </article>
+
+    <article class="card k-ont">
+      <div class="k"><h3>온톨로지 (LPG 스키마)</h3><span class="pill p-done">구현</span></div>
+      <span class="std">정보 사이의 관계 규칙</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>schema.cypher</code>(제약·인덱스), <code>build_graph.py</code>(파생·검증), Neo4j</dd></div>
+        <div><dt>담는 정보</dt><dd><ul>
+          <li>노드 7종, 관계 9종, 관계 방향의 의미</li>
+          <li>고유성 제약, 기간 인덱스, cjk 전문 검색 인덱스</li>
+          <li>파생 속성 <code>ancestor_ids</code>, <code>path_text</code></li>
+          <li>검증 12규칙 (Community 에디션 대체 검증 포함)</li>
+        </ul></dd></div>
+        <div><dt>제공 기능</dt><dd>다중 홉 탐색, 시점 조건 조회, 결정론적 결과. 모든 계층이 같은 엔티티 ID로 만나는 자리</dd></div>
+      </dl>
+    </article>
+
+    <article class="card k-sem">
+      <div class="k"><h3>시멘틱 레이어</h3><span class="pill p-part">일부</span></div>
+      <span class="std">용어를 정확한 질의로 고정</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>agent_tools.py</code>의 <code>SCHEMA_GUIDE</code>, 도구 명세 <code>TOOL_SPECS</code>, 목적형 도구 11개</dd></div>
+        <div><dt>구현된 부분</dt><dd><ul>
+          <li>현장 용어 → ID: 별칭, 시리얼, AAS ID, cjk 검색</li>
+          <li>질문 유형 → 고정 Cypher (LLM은 파라미터만 선택)</li>
+          <li>의미 명세: 관계 방향, 시점 규칙, 사용 금지 범위</li>
+          <li><code>run_cypher</code>: 존재하지 않는 스키마 사용을 실행 전 차단</li>
+        </ul></dd></div>
+        <div><dt>남은 부분</dt><dd>원단위·가동률 같은 지표 계산식과 <code>query_metric</code> 도구 (TSDB 연동)</dd></div>
+      </dl>
+    </article>
+
+    <article class="card k-opc">
+      <div class="k"><h3>OPC UA (IEC 62541)</h3><span class="pill p-part">일부</span></div>
+      <span class="std">실시간 데이터 접근</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>Tag</code> 노드, <code>SOURCE_OF {valid_from, valid_to}</code></dd></div>
+        <div><dt>담는 정보</dt><dd><ul>
+          <li>서버 <code>KEPServerEX-GS01</code>, NodeId, 데이터 타입</li>
+          <li>예: <code>ns=2;s=PowerMeters.PM0110.ActivePower</code></li>
+          <li>계측기 교체 이력: PM0102 → PM0110 (2026-06-15)</li>
+        </ul></dd></div>
+        <div><dt>제공 기능</dt><dd><code>get_measurement_points(at)</code>로 시점별 유효 태그, <code>get_tag_history</code>로 기간별 태그 목록. 실제 값 읽기는 OPC UA 서버·TSDB 쪽 <span class="pill p-ext">연동 지점</span></dd></div>
+      </dl>
+    </article>
+
+    <article class="card k-aas">
+      <div class="k"><h3>AAS (IEC 63278)</h3><span class="pill p-done">구현</span></div>
+      <span class="std">자산 정보의 기업 간 교환</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>aas_nameplate.py</code>, <code>Manufacturer</code> 노드, <code>PhysicalAsset</code>의 AAS 식별자 속성</dd></div>
+        <div><dt>담는 정보</dt><dd><ul>
+          <li>AAS: globalAssetId, specificAssetIds (내부 ID·시리얼·모델)</li>
+          <li>Nameplate 서브모델 15요소, IEC CDD semanticId</li>
+          <li>제조사명·주소(다국어), 주문코드, 제조일, 펌웨어</li>
+        </ul></dd></div>
+        <div><dt>제공 기능</dt><dd>AASX·JSON 출력과 재읽기 검증, Repository 등록(REST v3), 식별자 write-back, <code>get_aas_reference</code>. 샘플 7개 중 6개 생성, 1개는 필수 항목 누락으로 제외</dd></div>
+      </dl>
+    </article>
+
+    <article class="card k-rag">
+      <div class="k"><h3>RAG</h3><span class="pill p-part">일부</span></div>
+      <span class="std">서술형 지식 검색</span>
+      <dl>
+        <div><dt>적용 위치</dt><dd><code>Document</code> 노드, <code>ABOUT</code> 관계, <code>find_documents</code></dd></div>
+        <div><dt>담는 정보</dt><dd><ul>
+          <li>문서 포인터 4건: SOP 2, 장애보고서 1, 매뉴얼 1</li>
+          <li>제목, 유형, 원본 위치 (<code>confluence://DPE/…</code>, <code>s3://…</code>)</li>
+          <li>문서가 다루는 설비 역할과 실물</li>
+        </ul></dd></div>
+        <div><dt>제공 기능</dt><dd>엔티티 기준 문서 선별 (상위 계층·과거 실물 문서 포함). 본문 청킹·임베딩·유사도 검색은 벡터 DB <span class="pill p-ext">연동 지점</span></dd></div>
+      </dl>
+    </article>
+
+  </div>
+</section>
+
+<!-- ================================================================ 4. 질의 추적 -->
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">04 · 질의 추적</span>
+    <h2>질문 하나가 계층을 지나가는 순서</h2>
+    <p>“공압기 2호기가 멈추면 어디에 영향이 가고, 관련 장애 이력과 문서, 지금 설치된 장비 정보는?”을 샘플 데이터로 처리할 때 도구가 주고받는 값입니다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>도구</th><th>계층</th><th>보내는 값</th><th>받는 값 (샘플 데이터 기준)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td><code>resolve_entity</code></td><td><span class="lay k-sem"><i class="dot"></i>시멘틱</span></td>
+          <td><code>name="공압기 2호기"</code></td>
+          <td><code>WU-GS-UT-COMP02</code> · 경로 샘플제조(주) › 군산공장 › 유틸리티동 › 압축공기설비 › 공압기 2호기</td></tr>
+        <tr><td class="n">2</td><td><code>get_flow</code></td><td><span class="lay k-isa"><i class="dot"></i>ISA-95</span></td>
+          <td>위 ID · <code>downstream</code></td>
+          <td>압축공기 1홉 → <code>WU-GS-PC1-INJ01</code> PC1 사출기 1호기</td></tr>
+        <tr><td class="n">3</td><td><code>get_events</code></td><td><span class="lay k-isa"><i class="dot"></i>ISA-95 · 이력</span></td>
+          <td>위 ID</td>
+          <td>EV-2026-0621 전력계 교체, EV-2026-0588 실물 교체, EV-2026-0412 과전류 트립(당시 실물 AS-COMP-A101)</td></tr>
+        <tr><td class="n">4</td><td><code>find_documents</code></td><td><span class="lay k-rag"><i class="dot"></i>RAG 포인터</span></td>
+          <td>위 ID</td>
+          <td>DOC-SOP-COMP, DOC-INC-2026-031, DOC-MAN-SA75V (현재 실물 AS-COMP-B200의 매뉴얼)</td></tr>
+        <tr><td class="n">5</td><td><code>get_aas_reference</code></td><td><span class="lay k-aas"><i class="dot"></i>AAS</span></td>
+          <td>위 ID · 현재 시점</td>
+          <td><code>AS-COMP-B200</code> · globalAssetId <code>https://www.sampleair.example/id/AC-2026-0112</code> · AAS ID · Nameplate 서브모델 ID</td></tr>
+        <tr><td class="n">6</td><td><code>get_measurement_points</code></td><td><span class="lay k-opc"><i class="dot"></i>OPC UA</span></td>
+          <td>위 ID · 현재 시점</td>
+          <td>MP-COMP02-KW → <code>TAG-PM0110-P</code>, MP-COMP02-KWH → <code>TAG-PM0110-E</code> (서버 KEPServerEX-GS01)</td></tr>
+        <tr class="planned"><td class="n">7</td><td>벡터 검색 <span class="pill p-ext">연동 지점</span></td><td><span class="lay k-rag"><i class="dot"></i>RAG</span></td>
+          <td>4번 document_id로 필터 + 질문 임베딩</td>
+          <td>장애보고서 본문의 원인·조치 문단</td></tr>
+        <tr class="planned"><td class="n">8</td><td><code>query_metric</code> <span class="pill p-ext">연동 지점</span></td><td><span class="lay k-sem"><i class="dot"></i>시멘틱 · 지표</span></td>
+          <td>6번 측정 지점 · 기간</td>
+          <td>TSDB 값. 2026-06-15 이전은 PM0102, 이후는 PM0110 태그로 자동 이어 붙임</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">1번이 실패하면 나머지는 모두 의미가 없어집니다. 그래서 별칭 관리와 <code>resolve_entity</code>의 <code>ambiguous</code>·<code>not_found</code> 처리가 정확도에 가장 큰 영향을 줍니다. 1~6번은 LLM이 Cypher를 쓰지 않고 파라미터만 고릅니다.</p>
+</section>
+
+<!-- ================================================================ 5. 공통 키 -->
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">05 · 공통 키</span>
+    <h2>계층을 잇는 식별자</h2>
+    <p>각 계층은 서로의 데이터를 복제하지 않고 아래 식별자로만 서로를 가리킵니다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>식별자</th><th>정의하는 계층</th><th>그래프 관계</th><th>쓰이는 곳</th></tr></thead>
+      <tbody>
+        <tr><td><code>Equipment.id</code><br><span class="mono" style="color:var(--muted)">WU-GS-UT-COMP02</span></td>
+          <td><span class="lay k-isa"><i class="dot"></i>ISA-95 역할</span></td>
+          <td>PART_OF, FULFILLS, MEASURES, FEEDS, ABOUT, OCCURRED_AT</td>
+          <td>모든 도구의 <code>entity_id</code>, RAG 청크 메타데이터 <code>equipment_id</code></td></tr>
+        <tr><td><code>PhysicalAsset.id</code> · <code>serial</code><br><span class="mono" style="color:var(--muted)">AS-COMP-B200 · AC-2026-0112</span></td>
+          <td><span class="lay k-isa"><i class="dot"></i>ISA-95 실물</span></td>
+          <td>FULFILLS, MADE_BY, INVOLVES</td>
+          <td><code>get_asset_history</code>, AAS specificAssetIds (internalAssetId, serialNumber)</td></tr>
+        <tr><td><code>global_asset_id</code> · <code>aas_id</code> · <code>nameplate_submodel_id</code></td>
+          <td><span class="lay k-aas"><i class="dot"></i>AAS</span></td>
+          <td>PhysicalAsset 속성 (aas_nameplate.py가 기록)</td>
+          <td><code>get_aas_reference</code>, Repository 경로 <code>/shells/{base64url(aas_id)}</code></td></tr>
+        <tr><td><code>MeasurementPoint.id</code><br><span class="mono" style="color:var(--muted)">MP-COMP02-KW</span></td>
+          <td><span class="lay k-mes" style="--k:var(--mes)"><i class="dot"></i>계측</span></td>
+          <td>MEASURES, SOURCE_OF</td>
+          <td><code>get_measurement_points</code> → <code>query_metric</code> (계획)</td></tr>
+        <tr><td><code>Tag.node_id</code><br><span class="mono" style="color:var(--muted)">ns=2;s=PowerMeters.PM0110.ActivePower</span></td>
+          <td><span class="lay k-opc"><i class="dot"></i>OPC UA</span></td>
+          <td>SOURCE_OF {valid_from, valid_to}</td>
+          <td>OPC UA 읽기·구독, TSDB 시계열 키</td></tr>
+        <tr><td><code>Document.id</code><br><span class="mono" style="color:var(--muted)">DOC-INC-2026-031</span></td>
+          <td><span class="lay k-rag"><i class="dot"></i>RAG</span></td>
+          <td>ABOUT</td>
+          <td><code>find_documents</code> → 벡터 검색 메타데이터 필터</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
