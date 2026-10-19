@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>질의 처리 시퀀스 다이어그램</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 구성도 페이지와 같은 도면 체계. 시퀀스 도면 → 읽는 법 → 단계 표 → 분기·실패 경로.
+   색은 참여자의 계층(구성도와 동일), 점선은 샘플 코드 밖의 연동 지점. */
+:root {
+  --bg: #F3F5F7; --surface: #FFFFFF; --ink: #18212B; --muted: #5A6673; --line: #CBD3DB; --soft: #E8ECF0;
+  --isa: #2B5A88; --isa-bg: #E2EBF5; --aas: #9A5B17; --aas-bg: #F5E8D6; --rag: #66489A; --rag-bg: #ECE5F6;
+  --sem: #3B7330; --sem-bg: #E3EFDD; --mes: #56616D; --mes-bg: #EAEDF0; --note-bg: #FBF3DC; --note: #8A6A12;
+  --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161C; --surface: #182029; --ink: #E3E8ED; --muted: #9AA6B3; --line: #354150; --soft: #212A34;
+    --isa: #84B3E2; --isa-bg: #1B2B3C; --aas: #E1A75C; --aas-bg: #372816; --rag: #B89DE4; --rag-bg: #292137;
+    --sem: #8DC777; --sem-bg: #1D2D18; --mes: #AAB4BE; --mes-bg: #232B33; --note-bg: #332B14; --note: #E2C36A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161C; --surface: #182029; --ink: #E3E8ED; --muted: #9AA6B3; --line: #354150; --soft: #212A34;
+  --isa: #84B3E2; --isa-bg: #1B2B3C; --aas: #E1A75C; --aas-bg: #372816; --rag: #B89DE4; --rag-bg: #292137;
+  --sem: #8DC777; --sem-bg: #1D2D18; --mes: #AAB4BE; --mes-bg: #232B33; --note-bg: #332B14; --note: #E2C36A;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.65 var(--sans); }
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 48px; }
+h1, h2 { text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 34px); font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
+h2 { font-size: 21px; font-weight: 700; line-height: 1.35; }
+p { margin: 0; }
+code { font-family: var(--mono); font-size: 0.86em; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 14px; }
+.lede { max-width: 70ch; color: var(--muted); font-size: 16px; }
+.phases { display: flex; flex-wrap: wrap; gap: 8px 22px; font: 400 13px/1.4 var(--mono); color: var(--muted);
+  border-top: 1px solid var(--line); padding-top: 14px; }
+.phases b { color: var(--ink); font-weight: 500; }
+section { display: grid; gap: 16px; }
+.sec-head { display: grid; gap: 6px; max-width: 78ch; }
+.sec-head p { color: var(--muted); }
+
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.scroll { overflow-x: auto; padding: 16px 20px; }
+figure svg { display: block; width: 100%; min-width: 1180px; height: auto; }
+figcaption { border-top: 1px solid var(--line); padding: 14px 20px; color: var(--muted); font-size: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 0 20px 16px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { min-width: 0; width: auto; display: inline; }
+
+/* SVG */
+svg text { font-family: var(--sans); fill: var(--ink); }
+.pt { font-size: 13.5px; font-weight: 600; }
+.ps { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); }
+.box { stroke-width: 1.4; }
+.ext { stroke-dasharray: 6 4; }
+.b-plain { fill: var(--surface); stroke: var(--line); }
+.b-ink { fill: var(--soft); stroke: var(--ink); }
+.b-isa { fill: var(--isa-bg); stroke: var(--isa); }
+.b-aas { fill: var(--aas-bg); stroke: var(--aas); }
+.b-rag { fill: var(--rag-bg); stroke: var(--rag); }
+.b-sem { fill: var(--sem-bg); stroke: var(--sem); }
+.b-mes { fill: var(--mes-bg); stroke: var(--mes); }
+.life { stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 3 4; }
+.m { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.m.ret { stroke: var(--muted); stroke-dasharray: 5 4; }
+.m.plan { stroke: var(--muted); stroke-dasharray: 2 4; opacity: 0.85; }
+.ah { fill: var(--ink); }
+.aho { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.ml { font-size: 12px; font-weight: 500; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.mlm { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.ms { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.ml.plan, .ms.plan { fill: var(--muted); font-style: italic; }
+.frag { fill: none; stroke: var(--muted); stroke-width: 1; }
+.fragtag { fill: var(--soft); stroke: var(--muted); stroke-width: 1; }
+.ftag { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+.fcond { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+.note { fill: var(--note-bg); stroke: var(--note); stroke-width: 1; }
+.nt { font-size: 11.5px; fill: var(--note); }
+
+/* 표 */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; min-width: 900px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { font: 500 12px/1.3 var(--mono); color: var(--muted); background: var(--soft); letter-spacing: 0.03em; }
+tr:last-child td { border-bottom: 0; }
+td.n { font: 500 13px var(--mono); color: var(--muted); width: 38px; font-variant-numeric: tabular-nums; }
+td.route { white-space: nowrap; font-size: 13px; color: var(--muted); }
+tr.planned td { color: var(--muted); }
+.kind { display: inline-block; font: 500 10.5px/1 var(--mono); padding: 3px 6px; border-radius: 3px; margin-right: 4px; }
+.k-call { background: var(--soft); color: var(--ink); }
+.k-ret { background: transparent; color: var(--muted); border: 1px dashed var(--muted); padding: 2px 5px; }
+.pill { display: inline-block; font: 500 10.5px/1 var(--mono); padding: 3px 6px; border-radius: 3px; white-space: nowrap; }
+.p-ext { background: var(--soft); color: var(--muted); border: 1px dashed var(--muted); }
+
+.branches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.br { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.br h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.br .when { font: 500 11.5px/1.4 var(--mono); color: var(--muted); }
+.br p { font-size: 14px; }
+@media (max-width: 900px) { .branches { grid-template-columns: 1fr; } }
+</style>
+<style>*,*::before,*::after{box-sizing:border-box} body{margin:0}</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">isa95-neo4j-agent · 질의 처리 흐름</span>
+  <h1>질의 처리 시퀀스 다이어그램</h1>
+  <p class="lede">질문이 들어온 순간부터 답변이 나가기까지 에이전트 루프, Claude API, 그래프 도구, Neo4j 가 주고받는 메시지를 실제 코드 순서대로 그렸습니다. 반환값은 샘플 데이터 기준이며, 점선 상자 안은 아직 구현하지 않은 연동 지점입니다.</p>
+  <div class="phases" aria-label="처리 단계">
+    <span><b>①</b> 질문 수신</span><span><b>②</b> 엔티티 해석</span><span><b>③</b> 목적형 도구 5개 실행</span>
+    <span><b>④</b> 외부 원본 조회 (연동 지점)</span><span><b>⑤</b> 답변 생성</span><span>메시지 <b>33</b>개</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">01 · 시퀀스</span>
+    <h2>“공압기 2호기가 멈추면?” 한 건의 처리 순서</h2>
+    <p>위에서 아래로 시간이 흐릅니다. 번호는 아래 단계 표의 번호와 같습니다.</p>
+  </div>
+  <figure>
+    <div class="scroll">
+<svg viewBox="0 0 1530 1616" role="img" aria-label="사용자 질문이 에이전트 루프, Claude API, GraphTools, Neo4j 를 거쳐 답변으로 돌아오는 순서. 엔티티 해석 후 목적형 도구 5개를 실행하고, 벡터 DB·TSDB·AAS Repository 는 연동 지점으로 표시">
+<defs>
+<marker id="fill" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+<marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="aho" d="M0,0 L10,5 L0,10"/></marker>
+</defs>
+<rect class="frag" x="204" y="158" width="1302" height="1382" rx="3"/>
+<rect class="frag" x="213" y="1162" width="1284" height="322" rx="3" stroke-dasharray="6 4"/>
+<rect class="frag" x="213" y="702" width="744" height="410" rx="3"/>
+<rect class="frag" x="623" y="306" width="334" height="226" rx="3"/>
+<line class="life" x1="80" y1="74" x2="80" y2="1606"/>
+<rect class="box b-plain" x="5.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="80" y="43" text-anchor="middle">사용자</text>
+<text class="ps" x="80" y="61" text-anchor="middle">현장 담당자</text>
+<line class="life" x1="270" y1="74" x2="270" y2="1606"/>
+<rect class="box b-ink" x="195.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="270" y="43" text-anchor="middle">에이전트 루프</text>
+<text class="ps" x="270" y="61" text-anchor="middle">example_agent.py</text>
+<line class="life" x1="470" y1="74" x2="470" y2="1606"/>
+<rect class="box b-mes" x="395.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="470" y="43" text-anchor="middle">Claude API</text>
+<text class="ps" x="470" y="61" text-anchor="middle">Messages API</text>
+<line class="life" x1="680" y1="74" x2="680" y2="1606"/>
+<rect class="box b-sem" x="605.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="680" y="43" text-anchor="middle">GraphTools</text>
+<text class="ps" x="680" y="61" text-anchor="middle">agent_tools.py</text>
+<line class="life" x1="900" y1="74" x2="900" y2="1606"/>
+<rect class="box b-isa" x="825.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="900" y="43" text-anchor="middle">Neo4j</text>
+<text class="ps" x="900" y="61" text-anchor="middle">지식 그래프</text>
+<line class="life ext" x1="1100" y1="74" x2="1100" y2="1606"/>
+<rect class="box b-rag ext" x="1025.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="1100" y="43" text-anchor="middle">벡터 DB</text>
+<text class="ps" x="1100" y="61" text-anchor="middle">RAG 본문</text>
+<line class="life ext" x1="1270" y1="74" x2="1270" y2="1606"/>
+<rect class="box b-mes ext" x="1195.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="1270" y="43" text-anchor="middle">TSDB</text>
+<text class="ps" x="1270" y="61" text-anchor="middle">지표·시계열</text>
+<line class="life ext" x1="1440" y1="74" x2="1440" y2="1606"/>
+<rect class="box b-aas ext" x="1365.0" y="20" width="150" height="54" rx="5"/>
+<text class="pt" x="1440" y="43" text-anchor="middle">AAS Repository</text>
+<text class="ps" x="1440" y="61" text-anchor="middle">BaSyx · FA³ST</text>
+<text class="ml" x="90" y="118" text-anchor="start">1  질문 입력</text>
+<text class="ms" x="90" y="130" text-anchor="start">“공압기 2호기가 멈추면 영향 범위·장애 이력·문서·현재 장비는?”</text>
+<path class="m" d="M80,136 H268" marker-end="url(#fill)"/>
+<text class="ml" x="280" y="194" text-anchor="start">2  messages.create</text>
+<text class="ms" x="280" y="206" text-anchor="start">system=SYSTEM_PROMPT(규칙 6) · tools=TOOL_SPECS(12)</text>
+<path class="m" d="M270,212 H468" marker-end="url(#fill)"/>
+<text class="ml" x="280" y="234" text-anchor="start">3  stop_reason = tool_use</text>
+<text class="ms" x="280" y="246" text-anchor="start">resolve_entity {name: &#x27;공압기 2호기&#x27;}</text>
+<path class="m ret" d="M470,252 H272" marker-end="url(#open)"/>
+<text class="ml" x="475.0" y="277" text-anchor="middle">4  dispatch(&#x27;resolve_entity&#x27;, args)</text>
+<path class="m" d="M270,284 H678" marker-end="url(#fill)"/>
+<text class="ml" x="690" y="342" text-anchor="start">5  정확 일치 조회</text>
+<text class="ms" x="690" y="354" text-anchor="start">id · serial · name · aliases · global_asset_id · aas_id</text>
+<path class="m" d="M680,360 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="382" text-anchor="middle">6  1건</text>
+<text class="ms" x="790.0" y="394" text-anchor="middle">WU-GS-UT-COMP02 (name 일치)</text>
+<path class="m ret" d="M900,400 H682" marker-end="url(#open)"/>
+<text class="ml" x="690" y="454" text-anchor="start">7  전문 검색</text>
+<text class="ms" x="690" y="466" text-anchor="start">db.index.fulltext.queryNodes(&#x27;entity_names&#x27;) · cjk</text>
+<path class="m" d="M680,472 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="497" text-anchor="middle">8  후보 + score</text>
+<path class="m ret" d="M900,504 H682" marker-end="url(#open)"/>
+<path class="fragtag" d="M623,306 H657.5 V318 L650.5,325 H623 Z"/>
+<text class="ftag" x="629" y="320" text-anchor="start">alt</text>
+<text class="fcond" x="665.5" y="320" text-anchor="start">[정확 일치가 1건]</text>
+<line class="frag" x1="623" y1="426" x2="957" y2="426" stroke-dasharray="4 4"/>
+<text class="fcond" x="631" y="439" text-anchor="start">[else · 0건 또는 여러 건]</text>
+<text class="ml" x="280" y="542" text-anchor="start">9  status: resolved</text>
+<text class="ms" x="280" y="554" text-anchor="start">context: 샘플제조(주) › 군산공장 › 유틸리티동 › 압축공기설비 › 공압기 2호기</text>
+<path class="m ret" d="M680,560 H272" marker-end="url(#open)"/>
+<rect class="note" x="275.40000000000003" y="584" width="599.1999999999998" height="26" rx="3"/>
+<text class="nt" x="575.0" y="601" text-anchor="middle">ambiguous · not_found 이면 LLM 이 사용자에게 되묻는다. ID 를 추측하지 않는다 (규칙 1, hint)</text>
+<text class="ml" x="280" y="622" text-anchor="start">10  tool_result</text>
+<text class="ms" x="280" y="634" text-anchor="start">JSON 직렬화 · is_error = false</text>
+<path class="m" d="M270,640 H468" marker-end="url(#fill)"/>
+<text class="ml" x="280" y="662" text-anchor="start">11  stop_reason = tool_use × 5</text>
+<text class="ms" x="280" y="674" text-anchor="start">한 응답에 tool_use 블록 5개</text>
+<path class="m ret" d="M470,680 H272" marker-end="url(#open)"/>
+<path class="m" d="M680,748 H714 V766 H684" marker-end="url(#fill)"/>
+<text class="ml" x="722" y="754" text-anchor="start">12  _require(entity_id)</text>
+<text class="ms" x="722" y="768" text-anchor="start">존재·라벨 확인</text>
+<text class="ml" x="475.0" y="793" text-anchor="middle">13  get_flow(downstream)</text>
+<path class="m" d="M270,800 H678" marker-end="url(#fill)"/>
+<text class="mlm" x="790.0" y="793" text-anchor="middle">(s)-[:FEEDS*1..3]-&gt;(t)</text>
+<path class="m" d="M680,800 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="825" text-anchor="middle">14  경로 1개</text>
+<path class="m ret" d="M900,832 H682" marker-end="url(#open)"/>
+<text class="mlm" x="475.0" y="825" text-anchor="middle">PC1 사출기 1호기 · compressed_air · 1홉</text>
+<path class="m ret" d="M680,832 H272" marker-end="url(#open)"/>
+<text class="ml" x="475.0" y="857" text-anchor="middle">15  get_events</text>
+<path class="m" d="M270,864 H678" marker-end="url(#fill)"/>
+<text class="mlm" x="790.0" y="857" text-anchor="middle">(ev)-[:OCCURRED_AT]-&gt;(e)</text>
+<path class="m" d="M680,864 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="889" text-anchor="middle">16  3건</text>
+<path class="m ret" d="M900,896 H682" marker-end="url(#open)"/>
+<text class="mlm" x="475.0" y="889" text-anchor="middle">EV-0621 · EV-0588 · EV-0412(과전류, AS-COMP-A101)</text>
+<path class="m ret" d="M680,896 H272" marker-end="url(#open)"/>
+<text class="ml" x="475.0" y="921" text-anchor="middle">17  find_documents</text>
+<path class="m" d="M270,928 H678" marker-end="url(#fill)"/>
+<text class="mlm" x="790.0" y="921" text-anchor="middle">(d)-[:ABOUT]-&gt;(x)</text>
+<path class="m" d="M680,928 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="953" text-anchor="middle">18  3건</text>
+<path class="m ret" d="M900,960 H682" marker-end="url(#open)"/>
+<text class="mlm" x="475.0" y="953" text-anchor="middle">DOC-SOP-COMP · DOC-INC-2026-031 · DOC-MAN-SA75V</text>
+<path class="m ret" d="M680,960 H272" marker-end="url(#open)"/>
+<text class="ml" x="475.0" y="985" text-anchor="middle">19  get_aas_reference(at=now)</text>
+<path class="m" d="M270,992 H678" marker-end="url(#fill)"/>
+<text class="mlm" x="790.0" y="985" text-anchor="middle">FULFILLS 유효기간 · MADE_BY</text>
+<path class="m" d="M680,992 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="1017" text-anchor="middle">20  1건</text>
+<path class="m ret" d="M900,1024 H682" marker-end="url(#open)"/>
+<text class="mlm" x="475.0" y="1017" text-anchor="middle">AS-COMP-B200 · globalAssetId · aas_id</text>
+<path class="m ret" d="M680,1024 H272" marker-end="url(#open)"/>
+<text class="ml" x="475.0" y="1049" text-anchor="middle">21  get_measurement_points(at=now)</text>
+<path class="m" d="M270,1056 H678" marker-end="url(#fill)"/>
+<text class="mlm" x="790.0" y="1049" text-anchor="middle">MEASURES · SOURCE_OF 유효기간</text>
+<path class="m" d="M680,1056 H898" marker-end="url(#fill)"/>
+<text class="ml" x="790.0" y="1081" text-anchor="middle">22  2건</text>
+<path class="m ret" d="M900,1088 H682" marker-end="url(#open)"/>
+<text class="mlm" x="475.0" y="1081" text-anchor="middle">MP-COMP02-KW → TAG-PM0110-P · kWh → PM0110-E</text>
+<path class="m ret" d="M680,1088 H272" marker-end="url(#open)"/>
+<path class="fragtag" d="M213,702 H255.0 V714 L248.0,721 H213 Z"/>
+<text class="ftag" x="219" y="716" text-anchor="start">loop</text>
+<text class="fcond" x="263.0" y="716" text-anchor="start">[tool_use 블록 5개를 순서대로 dispatch]</text>
+<text class="ml" x="370.0" y="1122" text-anchor="middle">23  tool_result × 5</text>
+<text class="ms" x="370.0" y="1134" text-anchor="middle">user 메시지 하나에 묶어 전달</text>
+<path class="m" d="M270,1140 H468" marker-end="url(#fill)"/>
+<text class="ml plan" x="280" y="1201" text-anchor="start">24  tool_use: search_docs · query_metric · get_nameplate</text>
+<path class="m ret plan" d="M470,1208 H272" marker-end="url(#open)"/>
+<text class="ml plan" x="685.0" y="1230" text-anchor="middle">25  유사도 검색</text>
+<text class="ms plan" x="685.0" y="1242" text-anchor="middle">filter: document_id ∈ {DOC-INC-2026-031, …}</text>
+<path class="m plan" d="M270,1248 H1098" marker-end="url(#fill)"/>
+<text class="ml plan" x="685.0" y="1273" text-anchor="middle">26  원인·조치 문단</text>
+<path class="m ret plan" d="M1100,1280 H272" marker-end="url(#open)"/>
+<text class="ml plan" x="770.0" y="1302" text-anchor="middle">27  query_metric(MP-COMP02-KW, 기간)</text>
+<text class="ms plan" x="770.0" y="1314" text-anchor="middle">06-15 이전 PM0102 · 이후 PM0110 태그</text>
+<path class="m plan" d="M270,1320 H1268" marker-end="url(#fill)"/>
+<text class="ml plan" x="770.0" y="1345" text-anchor="middle">28  시계열 · 집계값</text>
+<path class="m ret plan" d="M1270,1352 H272" marker-end="url(#open)"/>
+<text class="ml plan" x="855.0" y="1374" text-anchor="middle">29  GET /submodels/{base64url(id)}</text>
+<text class="ms plan" x="855.0" y="1386" text-anchor="middle">Nameplate 서브모델</text>
+<path class="m plan" d="M270,1392 H1438" marker-end="url(#fill)"/>
+<text class="ml plan" x="855.0" y="1417" text-anchor="middle">30  제조사 · 주문코드 · 제조일</text>
+<path class="m ret plan" d="M1440,1424 H272" marker-end="url(#open)"/>
+<text class="ml plan" x="370.0" y="1449" text-anchor="middle">31  tool_result</text>
+<path class="m plan" d="M270,1456 H468" marker-end="url(#fill)"/>
+<path class="fragtag" d="M213,1162 H247.5 V1174 L240.5,1181 H213 Z"/>
+<text class="ftag" x="219" y="1176" text-anchor="start">opt</text>
+<text class="fcond" x="255.5" y="1176" text-anchor="start">[연동 지점 · 샘플 코드에는 아직 없음]</text>
+<text class="ml" x="280" y="1494" text-anchor="start">32  stop_reason = end_turn</text>
+<text class="ms" x="280" y="1506" text-anchor="start">최종 텍스트 · 근거 엔티티 ID 괄호 표기</text>
+<path class="m ret" d="M470,1512 H272" marker-end="url(#open)"/>
+<path class="fragtag" d="M204,158 H246.0 V170 L239.0,177 H204 Z"/>
+<text class="ftag" x="210" y="172" text-anchor="start">loop</text>
+<text class="fcond" x="254.0" y="172" text-anchor="start">[최대 12턴 (MAX_TURNS) · stop_reason 이 tool_use 인 동안 반복]</text>
+<text class="ml" x="90" y="1550" text-anchor="start">33  답변</text>
+<text class="ms" x="90" y="1562" text-anchor="start">영향: PC1 사출기 1호기 · 이력 3건 · 문서 3건 · 현재 장비 SA-75V</text>
+<path class="m ret" d="M270,1568 H82" marker-end="url(#open)"/>
+</svg>
+    </div>
+    <div class="legend">
+      <span><svg width="40" height="10" aria-hidden="true"><path d="M0,5 H36" style="stroke:var(--ink);stroke-width:1.4"/><path d="M30,1 L38,5 L30,9 z" style="fill:var(--ink)"/></svg>호출</span>
+      <span><svg width="40" height="10" aria-hidden="true"><path d="M0,5 H36" style="stroke:var(--muted);stroke-width:1.4;stroke-dasharray:5 4"/><path d="M30,1 L38,5 L30,9" style="fill:none;stroke:var(--muted);stroke-width:1.4"/></svg>응답</span>
+      <span><svg width="40" height="10" aria-hidden="true"><path d="M0,5 H38" style="stroke:var(--muted);stroke-width:1.4;stroke-dasharray:2 4"/></svg>연동 지점 (구현 전)</span>
+      <span><code>loop</code> 반복 · <code>alt</code> 조건 분기 · <code>opt</code> 선택 실행</span>
+    </div>
+    <figcaption>LLM 은 그래프를 직접 조회하지 않습니다. 도구 이름과 파라미터만 고르고, Cypher 는 GraphTools 안에 고정되어 있습니다. 2번째 왕복에서 받은 ID 하나(<code>WU-GS-UT-COMP02</code>)가 이후 모든 도구와 외부 시스템 조회의 입력이 됩니다.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">02 · 단계별 상세</span>
+    <h2>각 메시지가 하는 일</h2>
+    <p>구현 위치와 동작 근거입니다. 연동 지점 행은 추가할 도구의 설계 의도입니다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>구간</th><th>메시지</th><th>동작과 근거</th></tr></thead>
+      <tbody>
+<tr class=""><td class="n">1</td><td class="route">사용자 → 에이전트 루프</td><td><span class="kind k-call">호출</span> <code>질문 입력</code></td><td>main() → run_agent(question). messages = [{role: user, content: 질문}]</td></tr>
+<tr class=""><td class="n">2</td><td class="route">에이전트 루프 → Claude API</td><td><span class="kind k-call">호출</span> <code>messages.create</code></td><td>model=ANTHROPIC_MODEL, max_tokens=4096. 도구 명세에는 &#x27;언제 쓰지 말 것&#x27;까지 들어 있어 도구 선택 정확도를 높인다</td></tr>
+<tr class=""><td class="n">3</td><td class="route">Claude API → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>stop_reason = tool_use</code></td><td>규칙 1: 설비·라인·계측 지점은 다른 도구보다 먼저 resolve_entity 로 ID 를 확정</td></tr>
+<tr class=""><td class="n">4</td><td class="route">에이전트 루프 → GraphTools</td><td><span class="kind k-call">호출</span> <code>dispatch(&#x27;resolve_entity&#x27;, args)</code></td><td>GraphTools.dispatch: 이름으로 메서드를 찾고, 예외를 not_found · invalid_argument · db_error 상태로 바꿔 돌려준다</td></tr>
+<tr class=""><td class="n">5</td><td class="route">GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>정확 일치 조회</code></td><td>Equipment ∪ PhysicalAsset ∪ MeasurementPoint 를 UNION 으로 묶어 비교. 읽기 트랜잭션(execute_read), 타임아웃 10초</td></tr>
+<tr class=""><td class="n">6</td><td class="route">Neo4j → GraphTools</td><td><span class="kind k-ret">응답</span> <code>1건</code></td><td>샘플 데이터에서는 이름이 정확히 일치해 여기서 확정된다</td></tr>
+<tr class=""><td class="n">7</td><td class="route">GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>전문 검색</code></td><td>질의어는 Lucene 이스케이프 후 cjk 바이그램 분석기 인덱스로 검색. &#x27;2번 공압기&#x27;, &#x27;COMP-02&#x27; 같은 별칭도 여기서 잡힌다</td></tr>
+<tr class=""><td class="n">8</td><td class="route">Neo4j → GraphTools</td><td><span class="kind k-ret">응답</span> <code>후보 + score</code></td><td>1위 점수가 2위의 1.5배 이상이면 resolved, 아니면 ambiguous, 결과가 없으면 not_found</td></tr>
+<tr class=""><td class="n">9</td><td class="route">GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>status: resolved</code></td><td>계층 경로(path_text)를 함께 돌려줘 LLM 이 후보를 사람처럼 구별할 수 있게 한다</td></tr>
+<tr class=""><td class="n">10</td><td class="route">에이전트 루프 → Claude API</td><td><span class="kind k-call">호출</span> <code>tool_result</code></td><td>도구 결과를 JSON 문자열로 넣어 user 메시지로 추가. 오류 상태면 is_error=true</td></tr>
+<tr class=""><td class="n">11</td><td class="route">Claude API → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>stop_reason = tool_use × 5</code></td><td>확정된 ID 로 필요한 목적형 도구를 한 번에 요청. 규칙 2: 목적형 도구 우선, run_cypher 는 마지막 수단</td></tr>
+<tr class=""><td class="n">12</td><td class="route">GraphTools</td><td><span class="kind k-call">호출</span> <code>_require(entity_id)</code></td><td>모든 도구가 먼저 엔티티 존재와 라벨(Equipment 등)을 확인. 없으면 not_found + &#x27;resolve_entity 로 먼저 확정&#x27; hint</td></tr>
+<tr class=""><td class="n">13</td><td class="route">에이전트 루프 → GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>get_flow(downstream) / (s)-[:FEEDS*1..3]-&gt;(t)</code></td><td>가변 길이 상한은 정수로 검증 후 삽입(1~6). 대상별 최단 경로만 남김</td></tr>
+<tr class=""><td class="n">14</td><td class="route">Neo4j → GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>경로 1개 / PC1 사출기 1호기 · compressed_air · 1홉</code></td><td>공압기 2호기 정지 시 압축공기를 받는 PC1 사출기 1호기가 영향 범위</td></tr>
+<tr class=""><td class="n">15</td><td class="route">에이전트 루프 → GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>get_events / (ev)-[:OCCURRED_AT]-&gt;(e)</code></td><td>하위 설비 포함(ancestor_ids), 최신순. INVOLVES 로 당시 실물 자산도 함께 조회</td></tr>
+<tr class=""><td class="n">16</td><td class="route">Neo4j → GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>3건 / EV-0621 · EV-0588 · EV-0412(과전류, AS-COMP-A101)</code></td><td>전력계 교체, 실물 교체, 과전류 트립. 과전류는 교체 전 실물(A101)에서 발생</td></tr>
+<tr class=""><td class="n">17</td><td class="route">에이전트 루프 → GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>find_documents / (d)-[:ABOUT]-&gt;(x)</code></td><td>역할 자체, 상위 계층, 그 역할을 맡았던 모든 실물의 문서를 함께 찾는다</td></tr>
+<tr class=""><td class="n">18</td><td class="route">Neo4j → GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>3건 / DOC-SOP-COMP · DOC-INC-2026-031 · DOC-MAN-SA75V</code></td><td>SOP, 장애보고서(과거 실물), 현재 실물 B200 의 매뉴얼. 본문은 없고 ID·URI 만</td></tr>
+<tr class=""><td class="n">19</td><td class="route">에이전트 루프 → GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>get_aas_reference(at=now) / FULFILLS 유효기간 · MADE_BY</code></td><td>valid_from ≤ at &lt; valid_to 인 실물을 찾고 제조사와 AAS 식별자를 읽는다</td></tr>
+<tr class=""><td class="n">20</td><td class="route">Neo4j → GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>1건 / AS-COMP-B200 · globalAssetId · aas_id</code></td><td>globalAssetId = https://www.sampleair.example/id/AC-2026-0112 (제조사 부여 ID)</td></tr>
+<tr class=""><td class="n">21</td><td class="route">에이전트 루프 → GraphTools → Neo4j</td><td><span class="kind k-call">호출</span> <code>get_measurement_points(at=now) / MEASURES · SOURCE_OF 유효기간</code></td><td>측정 지점과 지금 유효한 OPC UA 태그. 시계열 값은 반환하지 않음</td></tr>
+<tr class=""><td class="n">22</td><td class="route">Neo4j → GraphTools → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>2건 / MP-COMP02-KW → TAG-PM0110-P · kWh → PM0110-E</code></td><td>서버 KEPServerEX-GS01, NodeId ns=2;s=PowerMeters.PM0110.ActivePower</td></tr>
+<tr class=""><td class="n">23</td><td class="route">에이전트 루프 → Claude API</td><td><span class="kind k-call">호출</span> <code>tool_result × 5</code></td><td>tool_use_id 별 결과 5개를 한 번에 넣는다</td></tr>
+<tr class="planned"><td class="n">24</td><td class="route">Claude API → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>tool_use: search_docs · query_metric · get_nameplate</code> <span class="pill p-ext">연동 지점</span></td><td>추가할 도구. 모두 그래프가 준 ID 를 입력으로 받는다</td></tr>
+<tr class="planned"><td class="n">25</td><td class="route">에이전트 루프 → 벡터 DB</td><td><span class="kind k-call">호출</span> <code>유사도 검색</code> <span class="pill p-ext">연동 지점</span></td><td>find_documents 결과로 범위를 좁힌 뒤 질문 임베딩으로 검색. 엉뚱한 설비 문서가 섞이지 않는다</td></tr>
+<tr class="planned"><td class="n">26</td><td class="route">벡터 DB → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>원인·조치 문단</code> <span class="pill p-ext">연동 지점</span></td><td>장애보고서 본문의 근거 문단</td></tr>
+<tr class="planned"><td class="n">27</td><td class="route">에이전트 루프 → TSDB</td><td><span class="kind k-call">호출</span> <code>query_metric(MP-COMP02-KW, 기간)</code> <span class="pill p-ext">연동 지점</span></td><td>get_tag_history 의 기간별 태그로 시계열을 끊김 없이 이어 붙인다. 계산식은 지표 정의(시멘틱 레이어)가 고정</td></tr>
+<tr class="planned"><td class="n">28</td><td class="route">TSDB → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>시계열 · 집계값</code> <span class="pill p-ext">연동 지점</span></td><td>LLM 은 숫자를 계산하지 않고 받은 값을 인용</td></tr>
+<tr class="planned"><td class="n">29</td><td class="route">에이전트 루프 → AAS Repository</td><td><span class="kind k-call">호출</span> <code>GET /submodels/{base64url(id)}</code> <span class="pill p-ext">연동 지점</span></td><td>get_aas_reference 가 준 nameplate_submodel_id 로 원본 조회 (IDTA 01002 API v3)</td></tr>
+<tr class="planned"><td class="n">30</td><td class="route">AAS Repository → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>제조사 · 주문코드 · 제조일</code> <span class="pill p-ext">연동 지점</span></td><td>현재 설치 장비의 명판 정보</td></tr>
+<tr class="planned"><td class="n">31</td><td class="route">에이전트 루프 → Claude API</td><td><span class="kind k-call">호출</span> <code>tool_result</code> <span class="pill p-ext">연동 지점</span></td><td>연동 결과도 같은 방식으로 전달</td></tr>
+<tr class=""><td class="n">32</td><td class="route">Claude API → 에이전트 루프</td><td><span class="kind k-ret">응답</span> <code>stop_reason = end_turn</code></td><td>규칙 4: 수치를 지어내지 않음. 규칙 6: 근거 ID 표기. tool_use 가 없으므로 루프 종료</td></tr>
+<tr class=""><td class="n">33</td><td class="route">에이전트 루프 → 사용자</td><td><span class="kind k-ret">응답</span> <code>답변</code></td><td>text 블록만 이어 붙여 출력. 12턴을 넘기면 중단 메시지를 반환</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">03 · 분기와 실패 경로</span>
+    <h2>정상 흐름에서 벗어나는 경우</h2>
+  </div>
+  <div class="branches">
+    <article class="br">
+      <span class="when">resolve_entity → ambiguous / not_found</span>
+      <h3>이름이 모호하거나 없을 때</h3>
+      <p>후보와 계층 경로를 돌려주고, LLM 은 경로로 고르거나 사용자에게 되묻습니다. 결과에 “ID 를 추측하지 마세요” hint 가 붙어 다음 도구 호출이 멈춥니다.</p>
+    </article>
+    <article class="br">
+      <span class="when">목적형 도구로 답할 수 없을 때</span>
+      <h3>run_cypher 로 넘어갈 때</h3>
+      <p>get_schema 로 스키마를 확인한 뒤 run_cypher 를 호출합니다. 쓰기 구문 차단 → EXPLAIN 문법 검사 → 없는 라벨·관계·속성이면 실행 전 schema_mismatch 반환 → 읽기 트랜잭션 실행 순서이고, 실패하면 hint 를 보고 최대 2회 고쳐 다시 시도합니다.</p>
+    </article>
+    <article class="br">
+      <span class="when">결과 0건 · 12턴 초과</span>
+      <h3>빈 결과와 무한 반복 방지</h3>
+      <p>0건이면 “없다”고 단정하지 말고 ID·관계 방향·시점 조건을 다시 확인하라는 hint 가 붙습니다. 도구 호출이 12턴을 넘기면 루프가 중단 메시지를 돌려주고 끝납니다.</p>
+    </article>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
