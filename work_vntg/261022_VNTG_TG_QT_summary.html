@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VNTG 팀장 QT (with TG) 회의 요약</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6f9; --card:#ffffff; --bg3:#f0f2f6; --border:#d0d8e4;
+  --text:#1e2a38; --text2:#4a6070; --text3:#7a90a4;
+  --accent:#2478d4; --green:#0f9e70; --yellow:#c87c00; --red:#c83232;
+  --orange:#c84800; --teal:#0a9090; --purple:#6848c8;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:104px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:15px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+code,.mono,.ts{font-family:var(--mono)}
+
+/* ── header ───────────────────────────── */
+header.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(244,246,249,.97);
+  backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.top-inner{max-width:1060px;margin:0 auto;padding:18px 28px 0}
+.doc-kicker{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:6px;
+}
+.doc-title{font-size:23px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px}
+.doc-meta{font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:14px}
+.doc-meta b{color:var(--text);font-weight:500}
+.doc-meta .sep{color:var(--border);margin:0 9px}
+
+nav.sections{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.sections::-webkit-scrollbar{display:none}
+nav.sections a{
+  flex:none;padding:9px 13px 11px;font-size:13px;font-weight:500;
+  color:var(--text2);text-decoration:none;border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;white-space:nowrap;
+}
+nav.sections a:hover{color:var(--accent)}
+nav.sections a.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── layout ───────────────────────────── */
+main{max-width:1060px;margin:0 auto;padding:34px 28px 90px}
+.fadeup{opacity:0;transform:translateY(14px);animation:fadeUp .55s cubic-bezier(.22,.8,.3,1) forwards}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+
+/* ── notice ───────────────────────────── */
+.notice{
+  background:var(--card);border:1px solid var(--border);
+  border-left:4px solid var(--yellow);border-radius:9px;
+  padding:18px 22px;margin-bottom:22px;
+}
+.notice h2{font-size:14px;font-weight:600;margin:0 0 9px;color:var(--yellow)}
+.notice p{margin:0 0 7px;font-size:13.5px;color:var(--text2);line-height:1.68}
+.notice p:last-child{margin-bottom:0}
+.notice strong{color:var(--text);font-weight:600}
+
+/* ── section ──────────────────────────── */
+.sec{margin-bottom:52px}
+.sec-head{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding-bottom:12px;margin-bottom:22px;border-bottom:1px solid var(--border);
+}
+.sec-num{
+  font-family:var(--mono);font-size:12px;font-weight:600;color:#fff;
+  background:var(--accent);border-radius:5px;padding:3px 8px;letter-spacing:.04em;
+}
+.sec-num.alt{background:var(--purple)}
+.sec-title{font-size:19px;font-weight:700;margin:0;letter-spacing:-.015em}
+.sec-sub{font-size:13px;color:var(--text3);font-weight:400}
+
+/* ── cards ────────────────────────────── */
+.cards{display:grid;grid-template-columns:minmax(0,1fr);gap:15px}
+.card{
+  min-width:0;background:var(--card);border:1px solid var(--border);border-radius:9px;
+  padding:19px 22px;transition:border-color .18s,box-shadow .18s;
+}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 14px rgba(36,120,212,.09)}
+.card.hot{border-left:4px solid var(--orange)}
+.card-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:11px;
+}
+.card-title{font-size:15.5px;font-weight:600;margin:0;letter-spacing:-.01em}
+.card-title .idx{font-family:var(--mono);color:var(--text3);font-weight:500;font-size:13px;margin-right:7px}
+.ts{
+  font-size:11.5px;color:var(--teal);background:rgba(10,144,144,.09);
+  border:1px solid rgba(10,144,144,.2);border-radius:4px;
+  padding:2px 7px;white-space:nowrap;
+}
+p.lead{margin:0 0 10px;font-size:14px;color:var(--text2);line-height:1.75}
+p.lead:last-child{margin-bottom:0}
+p.lead strong{color:var(--text);font-weight:600}
+
+ul.pts{margin:0;padding:0;list-style:none}
+ul.pts>li{position:relative;padding-left:16px;margin-bottom:9px;font-size:14px;color:var(--text2);line-height:1.7}
+ul.pts>li:last-child{margin-bottom:0}
+ul.pts>li::before{content:'';position:absolute;left:2px;top:10px;width:5px;height:5px;border-radius:50%;background:var(--border)}
+ul.pts>li>strong{color:var(--text);font-weight:600}
+ul.sub{margin:8px 0 0;padding:0 0 0 4px;list-style:none}
+ul.sub>li{position:relative;padding-left:15px;margin-bottom:5px;font-size:13.5px;color:var(--text3);line-height:1.65}
+ul.sub>li::before{content:'–';position:absolute;left:0;top:0;color:var(--border)}
+.note{display:block;margin-top:9px;padding:9px 13px;background:var(--bg3);border-radius:6px;font-size:13px;color:var(--text2);line-height:1.65}
+.quote{
+  margin:11px 0 0;padding:11px 16px;border-left:3px solid var(--accent);
+  background:var(--bg3);border-radius:0 6px 6px 0;
+  font-size:14px;color:var(--text);line-height:1.7;
+}
+.flag{
+  display:inline-block;font-family:var(--mono);font-size:10.5px;
+  color:var(--orange);background:rgba(200,72,0,.08);
+  border:1px solid rgba(200,72,0,.22);border-radius:3px;
+  padding:1px 6px;margin-left:5px;vertical-align:1px;white-space:nowrap;
+}
+
+/* ── table ────────────────────────────── */
+.tbl-wrap{overflow-x:auto;max-width:100%;margin-top:12px;border:1px solid var(--border);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--card);min-width:440px}
+th{text-align:left;font-weight:600;font-size:12px;letter-spacing:.03em;color:var(--text2);background:var(--bg3);padding:11px 15px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 15px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .14s}
+tbody tr:hover{background:var(--bg3)}
+td.k{color:var(--text);font-weight:500;white-space:nowrap}
+td.num{font-family:var(--mono);white-space:nowrap}
+
+/* ── flow ─────────────────────────────── */
+.flow{
+  font-family:var(--mono);font-size:13px;line-height:1.9;
+  background:var(--bg3);border-radius:7px;padding:15px 18px;
+  margin-top:12px;color:var(--text2);
+  white-space:pre-wrap;word-break:break-word;overflow-x:auto;max-width:100%;
+}
+.flow b{color:var(--text);font-weight:500}
+.divider{color:var(--border)}
+
+/* ── progress ─────────────────────────── */
+.bars{display:grid;gap:13px;margin-top:4px}
+.bar-row .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin-bottom:6px}
+.bar-row .bar-lbl{color:var(--text);font-weight:500}
+.bar-row .bar-val{font-family:var(--mono);font-size:12.5px;color:var(--text2)}
+.bar-track{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;width:0;border-radius:4px;transition:width 1.1s cubic-bezier(.22,.8,.3,1)}
+
+/* ── footer ───────────────────────────── */
+footer{border-top:1px solid var(--border);padding-top:20px;margin-top:8px;font-size:12.5px;color:var(--text3);line-height:1.8}
+footer code{background:var(--bg3);border-radius:3px;padding:1px 5px;font-size:12px;color:var(--text2)}
+
+h4.sub-h{font-size:13.5px;font-weight:600;color:var(--accent);margin:16px 0 8px;letter-spacing:-.005em}
+h4.sub-h:first-child{margin-top:0}
+.card-head + h4.sub-h{margin-top:2px}
+ol.pts{counter-reset:n}
+ol.pts>li::before{counter-increment:n;content:counter(n)'.';background:none;width:auto;height:auto;top:0;left:0;font-family:var(--mono);font-size:12px;color:var(--text3)}
+ol.pts>li{padding-left:22px}
+ul.pts + .tbl-wrap, p.lead + .tbl-wrap{margin-top:12px}
+.tbl-wrap + ul.pts, .tbl-wrap + p.lead, .tbl-wrap + h4.sub-h{margin-top:14px}
+ul.pts + h4.sub-h, p.lead + h4.sub-h{margin-top:18px}
+ul.pts + p.lead{margin-top:10px}
+td .ts, li .ts, p .ts{margin-left:4px}
+td.k{white-space:normal;min-width:110px}
+footer{border-top:1px solid var(--border);padding-top:20px;margin-top:8px;font-size:12.5px;color:var(--text3);line-height:1.8}
+@media (max-width:900px){
+  .top-inner{padding:15px 18px 0}
+  main{padding:26px 18px 70px}
+  .doc-title{font-size:20px}
+  .card{padding:17px 18px}
+  .cards{gap:13px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="doc-kicker">Quarterly Talk Summary</div>
+    <h1 class="doc-title">VNTG 팀장 QT (with TG) 회의 요약</h1>
+    <div class="doc-meta">일시 <b>2026-10-22 16:04~18:06 · 세아타워 4층 오디토리움</b><span class="sep">│</span>분량 <b>121.1분 (녹음 기준)</b><span class="sep">│</span>참석 <b>TG, 각 부서 팀장 (People Hub 진행)</b><span class="sep">│</span>주제 <b>TG 메일「AI 시대, VNTG는 어떻게 일해야 할까요」에 대한 팀별 의견 청취</b><span class="sep">│</span>작성 <b>자체 녹음 전사 + Gemini 회의록(스크립트·다음 단계) 교차 확인</b></div>
+    <nav class="sections"><a href="#s0">핵심 요약</a><a href="#s1">A. 배경과 진행 방식</a><a href="#s2">B. 주제 ① 우리 현실</a><a href="#s3">C. 주제 ② AI Worker와 BVC</a><a href="#s4">D. 주제 ③ 기술이 흔해지면 고객은 왜 VNTG에 돈을 낼까</a><a href="#s5">E. 주제 ④ 회사에 대한 제안</a><a href="#s6">F. 마무리와 후속 조치</a><a href="#s7">G. DataForge팀 취합본과의 비교</a></nav>
+  </div>
+</header>
+<main>
+<section class="notice fadeup" style="animation-delay:.05s"><h2>⚠ <strong>신뢰도 안내</strong></h2><p>강당 원거리 녹음이라 전사문에 누락·오인식이 많습니다. 자체 전사와 Gemini 스크립트를 서로 대조해 문맥으로 복원했습니다.</p><p>발언자는 대부분 <strong>팀 이름만</strong> 언급되거나 아예 언급되지 않아, 팀 귀속이 불확실한 곳은 <span class="flag">확인 필요</span>로 표시했습니다.</p><p>시각 표기는 <strong>자체 녹음 기준</strong>입니다. Gemini 스크립트 시각보다 약 1분 빠릅니다.</p></section>
+<section class="sec fadeup" id="s0" style="animation-delay:0.10s"><div class="sec-head"><span class="sec-num alt">요약</span><h2 class="sec-title">핵심 요약</h2></div><div class="cards"><article class="card"><div class="tbl-wrap"><table><thead><tr><th>주제</th><th>핵심 내용</th></tr></thead><tbody><tr><td class="k"><strong>사전 취합 결과</strong></td><td>원칙에는 거의 모든 부서가 공감(28/29). 그러나 <strong>M/M 계약 구조 압박(25개 부서)</strong>, <strong>평가·보상 기준 요구(22개 부서)</strong>, <strong>AI Worker·BVC 이해 차이(약 20개 부서)</strong>가 공통 과제로 확인됨</td></tr><tr><td class="k"><strong>① 우리 현실</strong></td><td>AI로 처리 속도는 빨라졌지만 <strong>검증 부담과 업무량은 오히려 늘었다.</strong> 책임은 사람이 지는데 그 판단을 받쳐 줄 기준·체계·보상이 없다</td></tr><tr><td class="k"><strong>② AI Worker &amp; BVC</strong></td><td>AI Worker는 대체로 명확(속도·도구). BVC는 <strong>"선제적 제안"이 과도하게 강조</strong>되어 팀마다 정의가 다름. 개발·운영 조직은 "주어진 안건을 잘 풀어 주는 것"도 BVC라고 봄. TG는 <strong>공통 분모를 정리해 공유</strong>하기로 함</td></tr><tr><td class="k"><strong>③ 고객이 돈을 낼 이유</strong></td><td>DataForge는 "물·공기처럼 당연해서 가치를 인정받지 못한다"고 토로. 팀들이 꼽은 이유는 <strong>현장에서 안정적으로 돌아가게 하는 힘, 원스톱 대응, 신뢰</strong>. TG는 <strong>패키징(포장)의 문제이며 회사 책임</strong>이라고 하고 데이터 TF를 언급</td></tr><tr><td class="k"><strong>④ 회사에 대한 제안</strong></td><td>시장 메시지 평준화 경고, <strong>MDM·멀티 에이전트·AI-Ready 데이터 풀과 샌드박스</strong>, 홀딩스 차원의 AI 가이드라인, 지원부서용 개발자 채용. TG는 <strong>데이터 거버넌스·에이전트·데이터 플랫폼 논의가 "때가 됐다"</strong>고 평가</td></tr><tr><td class="k"><strong>후속 조치</strong></td><td>평가·보상 기준, 경력 로드맵, BVC 공통 정의, 도메인 모델링, 자동화 거버넌스, AI 플랫폼 가이드라인, 개발자 채용 검토, 외부 FDE 사례 공유</td></tr></tbody></table></div></article></div></section><section class="sec fadeup" id="s1" style="animation-delay:0.15s"><div class="sec-head"><span class="sec-num">Part A</span><h2 class="sec-title">배경과 진행 방식</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">A1. TG 메일과 다섯 가지 질문</h3><span class="ts">2026-10-02 발송</span></div><p class="lead">TG는 10월 2일 「[함께 생각해 주십시오] AI 시대, VNTG는 어떻게 일해야 할까요」 메일을 보냈습니다. 핵심 문제의식은 <strong>"기술이 흔해진 뒤 고객이 무엇 때문에 VNTG에 돈을 낼 것인가"</strong>입니다.</p><ul class="pts"><li><strong>Part 1:</strong> AI를 많이 쓰는 사람과 잘 일하는 사람은 다르다. 주니어는 AI를 대신 생각해 주는 도구가 아니라 멘토로 써야 한다</li><li><strong>Part 2:</strong> AI Worker는 속도와 힘을 주고, BVC는 그 힘을 어디에 쓸지 정한다. 판단과 책임은 넘기지 않는다</li><li><strong>Part 3:</strong> Agent가 시스템을 오가게 되면 표준 데이터·업무 규칙·권한·프로세스가 더 중요해진다. 고객 곁에 있는 Companion과 경험의 자산화를 강조</li></ul><p class="lead">구성원에게 던진 질문은 다섯 가지입니다.</p><ol class="pts"><li>공감하는 것과, 동의하지 않거나 의문이 드는 것은 무엇인가</li><li>우리 팀 일 중 AI로 바뀌거나 줄어들 일, 더 중요해질 일은 무엇인가</li><li>우리 일에서 AI Worker와 BVC는 각각 무엇이고 어떻게 함께 가야 하나</li><li>기술이 흔해진 뒤에도 고객이 VNTG에 돈을 낼 이유는 무엇인가</li><li>VNTG의 가장 큰 기회와 위험, 그리고 TG와 회사가 놓치고 있는 것은 무엇인가</li></ol><p class="lead">부서별 답변은 10월 20일까지 제출했고, 이번 QT에서 취합 결과를 바탕으로 다시 의견을 들었습니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">A2. TG 오프닝 — 취합 결과</h3><span class="ts">00:00~02:30</span></div><p class="lead">TG는 "답을 주거나 설득하려는 자리가 아니라, 선언한 방향을 지키는 데 걸리는 <strong>허들을 알기 위해 정보를 듣는 자리</strong>"라고 설명했습니다. 취합하며 "우리가 같은 것을 바라보고 있다는 게 고무적"이라고 했습니다.</p><div class="tbl-wrap"><table><thead><tr><th>공통 의견</th><th>부서 수</th></tr></thead><tbody><tr><td class="k">AI를 많이 쓰는 것과 잘 쓰는 것은 다르다</td><td>25개 중 23개</td></tr><tr><td class="k">고객이 돈을 낼 이유는 <strong>끝까지 책임지는 믿을 만한 파트너</strong></td><td>29개 중 28개</td></tr><tr><td class="k">원칙에는 동의하지만 실제로 지키기는 매우 어렵다</td><td>29개 중 28개</td></tr><tr><td class="k">AI로 업무가 빨라질수록 <strong>M/M 계약 구조가 매출·단가를 압박</strong></td><td>25개</td></tr><tr><td class="k">변화에 걸맞은 <strong>평가·보상 기준</strong>을 빨리 마련해야 한다</td><td>22개</td></tr><tr><td class="k">AI Worker와 BVC의 의미가 조직마다 다르게 이해된다</td><td>약 20개 <span class="flag">21~22개 확인 필요</span></td></tr></tbody></table></div><p class="lead">이어서 TG가 네 가지 주제를 차례로 제시하고 팀장들이 팀 의견을 대변해 발언했습니다.</p></article></div></section><section class="sec fadeup" id="s2" style="animation-delay:0.20s"><div class="sec-head"><span class="sec-num">Part B</span><h2 class="sec-title">주제 ① 우리 현실 — "좋은 원칙, 지키기 어렵다"</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">B1. 플랫폼인프라팀 <span class="flag">팀명 확인 필요</span></h3><span class="ts">04:28~08:58</span></div><ul class="pts"><li>Claude·Ansible 등을 엮어 <strong>장애 서버에 AI가 직접 접속해 점검·조치</strong>하고, 같은 증상의 서버를 일괄 처리하는 방식으로 쓰고 있음</li><li><strong>고민 1 — 책임:</strong> "서버 10대 일괄 조치하고 재시작해 줘" 한 문장으로 시스템을 바꾸는데, AI는 책임지지 않음. 지시한 사람이 책임져야 함</li><li><strong>고민 2 — 일의 증가:</strong> 신규 입사자가 처음 보는 시스템도 AI로 금방 조치할 만큼 효율은 올랐지만, <strong>처리할 일은 계속 늘어남</strong></li><li><strong>고민 3 — 검토 부실:</strong> "읽어 보고 보내라, 이 단어 뜻은 아느냐"고 강조해도 시간이 없다는 이유로 대충 검토해 전달하는 일이 반복됨</li><li>리뷰어마저 AI로 리뷰를 돌리는 상황 → <strong>리뷰 책임도 희미해지고 있음</strong></li></ul><p class="lead"><strong>TG 코멘트</strong> — 업무 시간이 줄었다지만 실제로는 <strong>검증이 병목</strong>입니다. 결과를 내가 한 번 소화해서 전달해야 하는데 그 지점에서 병목이 크게 생깁니다. 쉬운 문제는 아니지만 현실입니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">B2. ERP 3팀</h3><span class="ts">10:38~14:08</span></div><ul class="pts"><li>가장 많이 나온 이야기: <strong>M/M 기반 매출 구조에서는 AI로 업무 시간을 줄이는 것이 곧 매출 감소</strong>. 이미 피부로 느끼는 중</li><li>생산성이 오르면 고객은 인원 축소와 단가 인하를 요구함 → "AI를 잘할수록 매출이 줄어드는" 역설</li><li>반론으로 정리한 논리<ul class="sub"><li>결과물이 빨리 나올수록 <strong>검증할 양도 늘어난다</strong></li><li>개발이 쉬워지면 건당 규모는 작아도 <strong>요청 건수가 많아진다</strong> → 오히려 기회</li><li>몇 년 뒤 결과까지 책임질 <strong>사람을 키우는 일</strong>은 계속 필요하다</li></ul></li><li>비유: 고객에게는 수면 위 오리만 보이지만, 수면 아래에서 <strong>백데이터부터 지원하며 발을 젓고 있는 것은 우리</strong>다. 이 점을 고객에게 계속 설득해야 함</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">B3. ERP 4팀</h3><span class="ts">14:28~17:59</span></div><ul class="pts"><li>AI의 기술적 효용에는 모두 공감하지만, 그것이 곧 <strong>SM 운영 업무의 축소</strong>로 읽히는 데 대한 부담이 큼. "효율화·운영" 같은 표현을 압박으로 받아들임</li><li>업무 성격이 바뀌고 있음: 예전 SM(ERP 운영)에서 <strong>FDE에 가까운 형태</strong>로, ERP 표준이 못 덮는 부분을 컨설팅까지 해서 메움</li><li>그런데 <strong>내가 만든 솔루션도 내가 운영</strong>해야 하니 일이 줄지 않고 범위만 넓어짐</li><li>반대로 "내가 운영할 것을 내가 운영하기 편하게 만들 수 있다"는 장점도 있다는 의견</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">B4. DX서비스팀</h3><span class="ts">18:09~20:26</span></div><ul class="pts"><li><strong>공감:</strong> "AI를 많이 쓰는 것과 일을 잘하는 것은 다르다", "판단과 책임은 사람이 가져야 한다"에 팀원 2/3 이상 동의</li><li><strong>의문:</strong> 판단과 책임을 개인에게 맡기려면 이를 <strong>받쳐 줄 기준·체계가 갖춰질 때까지 시간</strong>이 필요함</li><li>작업 시간은 크게 줄었지만 <strong>검증 시간은 2~3배</strong> 늘었음 → 검증 노력과 그 가치를 어떻게 평가·보상할 것인가</li><li>팀원 대부분이 5년 이상 경력자라 판단력은 있지만, 책임이 개인에게 쏠리는 데 부담을 표현</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">B5. SAP 운영 팀 <span class="flag">팀명 확인 필요</span></h3><span class="ts">20:47~24:44</span></div><ul class="pts"><li>출발점을 고객 관점으로 잡음: "고객은 왜 VNTG여야 하나? 꼭 AI가 아니어도 VNTG 역량이 고객이 원하는 수준인가?"</li><li><strong>공수 체계 → 서비스 체계</strong> 전환 시 지금 역량으로 그만한 가치를 낼 수 있을지 고민. "공수 체계가 사실 지금 일하는 사람을 보호해 주는 것 아니냐"는 시각도 있음</li><li>TG의 "2028" 이야기 이후 팀원들의 생각: "<strong>2028년에 회사에 기여하지 못하면 배에 탈 수 없다.</strong> 지금 무엇을 해야 하나?"<ul class="sub"><li>예: "SAP 모듈 하나만 하는데 다른 모듈까지 크로스로 하고 싶다. 그 노력에 대한 보상을 어떻게 가져가야 하는지, 회사는 어떻게 생각하는지 모르겠다"</li></ul></li><li>자가 진단해 보면 <strong>고객이 AI를 더 잘 쓰는 경우도 많음</strong> → 그래도 팀원들은 고객보다 AI를 잘 활용하며 "같이 해 보자"는 제안형으로 변하고 있음</li><li>AX 발표에서도 팀 사례가 언급됐지만 업무는 계속 늘고 있음. 공수 축소가 오면 프로젝트로 나갈 역량이 될지 걱정</li></ul><p class="lead">TG는 "답을 주거나 정리하지 않겠다"며 다음 주제로 넘어갔습니다.</p></article></div></section><section class="sec fadeup" id="s3" style="animation-delay:0.25s"><div class="sec-head"><span class="sec-num">Part C</span><h2 class="sec-title">주제 ② AI Worker와 BVC — 실제로 어떻게 이해하고 있나</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">C1. 그룹웨어 서비스 팀 <span class="flag">팀명 확인 필요</span></h3><span class="ts">26:24~30:23</span></div><ul class="pts"><li>정리: <strong>AI Worker는 속도, BVC는 판단·제안·책임</strong>을 갖춘 인재</li><li>자체 개발 시스템에 보편적 업무 영역이라 <strong>AI로 일하기에 매우 좋은 환경</strong>. 기획 쪽으로 넘어와 프로젝트 4개를 동시에 진행 중이며 <strong>작년 대비 약 3배</strong> 속도로 일함</li><li>팀원 반응: 재미있지만 "AI 시키고 판단하고"를 반복하느라 <strong>매우 피곤함</strong>. "매일 똑똑한 놈이랑 엄청 똑똑한 놈이랑 공부하는 기분, 고등학교 때 이렇게 했으면 SKY 갔을 것"</li><li>소수 의견: <strong>VNTG 조직 구조가 AI Worker·BVC를 잘할 수 있는 구조인지 의문.</strong> 일하는 방식은 바꾸라면서 조직 구조는 그대로이고, 역량 향상은 개인 노력에만 맡겨져 있음</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">C2. MES팀 <span class="flag">팀명 확인 필요</span></h3><span class="ts">30:41~35:17</span></div><ul class="pts"><li>정형화된 표준 데이터와 프로세스를 잘 정리해 두면 AI로 효율이 나고, 그 시간을 <strong>BVC(어떻게 처리할지 판단·책임)에 쓴다</strong>는 데 의견을 모음</li><li>고객이 AI를 더 많이 쓰면서 "우리는 AI로 이렇게까지 해 봤다"고 가져오는데, <strong>검증이 빠져 있어 실제로는 잘 돌아가지 않음</strong></li><li>운영 업무는 AI를 쓸수록 오히려 일이 늘어남. AI를 고객보다 더 잘 알아야 하는데, 발전 속도를 잘 따라가고 있는지 걱정</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">C3. PC팀</h3><span class="ts">35:17~39:10</span></div><ul class="pts"><li>현장 설비와 연계된 팀이라 BVC를 <strong>현장 개선 제안</strong> 중심으로 봄</li><li>AI Worker로 빠르게 코딩해 보고 실무자 동의까지 얻어도 <strong>조직장·임원 단계에서 비용 문제로 채택되지 않는 경우</strong>가 많음 → "우리 활동과 현장 사이에 갭이 있는 것 아니냐"</li><li>현실은 <strong>현업이 먼저 움직임</strong>: 베스틸 생산혁신 쪽이 부서별 개선 과제를 모아 <strong>자체적으로 AI 모델</strong>을 만들고(예: 비전 시스템 성능 개선), 시스템 적용·검증 단계에서야 요청이 옴</li><li>결론: VNTG가 가장 잘 아는 것은 <strong>Level 2·PLC 인터페이스, 데이터 수집, 설정·제어</strong>. 이 영역을 특화하고, 담당 시스템의 로직을 더 확실히 알도록 시간을 투자해 <strong>AI로 생산성만 올리지 말고 생산성을 올릴 우리 자산을 만들자</strong></li></ul><p class="lead"><strong>TG 코멘트</strong> — 효율화되면 예전에 우리 손을 거치던 일을 고객이 직접 하게 됩니다. 우리가 <strong>새로 건너가야 할 일이 무엇인지 잘 정의</strong>해야 합니다. 현실 진단에 그치지 않고 해법까지 고민해 줘서 좋았다고 평가했습니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">C4. BVC 프로그램에 대한 비판과 제안</h3><span class="ts">40:17~49:15</span></div><h4 class="sub-h">선제성의 과도한 강조</h4><ul class="pts"><li>Stage 1·2는 자기 영역, Stage 3·4는 전파·교육. 그 패스를 다 따라 하면 무엇이 바뀌는지, 어떻게 평가할지 의문</li><li>1·2단계에서 <strong>"선제적으로 먼저 제안하라"가 지나치게 강조</strong>됨. 업무에 따라 현업이 더 잘 아는 영역도 있음</li><li>고객의 추상적인 니즈를 <strong>구체화하고 실현되도록 조언하는 것도 BVC</strong>라고 봄</li></ul><h4 class="sub-h">과거 BVC 활동에 대한 소수 의견 <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>실제 비즈니스 가치 창출과 어떻게 연결되는지 이해하기 어려웠음. 내가 한 일을 올리는 <strong>"칭찬 챌린지"처럼 느껴짐</strong></li><li>고객 페인 포인트 해결을 더 구체화해야 함. 팀원들의 결론: <strong>"다음에도 함께 일하고 싶은 사람"이 되는 것이 BVC</strong></li></ul><h4 class="sub-h">제도화 제안 <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>개인 역량에만 기대지 말고, 팀별로 고객·현업과 <strong>주간·월간·분기 단위 정례 소통 자리</strong>를 만들어 평소 업무 외 주제로 의견을 듣자</li><li>크게는 반기 단위 전사 논의 자리를 두어 하위 단위 논의를 상위로 끌어올리자</li><li>컨설팅 사례처럼 고객의 페인 포인트를 함께 수집하는 방식도 고려할 만함</li></ul><p class="lead"><strong>TG 코멘트</strong> — BVC를 프로그램화한 사례는 시장에도 거의 없습니다. 다음 Stage로 넘어가며 외부 전문가 초빙도 알아봤지만 없었고, 오히려 다른 회사들이 우리에게 묻습니다. 그래서 체계적으로 보이지 못한 점이 아쉽고, 지금 같은 의견이 개선점이 될 것입니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">C5. "안 된다"와 고객 만족 — ERP 데이터 접근 논쟁</h3><span class="ts">48:41~01:07:04</span></div><h4 class="sub-h">운영·보안 측 입장 <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>BVC의 최종 목적은 고객 만족인데, 시스템 보호를 위해 <strong>"안 된다"는 말을 가장 많이 함</strong> → 오히려 불만을 유도하는 것 아닌가 하는 고민</li><li>원칙: ERP·DB 접근은 <strong>주관 부서 승인 필수</strong>, 모든 데이터를 열 수 없음, 승인 범위도 <strong>테이블 단위 읽기</strong>만, <strong>쓰기는 불가</strong></li><li>근거는 <strong>원본 보호의 법칙</strong>: 데이터가 발생한 원본과 원천 시스템은 건드리면 안 됨 → <strong>DW·데이터 레이크로 복제</strong>해 그곳에서 자유롭게 쓰는 방향을 안내</li></ul><h4 class="sub-h">현업 대응 측 입장 <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>회계 등 현업은 "매일 ERP에서 내려받아 드라이브에 올리는 것과 똑같은데 왜 자동화해 주면 안 되느냐"고 요구. 이번 달에 크게 부딪힘</li><li>현업은 AI로 ERP 데이터를 끌어와 대시보드를 직접 만들고, <strong>검증을 뺀 채</strong> 진행함. VNTG는 단순 데이터 제공자로 밀려남</li><li>그래서 "데이터를 주는 것이 아니라 <strong>데이터를 어떻게 쓸지 가이드하는 것</strong>"이 BVC라고 봄</li><li>그룹 정책상 서버를 열지 못하는 공통 제약이면 받아들이겠지만, 예전엔 현업이 <strong>1년치 개발 계획</strong>을 내면 운영에서 선별했던 체계도 이제는 없음</li><li><strong>"AX를 지향하는 회사 안에서 AX를 못 하고 있다."</strong> 다른 제조사는 ERP와 AI를 연동해 읽기·쓰기 제약 없이 검증·판단 화면까지 만들었음. "이 규약은 누구를 위한 규약인가"</li></ul><h4 class="sub-h">해법 논의 — 인증·권한과 API</h4><ul class="pts"><li>발언: 데이터가 아니라 <strong>인터페이스(API)에 접근</strong>하게 해야 함. 문제는 우리 시스템의 <strong>인증·권한 체계가 부족</strong>하다는 것. 이를 먼저 해결하면 클라이언트 형태(웹·모바일·데스크톱)와 무관하게 API로 제공할 수 있음. 밸리데이션은 API 안에서 하고, <strong>읽기 권한만</strong> 주어도 많은 부분이 해결됨</li><li>반론: 현업 요구는 사실상 "<strong>웹 ERP를 새로 만들어 달라</strong>"는 것과 같아 지금은 어려움. 보안·인증 정책 논의 끝에 신규 웹 버전 이야기가 나왔다가 보류된 상태. 전표 하나에 체크 항목이 20개 가까이 되는 복잡성도 있음</li><li>정리: 인증·권한이 갖춰진 데이터, 연결 구조, 밸리데이션·트리거가 안정적으로 도는 구조를 <strong>먼저 만들어야</strong> 가능함</li></ul><p class="lead"><strong>BVC 관점 차이에 대한 소회</strong> <span class="ts">01:04:10~01:07:04</span></p><ul class="pts"><li>"BVC는 <strong>어떤 문제를 어떻게 풀 것인가</strong>를 고민하는 것이 우리의 기본 틀이 되는 것"이라고 생각했음. 지금 방식으로는 사업을 지속하기 어렵기 때문</li><li>AI는 "원래 할 수 있던 일을 더 빨리 하는 도구"로 접근했음</li><li>영업·구매·재무 쪽에서 "쓰기 어렵고 개발이 오래 걸린다"는 불만이 반복되는데, <strong>"환경 탓만 한다"는 시선</strong>은 억울함. 환경 개선도 계속 시도했지만 도움을 못 받으면 <strong>외부에서 다른 방법을 찾을 수밖에 없다</strong></li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">C6. 개발 조직이 보는 BVC</h3><span class="ts">01:07:17~01:11:21</span></div><h4 class="sub-h">개발 조직 A <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>가장 어려운 점은 <strong>AI Worker와 BVC의 간극을 조율하는 일이 부서별·개인별 편차가 너무 크다</strong>는 것. BVC라는 단어가 너무 포괄적</li><li>AI Worker = <strong>LLM을 효율적으로 쓰는 사용자</strong></li><li>BVC = 고객은 정확한 아이디어를 주지 않으니, 우리 자산과 기술로 <strong>기획·설계·개발·전달·문서화까지 해서 해결안을 제시</strong>하는 것</li></ul><h4 class="sub-h">개발 조직 B <span class="flag">팀명 확인 필요</span></h4><ul class="pts"><li>"회사가 말하는 BVC는 우리에게 잘 맞지 않는다." 개발은 <strong>안건이 생긴 뒤 투입</strong>되므로, 고객 니즈를 선제적으로 찾는 것은 역할이 다름</li><li>LLM은 결국 <strong>개발을 잘하고 시스템을 잘 이해하는 순서대로 잘 쓴다.</strong> 적응 속도도 같음. 평소 잘하던 시니어가 도구도 가장 잘 씀</li><li>개발 조직의 BVC = <strong>주어진 안건을 기획·설계할 때 역량을 쏟는 것</strong>. 예: API나 데이터 가공 문의가 오면 workaround를 주든 API를 새로 만들든 해결해 주는 것</li></ul><p class="lead"><strong>TG 정리</strong> <span class="ts">01:11:21~01:12:52</span></p><ul class="pts"><li>AI Worker는 명확하지만 BVC는 보완이 필요함</li><li>밖에서는 같은 개념을 <strong>FDE(Forward Deployed Engineer)</strong>라고 부름. 삼성SDS·LG CNS도 자기 조직을 FDE라고 함. 그러나 회사마다 업무와 지향이 달라 정의도 다름</li><li>팀마다 정의가 다를 수밖에 없고 하나의 정의로 다 적용할 수는 없지만, <strong>공통 분모는 분명히 있어야 함</strong> → 그 관점으로 정리해 공유하겠다</li></ul></article></div></section><section class="sec fadeup" id="s4" style="animation-delay:0.30s"><div class="sec-head"><span class="sec-num">Part D</span><h2 class="sec-title">주제 ③ 기술이 흔해지면 고객은 왜 VNTG에 돈을 낼까</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">D1. DataForge팀 — "데이터포지 왜 필요해?"</h3><span class="ts">01:13:28~01:21:30</span></div><p class="lead">TG가 "이 주제로 가장 강하게 챌린지를 받는 팀"으로 DataForge를 먼저 지목했습니다.</p><h4 class="sub-h">현재 받는 챌린지</h4><ul class="pts"><li>고객은 데이터를 <strong>물·공기처럼</strong> 자연스럽게 쓰면서도 "DataForge가 왜 필요하냐"고 물음</li><li>지난 2~3년간 운영을 줄이려고 수집 체계를 거의 다 <strong>자동화</strong>함. PLC·MES·Level 2에서 무엇을 어떻게 가져와 저장할지 수작업으로 하던 일을, 고객이 정보만 입력하면 수집되는 구조로 바꿈 → <strong>"우리 할 일을 없애는 일"</strong></li><li>목적은 그렇게 아낀 힘으로 <strong>서비스를 다양하게 제공</strong>해 고객이 플랫폼을 잘 쓰게 하는 것. 그러나 고객 반응은 "네가 편하려고 만든 것 아니냐", 그리고 ROI는 별개 문제</li><li>고객은 "데이터를 다 만들었으니 최대 효율을 낼 방법을 제안하라"고 요구함. 기술적으로 어떤 데이터를 어떻게 보여 줄지는 알지만 <strong>현장 업무는 고객이 더 잘 알아</strong> 한계가 있음</li></ul><h4 class="sub-h">우리가 가진 가치</h4><ul class="pts"><li>외부 AI 기업들이 창원특수강에 와서 데이터 마트·정의·용어 사전·태그 체계를 보고 <strong>"이렇게 해 둔 회사는 없다"</strong>고 평가함</li><li>그런데 고객은 이를 당연하게 여기고 인식하지 못함. <strong>"데이터가 상품이고 돈이 된다"고 설명하기가 매우 어려움</strong></li><li>기술은 흔해져서, 지금의 자동화 시스템도 AI가 우리 제품을 보고 <strong>그대로 구현할 가능성이 큼</strong>. 그러면 기술 우위는 사라짐</li><li>그래서 남는 답: <strong>5년 이상 함께하며 쌓은 도메인 이해</strong>와 <strong>국제 표준 기반 표준화</strong>. AI·LLM 기업이 고객사에 들어가 처음 하는 일이 바로 표준화인데, 우리는 이미 해 둠</li><li>다만 "축적된 자산이니 잘 쓰시라" 이상으로 <strong>가치를 증명하는 방법</strong>이 아직 어려움</li></ul><h4 class="sub-h">질의응답 — 다른 업종에도 적용되나</h4><ul class="pts"><li>질문: 표준화 방법을 다른 업종 모델링에 쓸 수 있나? 창특 특화인가, 철강 업계 공통인가?</li><li>답: <strong>철강 제조 공장 전체를 다루는 국제 표준</strong>을 기반으로 철강 도메인에 적용함. 화학 등 다른 도메인은 국제 표준 용어를 다시 찾아 국내 용어와 매핑하고, 동의어·유사어를 가려 관계를 재정의해야 함. 대신 <strong>방법론과 기술은 그대로 재사용</strong>할 수 있음</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">D2. 데이터 에이전트 POC 소감 <span class="flag">화자 확인 필요</span></h3><span class="ts">01:21:30~01:23:24</span></div><ul class="pts"><li>크리스탈 님과 진행한 <strong>데이터 에이전트 POC</strong>를 다음 날 베스틸에 보고할 예정 <span class="flag">보고 대상 확인 필요</span></li><li>DataForge가 수집한 PLC 데이터, MES, SAP 데이터를 넣고 <strong>표준 정의만 해 주면 연결성(파이프라인)이 그려짐</strong></li><li>약 <strong>2개월 POC로 자연어 질의 정답률 약 80%</strong>. 나머지 20%를 높이는 것이 남은 과제</li><li>예전엔 수작업으로 하던 일이라 결과에 당혹스러웠음. 여기서 <strong>VNTG가 어떤 역할을 가져갈지</strong>가 핵심이며 <strong>위기감</strong>을 크게 느낌</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">D3. PC팀 — "만드는 건 누구나, 안정적으로 돌리는 건 아무도 못 한다"</h3><span class="ts">01:23:24~01:27:22</span></div><ul class="pts"><li>창특에서는 현업 팀이 <strong>Apps Script로 업무 자동화를 우후죽순 만들고</strong>, 올해 초 "통합 관리해 달라"고 넘겨 옴 <span class="flag">현업 팀명 확인 필요</span></li><li>세아·홀딩스 발표에서도 <strong>데이터는 실제로 VNTG가 만들어 줬는데</strong> 발표는 현업 성과로 나감. "VNTG와 친해지라"는 말이 나왔지만, 친해지려면 <strong>작업 전에 최소한 연락과 협의</strong>는 해 달라</li><li>팀 공통 의견: <strong>"만드는 건 누구나 하지만, 현장에서 안정적으로 돌아가게 하는 건 아무도 못 한다."</strong> 현장 설비와 연계된 팀으로서 이것이 고객에게 어필할 메리트</li><li>팀원 사례(타사 경험): 현업이 만든 시스템이 유지보수가 안 되자 결국 <strong>"돈 줄 테니 시스템으로 만들어 달라"</strong>고 함</li><li>운영1센터는 올해 초부터 <strong>창특 임원진·DT팀과 거버넌스</strong>를 논의 중. 관리·지원 역할에 초점을 맞춰 설득해야 함</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">D4. 정보보호팀 — 원스톱 대응</h3><span class="ts">01:28:26~01:30:59</span></div><ul class="pts"><li>그룹사에 별도 정보보호 조직이 없어, VNTG 정보보호팀의 <strong>전문성과 책임</strong>, 인프라 도메인 지식이 가치</li><li>고객은 정보보호팀이 아니라 <strong>"VNTG"에 요청</strong>함. "이거 위험한 것 같은데 확인해 달라" → 정보보호팀이 각 운영팀·인프라팀에 다 연락해야 함</li><li>고객이 원하는 것: <strong>VNTG 어느 팀에 연락해도 내부에서 알아서 확인해 완결된 답을 주는 것</strong></li><li>그러나 내부 협업은 다른 부서 업무를 늘리므로 "어렵다, 해당 부서에 직접 요청하라"는 답이 나오게 됨</li><li>정리: 고객이 돈을 낼 이유는 <strong>하나의 요구사항에 VNTG 전체가 답하는 원스톱 대응</strong></li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">D5. 비즈니스 관리 팀 — 신뢰 <span class="flag">팀명 확인 필요</span></h3><span class="ts">01:30:59~01:32:58</span></div><ul class="pts"><li>가장 큰 가치는 <strong>신뢰</strong></li><li>현업이 AI 결과를 던지며 판단을 요구할 때, 맥락·가정·경험으로 해석해 <strong>피드백과 해결 방안을 제시</strong>함</li><li>해결하지 못할 때는 <strong>못 하는 이유를 명확히 전달</strong>함 → "문제를 해결하는 주체"로 신뢰를 얻는 것</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">D6. TG — AI 멘토링 사례와 "패키징"</h3><span class="ts">01:32:58~01:37:26</span></div><ul class="pts"><li>작년 "AI 웨이브" 중 하나인 <strong>AI 멘토링</strong>: 고객사 대표에게 AI 리터러시를 높여 주는 프로그램. 대표가 알아야 투자·도입 판단을 할 수 있다는 취지</li><li>작년 2~3명으로 시작했는데 지금은 <strong>홀딩스 계열 대부분</strong>으로 퍼졌고, 전날 연락 온 대표는 본인이 직접 받겠다고 함</li><li>많이 받는 고객들이라 <strong>무료로 하려 했는데 모두 돈을 내겠다</strong>고 함. 안 받으면 오히려 오해를 산다는 것. 이태성 사장은 <strong>"아예 상품화하라"</strong>고 함</li><li>결론: 필요하면 돈을 냄. ERP·MES도 필요함. 다만 <strong>물·공기는 필요해도 돈을 내지 않는다</strong>(DataForge 측 비유 인용) → <strong>패키징, 즉 포장을 잘해야</strong> 함</li><li>멘토링도 돈을 받을 판인데, 그보다 훨씬 직접적인 필요가 있는 DataForge의 필요성을 인식시키지 못한 것은 <strong>DataForge팀의 문제가 아니라 회사가 포장을 못 한 것</strong>. 그래서 <strong>데이터 TF</strong>를 하는 것이고, 고객 필요에 맞게 "코팅"을 잘해야 함</li><li>AI 멘토링은 유료화를 검토 중</li></ul></article></div></section><section class="sec fadeup" id="s5" style="animation-delay:0.35s"><div class="sec-head"><span class="sec-num">Part E</span><h2 class="sec-title">주제 ④ 회사에 대한 제안 — 놓치고 있는 것</h2></div><div class="cards"><article class="card"><p class="lead">TG는 "가장 중요한 주제. 구성원이 아니라 <strong>회사가 바뀌어야 할 부분</strong>을 팀을 대표해 말해 달라"고 요청했습니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">E1. 시장 메시지의 평준화 <span class="flag">팀명 확인 필요</span></h3><span class="ts">01:38:25~01:39:53</span></div><ul class="pts"><li>대외 행사를 다니며 느낀 점: <strong>회사들이 평준화</strong>되고 있음. 다 같은 에이전트 이야기, 다 같은 <strong>"우리는 다 할 수 있다"</strong> 메시지</li><li>그 안에서 "안 된다"만 말하면 <strong>고객은 이탈</strong>할 수밖에 없음</li><li>AI를 잘 쓰는 것과 판단을 잘하는 것은 다름. 에이전트를 많이 학습시킬수록 편해지지만 <strong>고객도 똑같이 학습하면 우리가 필요 없어짐</strong> → 방향을 다시 찾아야 함</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">E2. MDM과 멀티 에이전트 체계 <span class="flag">화자 확인 필요</span></h3><span class="ts">01:40:14~01:44:32</span></div><ul class="pts"><li>제안: VNTG는 창특·베스틸·재강의 ERP·MES 데이터를 <strong>마음만 먹으면 볼 수 있는 위치</strong>. 그런데 왜 <strong>MDM</strong>을 추진하지 않나? 표준·MDM·구성 요소 간 관계 정의만 제공하면 <strong>일반 LLM으로도 질의 결과</strong>를 얻을 수 있음</li><li>데이터 에이전트 POC와도 연결됨. DataForge 입장에서는 현재 방식과 <strong>방향성이 다르다</strong>는 의견</li><li>현재 POC는 <strong>홀딩스가 자체 테스트한 결과를 검증해 달라는 형태</strong>라 방법 자체에 문제가 있음. 실제 사업화 때는 전문가를 투입하고 <strong>단일 에이전트가 아닌 멀티 에이전트</strong> 구조로 시야를 바꿔 시작하자는 제안</li></ul><p class="lead"><strong>TG 코멘트</strong> — 같은 생각이고 1년 전부터 해 온 이야기입니다. 데이터 중요성보다는 <strong>에이전트 때문에 다시 데이터 문제로</strong> 돌아오고 있습니다. 홀딩스에서도 <strong>에이전트 플랫폼을 어떻게 할 거냐</strong>는 이야기가 나옵니다. 이제 때가 됐고, VNTG가 어디까지 할 수 있을지가 관건입니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">E3. 데이터 오너십과 통합 시스템 <span class="flag">팀명 확인 필요</span></h3><span class="ts">01:44:41~01:47:35</span></div><ul class="pts"><li>운영하다 보면 <strong>데이터가 우리 것인 양 오해</strong>하는데, 데이터는 우리 것이 아님</li><li><strong>통합 인사 시스템이 없어</strong> 팀이 어렵게 대응하며 많은 리스크가 생김. 홀딩스가 만들지 않는다고 손 놓을 것이 아니라 <strong>VNTG가 주도적으로 만들어 제공</strong>해 회사 가치를 높이자</li><li>현업의 다양한 니즈가 끊임없이 들어오는데 이를 관리해 줄 체계가 없음</li><li>API로 돈을 버는 방향도 거론됐지만, <strong>베스틸 데이터를 베스틸에 주면서 돈을 받을 수 있나</strong>라는 의문도 있음</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">E4. DataForge팀 — AI-Ready 데이터 풀과 샌드박스 <span class="flag">화자 확인 필요</span></h3><span class="ts">01:47:35~01:53:44</span></div><ul class="pts"><li>팀에서 가장 많이 나온 이야기: 회사가 놓치는 것은 <strong>AI가 쓸 수 있는 데이터 기반</strong>. 그러면 <strong>연결·거버넌스 수요</strong>가 당연히 생김</li><li>VNTG가 가져가야 할 것<ul class="sub"><li>AI 에이전트가 <strong>회사 보안 규정을 지키며 데이터를 끌어 쓸 수 있는 안전한 데이터 풀</strong></li><li>고객이 원하는 것을 직접 만들어 보고 <strong>실행·테스트할 수 있는 환경(샌드박스)</strong></li></ul></li><li>사례: 10월부터 PM을 맡은 실증 사업에서 내부 기안 검토부터 RFP까지 팀이 지원함 <span class="flag">사업명 확인 필요</span><ul class="sub"><li>고객은 클라우드 도입은 부담스러워하면서, 개별 소스·SAP·히스토리언에 있는 데이터를 <strong>클릭 한 번에 모아 보여 주고 마트까지 연계되는</strong>(MDM 유사) 시스템을 원함</li><li>재강 계열은 AI 사용을 권장·교육하다 보니, 현업이 <strong>원하는 데이터를 아무 데나 끌고 가 개발</strong>하는 시스템을 원함. 불가하다고 하면 "계약서에 요구사항이 변할 수 있다고 하지 않았느냐"는 반응</li><li>창특은 <strong>자사 직원도 자사 데이터를 함부로 볼 수 없다는 규정</strong>이 있음. OT망의 실시간 데이터를 누가 허가하고 누가 책임지느냐를 먼저 제기하자, 권한·책임 체계 안에서 <strong>제한된 범위로 허용</strong>하는 방향으로 정리됨</li></ul></li><li>앱이 우후죽순 생겨 이미 감당이 안 되고, 회사는 Gemini만 쓰라고 하지만 개인이 다른 AI를 구매해 쓰는 경우도 있어 <strong>학습 데이터 문제</strong>가 우려됨</li><li>제안: <strong>홀딩스가 계열사 공통 AI 가이드라인</strong>을 정하고 각 계열사가 구체화·수행해야 함. 그것이 안 되면 <strong>VNTG가 가이드라인과 틀을 잡아</strong> 들어가는 역할이 필요함</li></ul><p class="lead"><strong>TG 코멘트</strong> — 아주 잘 맞는 이야기이니 <strong>회사에 정식 제안</strong>해 달라. 오래 이야기해 온 주제인데, 예전엔 꺼내면 "얼마 드냐"는 질문에 접혔지만 이제는 <strong>상위 주제로 올라왔습니다.</strong> 데이터 거버넌스, 에이전트 플랫폼, 데이터 플랫폼, 관련 컴플라이언스까지 모두 연결되어 <strong>이제 수면 위로 올라왔습니다.</strong></p></article><article class="card"><div class="card-head"><h3 class="card-title">E5. HR(지원부서) — 개발자 채용</h3><span class="ts">01:54:56~01:57:48</span></div><ul class="pts"><li>대부분 비슷한 의견. 차이점은 <strong>지원부서로서 AI 수준을 어디까지 올려야 하나</strong></li><li>팀원들은 AI를 잘 쓰지만, 에이전틱 AI를 넘어 조직이 처음 지향한 <strong>AI 네이티브</strong> 수준까지 모두가 가기는 어려움</li><li>차라리 <strong>HR 도메인 개발 경험이 있는 개발자를 채용</strong>해 도움받는 것이 업무 효율에 더 빠를 것</li></ul><p class="lead"><strong>TG 코멘트</strong> — 정규 채용은 무리가 있을 수 있습니다. 투자 검토했던 회사(최근 합병 기사) 사례를 소개하겠다고 했습니다. 기업의 재무(FI) 등 부서에 <strong>주 1회 방문해 필요한 에이전트를 대신 개발</strong>해 주는 방식으로, 그들도 스스로를 FDE라고 부릅니다. GS그룹·코오롱 등에서 진행했습니다.</p></article><article class="card"><div class="card-head"><h3 class="card-title">E6. 현장직의 AI 활용</h3><span class="ts">01:58:15~01:59:24</span></div><ul class="pts"><li>질문: 사무직 말고 <strong>공장 현장 근로자</strong>는 AI를 어떻게 쓰나?</li><li>답(PC 관련 팀): 작업 환경상 쓰기 어렵고 보안 제약이 있으며 고령화도 심함. 제공해도 쓰지 않을 것. 요구는 주로 <strong>"HMI나 Level 2에 만들어 주고 버튼만 누르게 해 달라"</strong>. 현장에서 AI를 직접 활용하는 경우는 거의 없음</li></ul></article></div></section><section class="sec fadeup" id="s6" style="animation-delay:0.40s"><div class="sec-head"><span class="sec-num">Part F</span><h2 class="sec-title">마무리와 후속 조치</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">F1. TG 마무리</h3><span class="ts">01:59:59~02:00:42</span></div><ul class="pts"><li>의견이 매우 도움이 됐다. 종합 정리가 아니라 마지막 질문과 연결해 한 가지만 강조</li><li>우리는 <strong>AX를 기반으로 비즈니스</strong>를 할 것이고, <strong>AX TF</strong>를 만든 이유도 그것. 그러려면 <strong>직원들의 사내 AI 경험이 많아야</strong> 함. AI Worker 등도 그 맥락</li><li>이어서 식사 자리로 이동</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">F2. 후속 조치 — Gemini 「다음 단계」 기준</h3></div><div class="tbl-wrap"><table><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody><tr><td class="k"><strong>피드백 공유</strong></td><td>AI 도입 현실과 업무 방식 변화에 대한 팀별 구체 의견을 정리해 공유</td></tr><tr><td class="k"><strong>보상 기준</strong></td><td>AI 활용으로 바뀐 업무 환경에 맞는 평가·보상 기준 마련</td></tr><tr><td class="k"><strong>경력 경로</strong></td><td>AI 시대에 맞는 직무 로드맵과 경력 개발 방향 제시</td></tr><tr><td class="k"><strong>BVC 정의</strong></td><td>팀별로 다른 BVC 정의를 검토하고 공통 분모를 정리해 공유</td></tr><tr><td class="k"><strong>도메인 모델링</strong></td><td>철강 표준 기반 방법론을 활용해 도메인별 모델링 방안 수립</td></tr><tr><td class="k"><strong>거버넌스</strong></td><td>우후죽순 생기는 자동화 시스템을 관리·지원하는 거버넌스 마련</td></tr><tr><td class="k"><strong>AI 플랫폼 제안</strong></td><td>데이터 거버넌스와 AI 플랫폼 구축 가이드라인을 작성해 전사 제안</td></tr><tr><td class="k"><strong>개발자 채용</strong></td><td>AI 개발 역량 보완을 위한 외부 개발자 채용 방안 검토</td></tr><tr><td class="k"><strong>외부 사례 공유</strong></td><td>부서별 에이전트 개발을 대행하는 외부(FDE) 사례 조사·공유</td></tr></tbody></table></div><p class="lead">DataForge팀과 직접 관련된 항목은 <strong>도메인 모델링, 거버넌스, AI 플랫폼 제안</strong>입니다. 특히 AI 플랫폼 제안은 TG가 "회사에 정식 제안해 달라"고 요청한 사안입니다.</p></article></div></section><section class="sec fadeup" id="s7" style="animation-delay:0.45s"><div class="sec-head"><span class="sec-num">Part G</span><h2 class="sec-title">DataForge팀 취합본과의 비교</h2></div><div class="cards"><article class="card"><div class="card-head"><h3 class="card-title">G1. 전사 논의와 일치한 부분</h3></div><div class="tbl-wrap"><table><thead><tr><th>DataForge팀 취합본</th><th>QT 전사 논의</th></tr></thead><tbody><tr><td class="k">판단과 책임은 사람에게 (거의 전원)</td><td>전 부서 공통. 다만 <strong>기준·체계·보상 없이 책임만 개인에게 쏠린다</strong>는 우려가 더해짐</td></tr><tr><td class="k">AI 결과물 검증과 데이터 품질 관리가 더 중요해짐</td><td>플랫폼인프라·DX서비스·MES팀 모두 <strong>검증 병목과 검증 시간 증가</strong>를 지적. TG도 "검증이 병목"이라고 인정</td></tr><tr><td class="k">수집·적재·파이프라인 자체는 대체될 수 있음</td><td>DataForge 발언과 데이터 에이전트 POC(2개월, 정답률 약 80%)가 이를 직접 보여 줌</td></tr><tr><td class="k">남는 가치: 도메인 이해, AI-Ready 데이터, 끝까지 책임지는 신뢰, 축적 자산</td><td>29개 중 28개 부서가 "끝까지 책임지는 파트너". PC팀 "안정적으로 돌리는 힘", 정보보호팀 "원스톱", 비즈니스 관리 팀 "신뢰"</td></tr><tr><td class="k">권한·보안·거버넌스가 중요해짐</td><td>ERP 데이터 접근 논쟁, Apps Script 난립, 창특 데이터 열람 규정 등 <strong>전사 공통 이슈</strong>로 확인</td></tr><tr><td class="k">M/M 계약은 생산성 향상을 손실로 바꿈 (소수 의견)</td><td>전사적으로는 <strong>25개 부서가 지적한 다수 의견</strong>. ERP 3팀이 가장 구체적으로 제기</td></tr><tr><td class="k">평가·보상 기준, 주니어 육성 (다수 질문)</td><td>22개 부서가 요구. SAP 운영 팀의 "모듈 확장 노력에 대한 보상" 사례</td></tr><tr><td class="k">AI Worker·BVC 이해가 제각각</td><td>약 20개 부서 공통. TG가 <strong>공통 분모 정리</strong>를 약속</td></tr></tbody></table></div></article><article class="card"><div class="card-head"><h3 class="card-title">G2. 전사 논의로 새로 확장된 부분</h3></div><ul class="pts"><li><strong>"물·공기" 문제는 회사의 패키징 문제</strong>: TG가 DataForge의 가치 인식 문제를 팀이 아닌 회사 책임으로 규정하고, 데이터 TF를 그 해법으로 언급함</li><li><strong>AI 멘토링 유료화 사례</strong>: 필요성을 체감하면 고객은 돈을 냄 → DataForge도 "필요를 체감시키는 포장"이 관건</li><li><strong>자동화 난립에 대한 거버넌스 수요</strong>: 현업이 AI로 만든 결과물의 시스템화·유지보수(취합본 소수 의견 "고객이 만든 개인용 서비스의 시스템화")가 PC팀·운영1센터 사례로 구체화됨</li><li><strong>인증·권한 기반 API 제공</strong>: 원본 보호 + 데이터 레이크 복제 + 읽기 권한 API는 DataForge의 "AI 서빙 레이어" 방향과 맞닿아 있음</li><li><strong>홀딩스 AI 가이드라인</strong>: 취합본의 "AI 사용 가이드와 보안 기준" 질문이 그룹 차원의 제안으로 확대됨</li></ul></article><article class="card"><div class="card-head"><h3 class="card-title">G3. DataForge팀 시사점</h3></div><ul class="pts"><li><strong>포지셔닝:</strong> 수집 플랫폼이 아니라 <strong>AI가 안전하게 쓸 수 있는 데이터 풀 + 샌드박스 + 거버넌스</strong>로 설명해야 함. 2027 재계약 비용 압박(DF TFT 1차 회의 기준) 상황에서 "AI 서빙 레이어" 재정의와 같은 방향</li><li><strong>증명 수단:</strong> 표준화 자산의 가치를 말로 설득하기보다 <strong>데이터 에이전트 POC 결과</strong>처럼 "표준 정의가 있으면 연결이 자동으로 그려진다"는 것을 보여 주는 방식이 효과적</li><li><strong>확장성:</strong> 철강 표준 기반 방법론을 <strong>다른 도메인에 재사용할 수 있는 패키지</strong>로 정리 (후속 조치「도메인 모델링」과 직결)</li><li><strong>정식 제안:</strong> TG가 요청한 <strong>데이터 거버넌스·AI 플랫폼 가이드라인</strong>을 DataForge 관점에서 초안으로 준비할 필요 <span class="flag">담당·일정 확인 필요</span></li></ul></article></div></section>
+<footer>전사 원문은 <span class="ts">TG팀장QT_전사.txt</span>(문단 정리본)와 <span class="ts">TG팀장QT_전사_타임스탬프.txt</span>(시각 표기본)를 참고하세요. Gemini 회의록의 「다음 단계」는 Google Drive 원문을 기준으로 옮겼습니다.</footer>
+</main>
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.sections a'));
+  var targets = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function sync(){
+    var line = window.scrollY + 150, idx = 0;
+    targets.forEach(function(t, i){ if (t && t.offsetTop <= line) idx = i; });
+    links.forEach(function(a, i){ a.classList.toggle('active', i === idx); });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function(){ sync(); ticking = false; });
+  }, {passive:true});
+  sync();
+})();
+</script>
+</body>
+</html>
