@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>피지컬 AI 추진계획</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#1b2230; --muted:#5b6575; --line:#d9dee6; --soft:#eef1f5;
+  --accent:#c2410c; --accent-soft:#fde7dc;
+  --c-plan:#64748b; --c-base:#2563eb; --c-model:#0d9488; --c-apply:#c2410c; --c-final:#7c3aed;
+  --lane-a:#fff4ec; --lane-b:#ecf3ff; --lane-c:#e9f7f5; --lane-d:#fbefef;
+  --ok:#15803d; --warn:#b91c1c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11151c; --panel:#181e27; --ink:#e6e9ef; --muted:#9aa4b4; --line:#2b3442; --soft:#202836;
+    --accent:#fb923c; --accent-soft:#3a2418;
+    --c-plan:#94a3b8; --c-base:#60a5fa; --c-model:#2dd4bf; --c-apply:#fb923c; --c-final:#a78bfa;
+    --lane-a:#2a2018; --lane-b:#18233a; --lane-c:#142a28; --lane-d:#2c1a1c;
+    --ok:#4ade80; --warn:#f87171;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11151c; --panel:#181e27; --ink:#e6e9ef; --muted:#9aa4b4; --line:#2b3442; --soft:#202836;
+  --accent:#fb923c; --accent-soft:#3a2418;
+  --c-plan:#94a3b8; --c-base:#60a5fa; --c-model:#2dd4bf; --c-apply:#fb923c; --c-final:#a78bfa;
+  --lane-a:#2a2018; --lane-b:#18233a; --lane-c:#142a28; --lane-d:#2c1a1c;
+  --ok:#4ade80; --warn:#f87171;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  line-height:1.6;font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header.hero{background:var(--panel);border-bottom:1px solid var(--line);padding:36px 0 28px}
+.hero .eyebrow{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.08em}
+.hero h1{margin:6px 0 10px;font-size:clamp(22px,3.4vw,32px);line-height:1.3}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--muted)}
+.chip b{color:var(--ink)}
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:4px;overflow-x:auto;padding:8px 16px;scrollbar-width:thin}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:13px;padding:5px 10px;border-radius:6px}
+nav.toc a:hover{background:var(--soft);color:var(--ink)}
+.theme-btn{margin-left:auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap}
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;margin:20px 0}
+h2{margin:0 0 16px;font-size:21px;display:flex;align-items:center;gap:10px}
+h2 .num{background:var(--accent);color:#fff;border-radius:6px;font-size:14px;padding:1px 9px}
+h3{font-size:17px;margin:26px 0 10px}
+h4{font-size:15px;margin:18px 0 8px;color:var(--muted)}
+p{margin:8px 0}
+.note{background:var(--accent-soft);border-left:4px solid var(--accent);padding:10px 14px;border-radius:6px;margin:12px 0;font-size:14px}
+.muted{color:var(--muted);font-size:13px}
+.tbl{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600;white-space:nowrap}
+td.c{text-align:center;white-space:nowrap}
+.tag{display:inline-block;border-radius:4px;padding:0 7px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-plan{background:color-mix(in srgb,var(--c-plan) 18%,transparent);color:var(--c-plan)}
+.t-base{background:color-mix(in srgb,var(--c-base) 18%,transparent);color:var(--c-base)}
+.t-model{background:color-mix(in srgb,var(--c-model) 18%,transparent);color:var(--c-model)}
+.t-apply{background:color-mix(in srgb,var(--c-apply) 18%,transparent);color:var(--c-apply)}
+.t-final{background:color-mix(in srgb,var(--c-final) 18%,transparent);color:var(--c-final)}
+.lv-mid{color:var(--c-base);font-weight:600}.lv-hi{color:var(--c-apply);font-weight:600}.lv-top{color:var(--warn);font-weight:700}
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--soft)}
+.pcard .k{font-weight:700;margin-bottom:4px}
+.pcard .k span{color:var(--accent);margin-right:6px}
+/* diagrams */
+.diagram{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px;margin:12px 0}
+.diagram svg{display:block;min-width:820px;width:100%;height:auto}
+svg text{font-family:inherit;fill:var(--ink)}
+svg .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+svg .t1{font-size:14px;font-weight:700}
+svg .t2{font-size:12px;fill:var(--muted)}
+svg .lbl{font-size:11.5px;fill:var(--muted)}
+svg .lane-t{font-size:12px;font-weight:700;fill:var(--muted)}
+svg .arr{stroke:var(--muted);stroke-width:1.6;fill:none}
+svg .arr-d{stroke:var(--accent);stroke-width:1.6;fill:none;stroke-dasharray:6 4}
+svg .s-plan{stroke:var(--c-plan);stroke-width:2}
+svg .s-base{stroke:var(--c-base);stroke-width:2}
+svg .s-model{stroke:var(--c-model);stroke-width:2}
+svg .s-apply{stroke:var(--c-apply);stroke-width:2}
+svg .s-final{stroke:var(--c-final);stroke-width:2}
+svg .s-warn{stroke:var(--warn);stroke-width:2}
+svg .gate{fill:var(--accent);font-size:11px;font-weight:700}
+svg .gate-bg{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1}
+/* step flow */
+.flow{display:flex;flex-wrap:wrap;gap:8px 0;align-items:stretch;margin:12px 0 6px}
+.step{position:relative;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-right:26px;min-width:120px;max-width:200px;font-size:13px}
+.step b{display:block;font-size:13.5px}
+.step small{color:var(--muted)}
+.step::after{content:"";position:absolute;right:-20px;top:50%;width:14px;height:2px;background:var(--muted)}
+.step::before{content:"";position:absolute;right:-21px;top:calc(50% - 4px);border-left:7px solid var(--muted);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.step.par{border-style:dashed}
+.step.par .pt{display:inline-block;font-size:11px;color:var(--accent);font-weight:700}
+.step.gate{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700;min-width:auto;display:flex;align-items:center}
+.step.gate::after,.step.gate::before{display:none}
+.phase{border-left:4px solid var(--line);padding-left:16px;margin:28px 0}
+.phase.plan{border-color:var(--c-plan)}.phase.base{border-color:var(--c-base)}.phase.model{border-color:var(--c-model)}.phase.apply{border-color:var(--c-apply)}.phase.final{border-color:var(--c-final)}
+.phase h3{margin-top:0}
+.phase h3 .per{font-size:13px;color:var(--muted);font-weight:500;margin-left:8px}
+/* gantt */
+.gantt{overflow-x:auto;margin:12px 0}
+.g-inner{min-width:880px}
+.g-row{display:grid;grid-template-columns:190px 1fr;align-items:center;border-bottom:1px solid var(--line);min-height:34px}
+.g-row.head{border-bottom:2px solid var(--line);min-height:auto}
+.g-name{font-size:13px;padding:4px 8px 4px 0}
+.g-name .sec{font-size:11px;color:var(--muted);display:block}
+.g-track{position:relative;height:34px;background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(100%/51*3 - 1px),var(--line) calc(100%/51*3 - 1px),var(--line) calc(100%/51*3))}
+.g-years{display:grid;grid-template-columns:3fr 12fr 12fr 12fr 12fr;font-size:12px;font-weight:700;text-align:center}
+.g-years div{border-left:1px solid var(--line);padding:4px 0}
+.g-q{display:grid;grid-template-columns:repeat(17,1fr);font-size:10.5px;color:var(--muted);text-align:center}
+.g-q div{border-left:1px solid var(--line)}
+.bar{position:absolute;top:7px;height:20px;border-radius:5px;color:#fff;font-size:11px;line-height:20px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b-plan{background:var(--c-plan)}.b-base{background:var(--c-base)}.b-model{background:var(--c-model)}.b-apply{background:var(--c-apply)}.b-final{background:var(--c-final)}
+.ms{position:absolute;top:9px;width:14px;height:14px;transform:translateX(-50%) rotate(45deg);background:var(--accent);border:2px solid var(--panel)}
+.ms-l{position:absolute;top:-1px;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}
+.lv{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px;background:var(--soft)}
+.lv b{display:block;font-size:14px}
+.lv.on{border-color:var(--accent);background:var(--accent-soft)}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 0 40px}
+@media (max-width:640px){
+  section{padding:18px 14px}
+  .step{max-width:none;flex:1 1 100%;margin-right:0;margin-bottom:18px}
+  .step::after{right:auto;left:50%;top:auto;bottom:-14px;width:2px;height:10px}
+  .step::before{right:auto;left:calc(50% - 4px);top:auto;bottom:-19px;border-top:7px solid var(--muted);border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:0}
+}
+@media print{
+  nav.toc{display:none} body{background:#fff}
+  section{break-inside:avoid-page;border:none;padding:10px 0}
+  .diagram,.gantt{overflow:visible}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">PHYSICAL AI ROADMAP</div>
+    <h1>철강공장 피지컬 AI 도입 추진계획<br>제강 → 압연 → 품질 관리</h1>
+    <p class="muted">데이터 계보를 먼저 확보하고, AI 개입 수준을 모니터링에서 제한적 자율제어까지 단계적으로 높이는 51개월 추진 계획입니다.</p>
+    <div class="meta">
+      <span class="chip">과제 기간 <b>2026.10 ~ 2030.12</b></span>
+      <span class="chip">총 <b>51개월</b></span>
+      <span class="chip">범위 <b>EAF·LF·VD → 연주 → 가열로·압연 → 정정·품질</b></span>
+      <span class="chip">작성일 <b>2026-10-21</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#s1">1. 추진 원칙</a>
+    <a href="#s2">2. 전체 흐름</a>
+    <a href="#s3">3. 일정표</a>
+    <a href="#s4">4. 업무 연계도</a>
+    <a href="#s5">5. 단계별 상세</a>
+    <a href="#s6">6. 안전 제어 흐름</a>
+    <a href="#s7">7. 실패 예방</a>
+    <button class="theme-btn" id="themeBtn" type="button">테마 전환</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section id="s1">
+  <h2><span class="num">1</span>추진 원칙</h2>
+  <div class="principles">
+    <div class="pcard"><div class="k"><span>①</span>데이터 계보 우선</div>Heat → Billet/Bloom → 압연 Lot/Coil → 품질 시험 결과의 추적 체계를 가장 먼저 확보합니다. 계보가 없으면 공정 간 AI 학습 데이터를 만들 수 없습니다.</div>
+    <div class="pcard"><div class="k"><span>②</span>AI 개입 수준의 단계적 상향</div>모니터링(L0) → 예측(L1) → 권고(L2) → 승인형 제어(L3) → 제한적 자율제어(L4) 순서로 올립니다. 설비 쓰기 권한은 마지막에 부여합니다.</div>
+    <div class="pcard"><div class="k"><span>③</span>품질 → 압연 → 제강 순 공략</div>리스크가 낮고 성과가 빠른 품질부터 시작합니다. 품질 단계에서 만든 라벨이 상위 공정 모델의 정답 데이터가 됩니다.</div>
+    <div class="pcard"><div class="k"><span>④</span>안전장치는 제어보다 먼저</div>입력 검증 게이트, 출력 제한, 기능 차단(Kill switch), 수동 롤백이 갖춰지기 전에는 폐루프 제어를 하지 않습니다.</div>
+  </div>
+  <div class="note">일정은 달력 연도 기준입니다. 협약상 차년도 구분이 다르면 해당 기준에 맞춰 조정합니다.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2><span class="num">2</span>전체 단계 흐름도</h2>
+  <p class="muted">실선은 선후행 관계, 주황 표식은 다음 단계로 넘어가기 위한 완료 게이트입니다. 같은 열에 위·아래로 놓인 단계는 병행 추진합니다.</p>
+  <div class="diagram">
+  <svg viewBox="0 0 1100 270" role="img" aria-label="전체 단계 흐름도">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+      <marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+    </defs>
+    <!-- arrows -->
+    <path class="arr" d="M132 135 L158 135" marker-end="url(#ah)"/>
+    <path class="arr" d="M290 135 C305 135 305 75 326 75" marker-end="url(#ah)"/>
+    <path class="arr" d="M290 135 C305 135 305 195 326 195" marker-end="url(#ah)"/>
+    <path class="arr" d="M458 75 L494 75" marker-end="url(#ah)"/>
+    <path class="arr" d="M458 195 C476 195 476 90 494 90" marker-end="url(#ah)"/>
+    <path class="arr" d="M560 108 L560 160" marker-end="url(#ah)"/>
+    <path class="arr" d="M626 195 C645 195 645 135 664 135" marker-end="url(#ah)"/>
+    <path class="arr" d="M796 135 L828 135" marker-end="url(#ah)"/>
+    <path class="arr" d="M960 135 L984 135" marker-end="url(#ah)"/>
+    <!-- nodes -->
+    <g><rect class="box s-plan" x="10" y="102" width="122" height="66" rx="8"/><text class="t1" x="71" y="130" text-anchor="middle">0. 추진체계</text><text class="t2" x="71" y="150" text-anchor="middle">2026.10~12</text></g>
+    <g><rect class="box s-plan" x="160" y="102" width="130" height="66" rx="8"/><text class="t1" x="225" y="130" text-anchor="middle">1. 현황 진단</text><text class="t2" x="225" y="150" text-anchor="middle">2026.11~2027.03</text></g>
+    <g><rect class="box s-base" x="328" y="42" width="130" height="66" rx="8"/><text class="t1" x="393" y="70" text-anchor="middle">2. 데이터 기반</text><text class="t2" x="393" y="90" text-anchor="middle">2027.01~12</text></g>
+    <g><rect class="box s-base" x="328" y="162" width="130" height="66" rx="8"/><text class="t1" x="393" y="190" text-anchor="middle">3. AI 인프라·MLOps</text><text class="t2" x="393" y="210" text-anchor="middle">2027.04~12</text></g>
+    <g><rect class="box s-model" x="496" y="42" width="130" height="66" rx="8"/><text class="t1" x="561" y="70" text-anchor="middle">4. 예측·권고 모델</text><text class="t2" x="561" y="90" text-anchor="middle">2027.07~2029.03</text></g>
+    <g><rect class="box s-model" x="496" y="162" width="130" height="66" rx="8"/><text class="t1" x="561" y="190" text-anchor="middle">5. 트윈·Shadow</text><text class="t2" x="561" y="210" text-anchor="middle">2028.01~2029.06</text></g>
+    <g><rect class="box s-apply" x="666" y="102" width="130" height="66" rx="8"/><text class="t1" x="731" y="130" text-anchor="middle">6. 폐루프 제어</text><text class="t2" x="731" y="150" text-anchor="middle">2029.01~2030.09</text></g>
+    <g><rect class="box s-apply" x="830" y="102" width="130" height="66" rx="8"/><text class="t1" x="895" y="130" text-anchor="middle">7. 확산·로봇화</text><text class="t2" x="895" y="150" text-anchor="middle">2029.10~2030.12</text></g>
+    <g><rect class="box s-final" x="986" y="102" width="104" height="66" rx="8"/><text class="t1" x="1038" y="130" text-anchor="middle">최종 평가</text><text class="t2" x="1038" y="150" text-anchor="middle">2030.12</text></g>
+    <!-- gates -->
+    <g><rect class="gate-bg" x="120" y="74" width="50" height="20" rx="4"/><text class="gate" x="145" y="88" text-anchor="middle">G1</text></g>
+    <g><rect class="gate-bg" x="272" y="38" width="50" height="20" rx="4"/><text class="gate" x="297" y="52" text-anchor="middle">G2</text></g>
+    <g><rect class="gate-bg" x="452" y="14" width="50" height="20" rx="4"/><text class="gate" x="477" y="28" text-anchor="middle">G3</text></g>
+    <g><rect class="gate-bg" x="452" y="232" width="50" height="20" rx="4"/><text class="gate" x="477" y="246" text-anchor="middle">G4</text></g>
+    <g><rect class="gate-bg" x="568" y="124" width="50" height="20" rx="4"/><text class="gate" x="593" y="138" text-anchor="middle">G5</text></g>
+    <g><rect class="gate-bg" x="630" y="210" width="50" height="20" rx="4"/><text class="gate" x="655" y="224" text-anchor="middle">G6</text></g>
+    <g><rect class="gate-bg" x="788" y="74" width="50" height="20" rx="4"/><text class="gate" x="813" y="88" text-anchor="middle">G7</text></g>
+    <g><rect class="gate-bg" x="948" y="74" width="50" height="20" rx="4"/><text class="gate" x="973" y="88" text-anchor="middle">G8</text></g>
+  </svg>
+  </div>
+
+  <h3>단계 요약</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>단계</th><th>명칭</th><th>기간</th><th>핵심 목표</th><th>완료 게이트</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="tag t-plan">0</span></td><td>추진체계·범위 정의</td><td class="c">2026.10 ~ 2026.12</td><td>유스케이스·KPI·안전 원칙 확정</td><td><b>G1</b> 우선 유스케이스 Top 5, KPI 합의</td></tr>
+      <tr><td class="c"><span class="tag t-plan">1</span></td><td>현황 진단</td><td class="c">2026.11 ~ 2027.03</td><td>공정·설비·데이터·네트워크 As-Is 파악</td><td><b>G2</b> 데이터 가용성 맵, Gap 분석서</td></tr>
+      <tr><td class="c"><span class="tag t-base">2</span></td><td>데이터 기반 구축</td><td class="c">2027.01 ~ 2027.12</td><td>수집·계보·데이터 품질 체계</td><td><b>G3</b> Heat–제품 매칭률 95% 이상</td></tr>
+      <tr><td class="c"><span class="tag t-base">3</span></td><td>AI 인프라·MLOps</td><td class="c">2027.04 ~ 2027.12</td><td>온프렘 학습·배포·모니터링</td><td><b>G4</b> 모델 배포·롤백 시연</td></tr>
+      <tr><td class="c"><span class="tag t-model">4</span></td><td>예측·권고 모델</td><td class="c">2027.07 ~ 2029.03</td><td>품질 → 압연 → 제강 Open-loop 모델</td><td><b>G5</b> 공정별 Shadow 정확도 목표 달성</td></tr>
+      <tr><td class="c"><span class="tag t-model">5</span></td><td>디지털 트윈·Shadow 검증</td><td class="c">2028.01 ~ 2029.06</td><td>시뮬레이션·병행 운영 검증</td><td><b>G6</b> 안전성 검증 통과</td></tr>
+      <tr><td class="c"><span class="tag t-apply">6</span></td><td>폐루프 제어</td><td class="c">2029.01 ~ 2030.09</td><td>L2 권고 → L3 승인형 → L4 제한 자율</td><td><b>G7</b> L3 운영 안정화</td></tr>
+      <tr><td class="c"><span class="tag t-apply">7</span></td><td>확산·로봇화</td><td class="c">2029.10 ~ 2030.12</td><td>로봇·물류 자동화, 운영 체계</td><td><b>G8</b> 최종 성과 평가</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2><span class="num">3</span>과제 기간 일정표</h2>
+  <div class="gantt"><div class="g-inner">
+    <div class="g-row head"><div class="g-name"></div><div>
+      <div class="g-years"><div>2026</div><div>2027</div><div>2028</div><div>2029</div><div>2030</div></div>
+      <div class="g-q"><div>Q4</div><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div></div>
+    </div></div>
+    <div id="ganttRows"></div>
+  </div></div>
+  <div class="legend">
+    <span><i style="background:var(--c-plan)"></i>기획·진단</span>
+    <span><i style="background:var(--c-base)"></i>기반 구축</span>
+    <span><i style="background:var(--c-model)"></i>모델 개발·검증</span>
+    <span><i style="background:var(--c-apply)"></i>현장 적용</span>
+    <span><i style="background:var(--c-final)"></i>성과 검증</span>
+    <span><i style="background:var(--accent);transform:rotate(45deg);border-radius:0"></i>마일스톤(게이트)</span>
+  </div>
+
+  <h3>연도별 목표</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>연도</th><th>기간</th><th>주요 목표</th><th>연말 성과물</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><b>2026</b></td><td class="c">10~12월 (3개월)</td><td>추진체계 구성, 유스케이스·KPI 확정, 진단 착수</td><td>추진계획서, KPI 정의서, AI 운영 안전 정책서</td></tr>
+      <tr><td class="c"><b>2027</b></td><td class="c">1~12월</td><td>현황 진단 완료, 데이터 기반·MLOps 구축, 품질·압연 모델 착수</td><td>데이터 가용성 맵, 계보 DB, MLOps 플랫폼, 품질 모델 1차</td></tr>
+      <tr><td class="c"><b>2028</b></td><td class="c">1~12월</td><td>품질·압연 모델 Shadow 검증, 제강 모델 개발, 디지털 트윈 구축</td><td>공정별 예측 모델, 하이브리드 트윈, Shadow 운영 결과</td></tr>
+      <tr><td class="c"><b>2029</b></td><td class="c">1~12월</td><td>제강 모델 검증 완료, 안전장치 구축, L2 권고 → L3 승인형 제어</td><td>안전 게이트 체계, L3 적용 루프, 운영 효과 측정</td></tr>
+      <tr><td class="c"><b>2030</b></td><td class="c">1~12월</td><td>L4 제한 자율제어, 로봇·물류 자동화, 확산 체계, 최종 평가</td><td>자율제어 적용 사례, 로봇 실증, 최종 보고서</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>마일스톤(게이트)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>게이트</th><th>시점</th><th>판정 기준</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><b>G1</b></td><td class="c">2026.12</td><td>우선 유스케이스 Top 5, KPI와 Baseline 측정 계획, AI 개입 레벨 정책 합의</td></tr>
+      <tr><td class="c"><b>G2</b></td><td class="c">2027.03</td><td>데이터 가용성 맵, Gap 분석서, 네트워크·보안 진단 결과</td></tr>
+      <tr><td class="c"><b>G3</b></td><td class="c">2027.12</td><td>Heat–Billet–Lot–시험 결과 매칭률 95% 이상, 데이터 품질 규칙 운영</td></tr>
+      <tr><td class="c"><b>G4</b></td><td class="c">2027.12</td><td>모델 학습 → 배포 → 모니터링 → 롤백 전 과정 시연</td></tr>
+      <tr><td class="c"><b>G5</b></td><td class="c">2028.06 / 09, 2029.03</td><td>공정별(품질 / 압연 / 제강) Shadow 운영에서 정확도 목표 달성</td></tr>
+      <tr><td class="c"><b>G6</b></td><td class="c">2029.06</td><td>트윈 시나리오 검증, 센서 고장·강종 전환 시 안전성 확인</td></tr>
+      <tr><td class="c"><b>G7</b></td><td class="c">2029.12</td><td>L3 승인형 제어 3개월 이상 무사고 운영, KPI 개선 확인</td></tr>
+      <tr><td class="c"><b>G8</b></td><td class="c">2030.12</td><td>최종 KPI 달성 평가, 확산 계획 확정</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2><span class="num">4</span>공정·업무 연계 관계도</h2>
+  <p class="muted">위에서 아래로 데이터가 흘러 AI 플랫폼을 거치고, 안전 게이트를 통과한 결과만 왼쪽 경로로 현장 공정에 다시 반영됩니다. 주황 점선은 피드백·재사용 관계입니다.</p>
+  <div class="diagram">
+  <svg viewBox="0 0 1000 530" role="img" aria-label="공정 업무 연계 관계도">
+    <!-- lanes -->
+    <rect x="100" y="10" width="890" height="112" rx="10" fill="var(--lane-a)"/>
+    <rect x="100" y="140" width="890" height="112" rx="10" fill="var(--lane-b)"/>
+    <rect x="100" y="270" width="890" height="112" rx="10" fill="var(--lane-c)"/>
+    <rect x="100" y="400" width="890" height="112" rx="10" fill="var(--lane-d)"/>
+    <text class="lane-t" x="112" y="30">현장 공정 (물리 흐름)</text>
+    <text class="lane-t" x="112" y="160">데이터 기반 · 2단계</text>
+    <text class="lane-t" x="112" y="290">AI 플랫폼 · 3·4·5단계</text>
+    <text class="lane-t" x="112" y="420">현장 적용 · 6단계</text>
+    <!-- lane A -->
+    <g><rect class="box s-apply" x="150" y="40" width="170" height="60" rx="8"/><text class="t1" x="235" y="66" text-anchor="middle">제강</text><text class="t2" x="235" y="86" text-anchor="middle">EAF · LF · VD</text></g>
+    <g><rect class="box s-apply" x="360" y="40" width="170" height="60" rx="8"/><text class="t1" x="445" y="66" text-anchor="middle">연주</text><text class="t2" x="445" y="86" text-anchor="middle">Billet / Bloom</text></g>
+    <g><rect class="box s-apply" x="570" y="40" width="170" height="60" rx="8"/><text class="t1" x="655" y="66" text-anchor="middle">가열로 · 압연</text><text class="t2" x="655" y="86" text-anchor="middle">조압연 · 사상</text></g>
+    <g><rect class="box s-apply" x="780" y="40" width="170" height="60" rx="8"/><text class="t1" x="865" y="66" text-anchor="middle">정정 · 품질</text><text class="t2" x="865" y="86" text-anchor="middle">검사 · 시험</text></g>
+    <path class="arr" d="M320 70 L358 70" marker-end="url(#ah)"/>
+    <path class="arr" d="M530 70 L568 70" marker-end="url(#ah)"/>
+    <path class="arr" d="M740 70 L778 70" marker-end="url(#ah)"/>
+    <!-- lane B -->
+    <g><rect class="box s-base" x="150" y="170" width="170" height="60" rx="8"/><text class="t1" x="235" y="196" text-anchor="middle">수집</text><text class="t2" x="235" y="216" text-anchor="middle">OPC-UA · 엣지</text></g>
+    <g><rect class="box s-base" x="360" y="170" width="170" height="60" rx="8"/><text class="t1" x="445" y="196" text-anchor="middle">Historian / TSDB</text><text class="t2" x="445" y="216" text-anchor="middle">시간 동기화</text></g>
+    <g><rect class="box s-base" x="570" y="170" width="170" height="60" rx="8"/><text class="t1" x="655" y="196" text-anchor="middle">제품 계보</text><text class="t2" x="655" y="216" text-anchor="middle">Heat→Billet→Lot→시험</text></g>
+    <g><rect class="box s-base" x="780" y="170" width="170" height="60" rx="8"/><text class="t1" x="865" y="196" text-anchor="middle">데이터 품질 규칙</text><text class="t2" x="865" y="216" text-anchor="middle">결측 · 이상치 · 고착</text></g>
+    <path class="arr" d="M320 200 L358 200" marker-end="url(#ah)"/>
+    <path class="arr" d="M530 200 L568 200" marker-end="url(#ah)"/>
+    <path class="arr" d="M740 200 L778 200" marker-end="url(#ah)"/>
+    <!-- lane C -->
+    <g><rect class="box s-model" x="150" y="300" width="170" height="60" rx="8"/><text class="t1" x="235" y="326" text-anchor="middle">MLOps</text><text class="t2" x="235" y="346" text-anchor="middle">학습 · 레지스트리 · 배포</text></g>
+    <g><rect class="box s-model" x="465" y="300" width="170" height="60" rx="8"/><text class="t1" x="550" y="326" text-anchor="middle">공정별 모델</text><text class="t2" x="550" y="346" text-anchor="middle">품질 · 압연 · 제강</text></g>
+    <g><rect class="box s-model" x="780" y="300" width="170" height="60" rx="8"/><text class="t1" x="865" y="326" text-anchor="middle">디지털 트윈</text><text class="t2" x="865" y="346" text-anchor="middle">Shadow 검증</text></g>
+    <path class="arr" d="M320 330 L463 330" marker-end="url(#ah)"/>
+    <path class="arr" d="M635 330 L778 330" marker-end="url(#ah)"/>
+    <!-- lane D (right to left) -->
+    <g><rect class="box s-warn" x="780" y="430" width="170" height="60" rx="8"/><text class="t1" x="865" y="456" text-anchor="middle">안전 게이트</text><text class="t2" x="865" y="476" text-anchor="middle">입력 검증 · 출력 제한</text></g>
+    <g><rect class="box s-apply" x="465" y="430" width="170" height="60" rx="8"/><text class="t1" x="550" y="456" text-anchor="middle">운전원 승인</text><text class="t2" x="550" y="476" text-anchor="middle">L2 권고 / L3 승인</text></g>
+    <g><rect class="box s-apply" x="150" y="430" width="170" height="60" rx="8"/><text class="t1" x="235" y="456" text-anchor="middle">L2 · PLC 반영</text><text class="t2" x="235" y="476" text-anchor="middle">기존 인터록 우선</text></g>
+    <path class="arr" d="M780 460 L637 460" marker-end="url(#ah)"/>
+    <path class="arr" d="M465 460 L322 460" marker-end="url(#ah)"/>
+    <!-- cross-lane -->
+    <path class="arr" d="M235 100 L235 168" marker-end="url(#ah)"/>
+    <text class="lbl" x="243" y="140">센서·조업·시험 데이터</text>
+    <path class="arr" d="M655 230 L585 298" marker-end="url(#ah)"/>
+    <text class="lbl" x="628" y="262" text-anchor="end">학습 데이터셋</text>
+    <path class="arr" d="M865 360 L865 428" marker-end="url(#ah)"/>
+    <text class="lbl" x="873" y="398">권고·설정값</text>
+    <path class="arr" d="M150 460 L70 460 L70 70 L148 70" marker-end="url(#ah)"/>
+    <text class="lbl" x="44" y="265" text-anchor="middle" transform="rotate(-90 44 265)">제어 반영</text>
+    <!-- dashed feedback -->
+    <path class="arr-d" d="M810 100 L760 130 L760 318 L637 318" marker-end="url(#ahd)"/>
+    <text class="lbl" x="752" y="292" text-anchor="end" style="fill:var(--accent)">품질 라벨 피드백</text>
+    <path class="arr-d" d="M950 200 L978 200 L978 460 L952 460" marker-end="url(#ahd)"/>
+    <text class="lbl" x="990" y="330" text-anchor="middle" transform="rotate(90 990 330)" style="fill:var(--accent)">차단 조건 재사용</text>
+    <path class="arr-d" d="M235 430 L235 362" marker-end="url(#ahd)"/>
+    <text class="lbl" x="243" y="402" style="fill:var(--accent)">이상 시 수동 롤백</text>
+  </svg>
+  </div>
+
+  <h3>업무 선후행 관계</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>선행 업무</th><th>산출물</th><th>후행 업무</th><th>연계 내용</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag t-plan">0</span> 유스케이스 발굴·KPI</td><td>우선순위 Top 5, KPI</td><td><span class="tag t-plan">1</span> 진단 범위 / <span class="tag t-model">4</span> 모델 대상</td><td>진단과 모델 개발의 대상 결정</td></tr>
+      <tr><td><span class="tag t-plan">0</span> AI 안전 정책</td><td>개입 레벨 L0~L4</td><td><span class="tag t-apply">6</span> 폐루프 제어</td><td>레벨별 권한 상한 적용</td></tr>
+      <tr><td><span class="tag t-plan">1</span> 데이터 인벤토리</td><td>데이터 가용성 맵</td><td><span class="tag t-base">2</span> 수집 아키텍처 설계</td><td>수집 대상 태그·주기 결정</td></tr>
+      <tr><td><span class="tag t-plan">1</span> 네트워크·보안 진단</td><td>OT/IT 구조도</td><td><span class="tag t-base">3</span> 인프라 배치 / <span class="tag t-apply">6</span> 쓰기 연동</td><td>서버 위치와 연동 방식 결정</td></tr>
+      <tr><td><span class="tag t-base">2</span> 제품 계보 매핑</td><td>계보 DB</td><td><span class="tag t-model">4</span> 품질 원인추적, 압연·제강 모델</td><td>공정 간 학습 데이터셋 생성</td></tr>
+      <tr><td><span class="tag t-base">2</span> 데이터 품질 규칙</td><td>결측·이상치 탐지 규칙</td><td><span class="tag t-apply">6</span> 입력 검증 게이트</td><td>AI 기능 차단 조건으로 재사용</td></tr>
+      <tr><td><span class="tag t-base">2</span> 이미지 수집·라벨링</td><td>결함 이미지 DB</td><td><span class="tag t-model">4-①</span> 비전 결함 검사</td><td>학습 데이터</td></tr>
+      <tr><td><span class="tag t-base">3</span> 레지스트리·배포</td><td>모델 버전 관리, 롤백</td><td><span class="tag t-model">4</span> 모델 배포 / <span class="tag t-apply">6</span> 모델 롤백</td><td>운영 전환과 복구</td></tr>
+      <tr><td><span class="tag t-base">3</span> 모니터링</td><td>드리프트 알람</td><td><span class="tag t-apply">6</span> 운영 / <span class="tag t-apply">7</span> 재학습 체계</td><td>성능 저하 감지</td></tr>
+      <tr><td><span class="tag t-model">4-①</span> 품질 모델</td><td>품질 라벨·특성 예측</td><td><span class="tag t-model">4-②·③</span> 압연·제강 모델</td><td>상위 공정의 목표 변수</td></tr>
+      <tr><td><span class="tag t-model">4</span> 공정별 모델</td><td>검증된 모델</td><td><span class="tag t-model">5</span> Shadow 검증</td><td>병행 운영 비교</td></tr>
+      <tr><td><span class="tag t-model">5</span> 트윈·Shadow 검증</td><td>안전성 검증 보고서</td><td><span class="tag t-apply">6</span> 폐루프 제어</td><td>제어 적용 승인 근거</td></tr>
+      <tr><td><span class="tag t-apply">6</span> 운영 이력</td><td>운영 효과, 사고 이력</td><td><span class="tag t-apply">7</span> 확산·로봇화</td><td>확산 대상과 우선순위</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2><span class="num">5</span>단계별 상세 업무 및 진행 순서</h2>
+  <p class="muted">각 단계 상단의 흐름은 권장 진행 순서입니다. 점선 상자는 앞 단계와 병행하는 업무입니다.</p>
+
+  <!-- P0 -->
+  <div class="phase plan">
+    <h3>0단계. 추진체계 및 범위 정의<span class="per">2026.10 ~ 2026.12</span></h3>
+    <div class="flow">
+      <div class="step"><b>TF 구성</b><small>R&amp;R 정의 · 10월</small></div>
+      <div class="step"><b>Pain point 인터뷰</b><small>10~11월</small></div>
+      <div class="step"><b>유스케이스 우선순위</b><small>11월</small></div>
+      <div class="step"><b>KPI·Baseline 정의</b><small>11~12월</small></div>
+      <div class="step"><b>AI 안전 정책</b><small>L0~L4 · 12월</small></div>
+      <div class="step gate">G1</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>주요 업무</th><th>작업 내역</th><th>산출물</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>추진 조직 구성</td><td>생산·설비·품질·IT/OT·안전 부서 TF, 공정별 현업 챔피언 지정</td><td>TF 조직도, R&amp;R</td><td class="c">2026.10</td></tr>
+        <tr><td class="c">2</td><td>유스케이스 발굴</td><td>공정별 Pain point 인터뷰, 효과와 실현가능성 매트릭스</td><td>유스케이스 후보 리스트</td><td class="c">2026.10~11</td></tr>
+        <tr><td class="c">3</td><td>우선순위 결정</td><td>데이터 가용성, ROI, 안전 리스크로 점수화</td><td>우선순위 Top 5</td><td class="c">2026.11</td></tr>
+        <tr><td class="c">4</td><td>KPI 정의</td><td>전력·합금철 원단위, 수율, 결함률, 재작업률, 검사 인력</td><td>KPI 정의서, Baseline 측정 계획</td><td class="c">2026.11~12</td></tr>
+        <tr><td class="c">5</td><td>안전·책임 원칙</td><td>AI 개입 레벨(L0~L4), 최종 책임 주체, 비상 정지 원칙</td><td>AI 운영 안전 정책서</td><td class="c">2026.12</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">"AI가 설비에 쓸 수 있는 권한의 상한"을 이 단계에서 문서로 합의해 두면 6단계에서 다시 논쟁하지 않아도 됩니다.</div>
+  </div>
+
+  <!-- P1 -->
+  <div class="phase plan">
+    <h3>1단계. 현황 진단<span class="per">2026.11 ~ 2027.03</span></h3>
+    <div class="flow">
+      <div class="step"><b>공정·조업 표준 정리</b><small>2026.11~12</small></div>
+      <div class="step"><b>제어 계층 조사</b><small>L0~L4 · 2026.12~2027.01</small></div>
+      <div class="step"><b>태그·데이터 인벤토리</b><small>2027.01~02</small></div>
+      <div class="step par"><span class="pt">병행</span><b>품질 데이터 연결성</b><small>2027.01~02</small></div>
+      <div class="step par"><span class="pt">병행</span><b>네트워크·보안 진단</b><small>2027.01~02</small></div>
+      <div class="step"><b>Gap 분석·가용성 맵</b><small>2027.03</small></div>
+      <div class="step gate">G2</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>영역</th><th>작업 내역</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>공정</td><td>제강(EAF·LF·VD) → 연주 → 가열로 → 압연 → 냉각 → 정정·검사 흐름도와 조업 표준</td><td class="c">2026.11~12</td></tr>
+        <tr><td class="c">2</td><td>설비·제어 계층</td><td>L0 센서 → L1 PLC/DCS → L2 조업 컴퓨터 → L3 MES → L4 ERP 구조, 제어 루프·인터록 목록</td><td class="c">2026.12~2027.01</td></tr>
+        <tr><td class="c">3</td><td>데이터</td><td>태그 목록, 샘플링 주기, 저장 위치(Historian·DB·엑셀·수기), 보존 기간, 결측 현황</td><td class="c">2027.01~02</td></tr>
+        <tr><td class="c">4</td><td>품질 데이터</td><td>성분 분석, 기계적 시험, 표면·내부 결함(UT/MT) 결과와 제품 ID 연결 여부</td><td class="c">2027.01~02</td></tr>
+        <tr><td class="c">5</td><td>네트워크·보안</td><td>OT/IT 망 분리, 방화벽·DMZ, 데이터 반출 가능 여부</td><td class="c">2027.01~02</td></tr>
+        <tr><td class="c">6</td><td>종합</td><td>데이터 가용성 맵(공정 × 항목 × 품질 등급), Gap 분석서, 인력 역량 진단</td><td class="c">2027.03</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- P2 -->
+  <div class="phase base">
+    <h3>2단계. 데이터 기반 구축<span class="per">2027.01 ~ 2027.12</span></h3>
+    <div class="flow">
+      <div class="step"><b>수집 아키텍처 설계</b><small>01~02월</small></div>
+      <div class="step"><b>OPC-UA·엣지 수집</b><small>03~06월</small></div>
+      <div class="step"><b>Historian/TSDB</b><small>04~07월</small></div>
+      <div class="step"><b>시간 동기화</b><small>05~06월</small></div>
+      <div class="step"><b>제품 계보 매핑</b><small>06~10월</small></div>
+      <div class="step"><b>데이터 품질 규칙</b><small>08~12월</small></div>
+      <div class="step par"><span class="pt">병행</span><b>이미지 수집·라벨링</b><small>03~12월</small></div>
+      <div class="step par"><span class="pt">병행</span><b>거버넌스·카탈로그</b><small>07~12월</small></div>
+      <div class="step gate">G3</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>주요 업무</th><th>작업 내역</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>수집 아키텍처 설계</td><td>1단계 가용성 맵 기준으로 대상 태그·주기·경로 설계</td><td class="c">2027.01~02</td></tr>
+        <tr><td class="c">2</td><td>수집 체계 구축</td><td>OPC-UA/KepServerEX로 PLC·DCS 수집, 고속 데이터(압연 하중·진동)는 엣지 처리</td><td class="c">2027.03~06</td></tr>
+        <tr><td class="c">3</td><td>시계열 저장</td><td>Historian/TSDB, 원천·정제·집계 계층 분리</td><td class="c">2027.04~07</td></tr>
+        <tr><td class="c">4</td><td>시간 동기화</td><td>설비 간 타임스탬프 정합(NTP/PTP)</td><td class="c">2027.05~06</td></tr>
+        <tr><td class="c">5</td><td><b>제품 계보</b></td><td>Heat No. → Billet No. → 압연 Lot/Coil No. → 시험 결과 매핑, 공정 간 지연과 절단·분할 반영</td><td class="c">2027.06~10</td></tr>
+        <tr><td class="c">6</td><td>데이터 품질관리</td><td>결측·이상치·센서 고착 탐지 규칙, 품질 점수화</td><td class="c">2027.08~12</td></tr>
+        <tr><td class="c">7</td><td>비정형 데이터</td><td>표면 결함 이미지, 열화상, 스크랩 이미지 수집과 라벨링</td><td class="c">2027.03~12</td></tr>
+        <tr><td class="c">8</td><td>데이터 거버넌스</td><td>태그 명명 규칙, 메타데이터 카탈로그, 접근 권한</td><td class="c">2027.07~12</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">6번의 데이터 품질 규칙은 6단계에서 AI 기능 차단 조건으로 그대로 재사용됩니다. 처음부터 운영용 수준으로 설계합니다.</div>
+  </div>
+
+  <!-- P3 -->
+  <div class="phase base">
+    <h3>3단계. AI 인프라 및 MLOps 플랫폼<span class="per">2027.04 ~ 2027.12</span></h3>
+    <div class="flow">
+      <div class="step"><b>인프라 사양·조달</b><small>04~05월</small></div>
+      <div class="step"><b>GPU·엣지 서버 구축</b><small>06~07월</small></div>
+      <div class="step"><b>K8s·레지스트리</b><small>07~08월</small></div>
+      <div class="step"><b>학습 파이프라인</b><small>08~09월</small></div>
+      <div class="step"><b>배포·롤백</b><small>09~10월</small></div>
+      <div class="step"><b>드리프트 모니터링</b><small>10~11월</small></div>
+      <div class="step par"><span class="pt">병행</span><b>L2/MES 읽기 연동</b><small>09~12월</small></div>
+      <div class="step gate">G4</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>주요 업무</th><th>작업 내역</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>인프라 사양·조달</td><td>학습 GPU 서버군, 추론용 엣지 서버, 이중화, 보안 요구사항</td><td class="c">2027.04~05</td></tr>
+        <tr><td class="c">2</td><td>서버 구축</td><td>공장 IDC 학습 서버, 공정 인근 엣지 서버</td><td class="c">2027.06~07</td></tr>
+        <tr><td class="c">3</td><td>플랫폼</td><td>컨테이너(K8s), 모델 레지스트리(MLflow 등), 피처 스토어</td><td class="c">2027.07~08</td></tr>
+        <tr><td class="c">4</td><td>학습 파이프라인</td><td>Python 기반 학습·평가 파이프라인, 실험 관리</td><td class="c">2027.08~09</td></tr>
+        <tr><td class="c">5</td><td>배포·롤백</td><td>섀도·카나리 배포, 원클릭 모델 롤백</td><td class="c">2027.09~10</td></tr>
+        <tr><td class="c">6</td><td>모니터링</td><td>입력 드리프트, 성능 저하, 추론 지연 감시·알람</td><td class="c">2027.10~11</td></tr>
+        <tr><td class="c">7</td><td>연계</td><td>L2/MES 연동 인터페이스(초기 읽기 전용, 쓰기 권한은 6단계에서 별도 승인)</td><td class="c">2027.09~12</td></tr>
+        <tr><td class="c">8</td><td>보안</td><td>OT망 단방향 반출, 접근 통제, 감사 로그 (전 기간)</td><td class="c">2027.04~12</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- P4 -->
+  <div class="phase model">
+    <h3>4단계. 예측·권고 모델 개발 (Open-loop)<span class="per">2027.07 ~ 2029.03</span></h3>
+    <h4>공통 개발 흐름 (유스케이스마다 반복)</h4>
+    <div class="flow">
+      <div class="step"><b>문제 정의</b></div>
+      <div class="step"><b>데이터셋 구성</b><small>계보 기반</small></div>
+      <div class="step"><b>베이스라인</b><small>현행 조업 표준</small></div>
+      <div class="step"><b>모델 개발</b></div>
+      <div class="step"><b>현업 검토</b><small>미흡 시 재개발</small></div>
+      <div class="step"><b>Shadow 운영</b></div>
+      <div class="step gate">G5</div>
+    </div>
+    <h4>공정 착수 순서</h4>
+    <div class="flow">
+      <div class="step"><b>① 품질</b><small>2027.07~2028.06</small></div>
+      <div class="step"><b>② 압연</b><small>2027.10~2028.09 · 품질 라벨 활용</small></div>
+      <div class="step"><b>③ 제강</b><small>2028.04~2029.03 · 품질 라벨+압연 조건</small></div>
+      <div class="step gate">G5</div>
+    </div>
+
+    <h4>① 품질 관리 · 2027.07 ~ 2028.06</h4>
+    <div class="tbl"><table>
+      <thead><tr><th>유스케이스</th><th>내용</th><th>난이도</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td>비전 표면결함 검사</td><td>압연재 표면 카메라 기반 결함 검출·분류</td><td class="c lv-mid">중</td><td class="c">2027.07~2028.03</td></tr>
+        <tr><td>기계적 특성 예측</td><td>성분, 압연·냉각 조건으로 인장강도·경도 예측, 시험 축소</td><td class="c lv-mid">중</td><td class="c">2027.10~2028.06</td></tr>
+        <tr><td>품질 이상 원인 추적</td><td>불량 Lot의 상류 공정 인자 분석(계보 활용)</td><td class="c lv-mid">중</td><td class="c">2028.01~2028.06</td></tr>
+      </tbody>
+    </table></div>
+    <h4>② 압연 · 2027.10 ~ 2028.09</h4>
+    <div class="tbl"><table>
+      <thead><tr><th>유스케이스</th><th>내용</th><th>난이도</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td>가열로 추출 온도 최적화</td><td>재료별 목표 온도 권고, 연료 절감</td><td class="c lv-mid">중</td><td class="c">2027.10~2028.04</td></tr>
+        <tr><td>롤 마모·설비 예지보전</td><td>진동·전류 기반 이상 감지, 교체 시점 예측</td><td class="c lv-mid">중</td><td class="c">2027.10~2028.06</td></tr>
+        <tr><td>압연 하중·온도 예측</td><td>패스 스케줄 보정 권고</td><td class="c lv-hi">중상</td><td class="c">2028.01~2028.09</td></tr>
+        <tr><td>치수·형상 예측</td><td>직경·진원도 편차 사전 예측</td><td class="c lv-top">상</td><td class="c">2028.03~2028.09</td></tr>
+      </tbody>
+    </table></div>
+    <h4>③ 제강 · 2028.04 ~ 2029.03</h4>
+    <div class="tbl"><table>
+      <thead><tr><th>유스케이스</th><th>내용</th><th>난이도</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td>스크랩 비전 분류</td><td>스크랩 등급 자동 판정</td><td class="c lv-mid">중</td><td class="c">2028.04~2028.10</td></tr>
+        <tr><td>합금철 투입량 최적화</td><td>목표 성분 대비 최소 투입 권고</td><td class="c lv-hi">중상</td><td class="c">2028.04~2028.12</td></tr>
+        <tr><td>종점 온도·성분 예측</td><td>측온·샘플링 횟수 절감</td><td class="c lv-top">상</td><td class="c">2028.06~2029.03</td></tr>
+        <tr><td>전기로 전력 원단위 최적화</td><td>스크랩 배합·통전 패턴 권고</td><td class="c lv-top">상</td><td class="c">2028.07~2029.03</td></tr>
+        <tr><td>연주 브레이크아웃 예측</td><td>몰드 열전대 패턴 기반 조기 경보</td><td class="c lv-top">상</td><td class="c">2028.07~2029.03</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- P5 -->
+  <div class="phase model">
+    <h3>5단계. 디지털 트윈 및 Shadow 검증<span class="per">2028.01 ~ 2029.06</span></h3>
+    <div class="flow">
+      <div class="step"><b>하이브리드 공정 모델</b><small>물리+데이터 · 2028.01~12</small></div>
+      <div class="step par"><span class="pt">병행</span><b>Shadow 병행 운영</b><small>2028.04~2029.06</small></div>
+      <div class="step"><b>시나리오 검증</b><small>극한·센서고장·강종전환</small></div>
+      <div class="step"><b>운전원 피드백·XAI</b><small>2028.07~2029.06</small></div>
+      <div class="step"><b>안전성 검증</b><small>2029.04~06</small></div>
+      <div class="step gate">G6</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>주요 업무</th><th>작업 내역</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>공정 모델</td><td>열·물질 수지 물리 모델과 데이터 모델을 결합한 하이브리드 트윈(압연 → 제강 순)</td><td class="c">2028.01~2028.12</td></tr>
+        <tr><td class="c">2</td><td>Shadow 운영</td><td>실제 조업과 병행해 AI 권고를 기록만 하고 실제 결과와 비교(모델 완료 순서대로)</td><td class="c">2028.04~2029.06</td></tr>
+        <tr><td class="c">3</td><td>시나리오 검증</td><td>극한 조건, 센서 고장, 강종 전환 시 AI 출력 안전성 확인</td><td class="c">2028.07~2029.04</td></tr>
+        <tr><td class="c">4</td><td>운전원 피드백</td><td>권고 채택·거부 사유 수집, 설명 가능성(XAI) 보완</td><td class="c">2028.07~2029.06</td></tr>
+        <tr><td class="c">5</td><td>안전성 검증</td><td>공정별 제어 적용 가능 판정, 적용 루프 선정</td><td class="c">2029.04~2029.06</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- P6 -->
+  <div class="phase apply">
+    <h3>6단계. 폐루프 제어<span class="per">2029.01 ~ 2030.09</span></h3>
+    <div class="flow">
+      <div class="step"><b>안전장치 구축</b><small>2029.01~03</small></div>
+      <div class="step"><b>L2 권고 운영</b><small>2029.01~06</small></div>
+      <div class="step"><b>L3 승인형 제어</b><small>2029.07~2030.03</small></div>
+      <div class="step"><b>운영 안정성 평가</b><small>2029.10~12</small></div>
+      <div class="step gate">G7</div>
+      <div class="step" style="margin-left:26px"><b>L4 제한 자율</b><small>2030.01~09</small></div>
+    </div>
+    <div class="levels">
+      <div class="lv"><b>L0 모니터링</b>데이터 시각화·알람</div>
+      <div class="lv"><b>L1 예측</b>결과 예측값 제공</div>
+      <div class="lv on"><b>L2 권고</b>설정값 제시, 운전원 수동 입력</div>
+      <div class="lv on"><b>L3 승인형</b>운전원 승인 후 자동 반영</div>
+      <div class="lv on"><b>L4 제한 자율</b>허용 범위 내 자동, 이탈 시 차단</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>레벨</th><th>방식</th><th>적용 예시</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td><b>L2 권고</b></td><td>AI 설정값 제시, 운전원이 수동 입력</td><td>합금철 투입량, 가열로 목표 온도</td><td class="c">2029.01~06</td></tr>
+        <tr><td><b>L3 승인형</b></td><td>AI 설정값을 운전원 승인 후 자동 반영</td><td>가열로 목표 온도, 압연 패스 보정</td><td class="c">2029.07~2030.03</td></tr>
+        <tr><td><b>L4 제한 자율</b></td><td>허용 범위 안에서 자동 반영, 범위 이탈 시 차단</td><td>압연 패스 미세 보정(선정 루프 한정)</td><td class="c">2030.01~09</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">안전장치의 동작 흐름은 <a href="#s6">6. 안전 제어 흐름</a>을 참고하세요.</p>
+  </div>
+
+  <!-- P7 -->
+  <div class="phase apply">
+    <h3>7단계. 확산 및 로봇화<span class="per">2029.10 ~ 2030.12</span></h3>
+    <div class="flow">
+      <div class="step"><b>로봇 적용 대상 선정</b><small>2029.10~12</small></div>
+      <div class="step"><b>측온·샘플링 로봇</b><small>2030.01~08</small></div>
+      <div class="step"><b>크레인·물류 자동화</b><small>2030.03~10</small></div>
+      <div class="step"><b>롤 교체·검사 자동화</b><small>2030.04~11</small></div>
+      <div class="step par"><span class="pt">병행</span><b>AI 운영 조직·재학습</b><small>2029.10~2030.10</small></div>
+      <div class="step"><b>확산 계획·최종 평가</b><small>2030.07~12</small></div>
+      <div class="step gate">G8</div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>영역</th><th>내용</th><th>시기</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td>대상 선정</td><td>고위험·반복 작업 중심으로 로봇 적용 우선순위</td><td class="c">2029.10~12</td></tr>
+        <tr><td class="c">2</td><td>제강 로봇</td><td>측온·샘플링 로봇, 탭홀 작업 보조</td><td class="c">2030.01~08</td></tr>
+        <tr><td class="c">3</td><td>물류</td><td>크레인 자동화, AGV, 소재 위치 추적</td><td class="c">2030.03~10</td></tr>
+        <tr><td class="c">4</td><td>압연·품질</td><td>롤 교체 자동화, 가이드 세팅, 시편 채취·검사 자동화</td><td class="c">2030.04~11</td></tr>
+        <tr><td class="c">5</td><td>운영 체계</td><td>AI 운영 전담 조직, 모델 재학습 주기, 운영 매뉴얼</td><td class="c">2029.10~2030.10</td></tr>
+        <tr><td class="c">6</td><td>확산·평가</td><td>타 라인·공장 확산 계획, 최종 KPI 평가</td><td class="c">2030.07~12</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2><span class="num">6</span>폐루프 안전 제어 흐름</h2>
+  <p class="muted">AI 출력이 설비에 반영되기까지 거치는 검증 단계입니다. 어느 단계에서든 이상이 감지되면 AI 기능을 차단하고 조업 표준값으로 돌아갑니다.</p>
+  <div class="diagram">
+  <svg viewBox="0 0 900 450" role="img" aria-label="폐루프 안전 제어 흐름">
+    <!-- row1 -->
+    <g><rect class="box s-base" x="20" y="50" width="130" height="52" rx="8"/><text class="t1" x="85" y="74" text-anchor="middle">센서·L1 데이터</text><text class="t2" x="85" y="92" text-anchor="middle">PLC/DCS</text></g>
+    <g><rect class="box s-warn" x="190" y="50" width="140" height="52" rx="8"/><text class="t1" x="260" y="74" text-anchor="middle">입력 검증 게이트</text><text class="t2" x="260" y="92" text-anchor="middle">결측·이상치·고착</text></g>
+    <g><rect class="box s-model" x="370" y="50" width="130" height="52" rx="8"/><text class="t1" x="435" y="74" text-anchor="middle">AI 모델 추론</text><text class="t2" x="435" y="92" text-anchor="middle">엣지 서버</text></g>
+    <g><rect class="box s-warn" x="540" y="50" width="140" height="52" rx="8"/><text class="t1" x="610" y="74" text-anchor="middle">출력 제한</text><text class="t2" x="610" y="92" text-anchor="middle">절대 범위·변화율</text></g>
+    <g><rect class="box s-apply" x="720" y="50" width="150" height="52" rx="8"/><text class="t1" x="795" y="74" text-anchor="middle">운전원 승인 (L3)</text><text class="t2" x="795" y="92" text-anchor="middle">거부 시 사유 기록</text></g>
+    <path class="arr" d="M150 76 L188 76" marker-end="url(#ah)"/>
+    <path class="arr" d="M330 76 L368 76" marker-end="url(#ah)"/><text class="lbl" x="349" y="68" text-anchor="middle">합격</text>
+    <path class="arr" d="M500 76 L538 76" marker-end="url(#ah)"/>
+    <path class="arr" d="M680 76 L718 76" marker-end="url(#ah)"/><text class="lbl" x="699" y="68" text-anchor="middle">정상</text>
+    <!-- row2 -->
+    <g><rect class="box s-apply" x="720" y="220" width="150" height="52" rx="8"/><text class="t1" x="795" y="244" text-anchor="middle">L2·PLC 반영</text><text class="t2" x="795" y="262" text-anchor="middle">기존 인터록 우선</text></g>
+    <g><rect class="box s-model" x="540" y="220" width="140" height="52" rx="8"/><text class="t1" x="610" y="244" text-anchor="middle">결과 모니터링</text><text class="t2" x="610" y="262" text-anchor="middle">품질·설비 상태</text></g>
+    <g><rect class="box s-base" x="370" y="220" width="130" height="52" rx="8"/><text class="t1" x="435" y="244" text-anchor="middle">감사 로그</text><text class="t2" x="435" y="262" text-anchor="middle">입력·출력·조치</text></g>
+    <path class="arr" d="M795 102 L795 218" marker-end="url(#ah)"/><text class="lbl" x="803" y="165">승인</text>
+    <path class="arr" d="M720 246 L682 246" marker-end="url(#ah)"/>
+    <path class="arr" d="M540 246 L502 246" marker-end="url(#ah)"/><text class="lbl" x="521" y="238" text-anchor="middle">정상</text>
+    <!-- row3 -->
+    <g><rect class="box s-warn" x="180" y="360" width="190" height="60" rx="8" style="fill:var(--lane-d)"/><text class="t1" x="275" y="386" text-anchor="middle">AI 기능 차단</text><text class="t2" x="275" y="405" text-anchor="middle">조업 표준값 유지</text></g>
+    <g><rect class="box s-warn" x="540" y="360" width="140" height="60" rx="8"/><text class="t1" x="610" y="386" text-anchor="middle">수동 롤백</text><text class="t2" x="610" y="405" text-anchor="middle">직전 안정값·모델 버전</text></g>
+    <g><rect class="box s-warn" x="20" y="366" width="120" height="48" rx="24"/><text class="t1" x="80" y="395" text-anchor="middle">Kill switch</text></g>
+    <path class="arr-d" d="M240 102 L240 358" marker-end="url(#ahd)"/><text class="lbl" x="232" y="230" text-anchor="end" style="fill:var(--accent)">불합격</text>
+    <path class="arr-d" d="M610 102 L610 170 L310 170 L310 358" marker-end="url(#ahd)"/><text class="lbl" x="460" y="162" text-anchor="middle" style="fill:var(--accent)">범위 이탈</text>
+    <path class="arr-d" d="M610 272 L610 358" marker-end="url(#ahd)"/><text class="lbl" x="618" y="320" style="fill:var(--accent)">이상 감지</text>
+    <path class="arr-d" d="M540 390 L372 390" marker-end="url(#ahd)"/>
+    <path class="arr-d" d="M140 390 L178 390" marker-end="url(#ahd)"/>
+    <text class="lbl" x="80" y="356" text-anchor="middle">운전실 즉시 해제</text>
+  </svg>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>안전장치</th><th>내용</th><th>근거 단계</th></tr></thead>
+    <tbody>
+      <tr><td><b>입력 검증 게이트</b></td><td>결측·이상치·센서 고착 규칙에 걸리면 AI 출력을 차단</td><td><span class="tag t-base">2</span> 데이터 품질 규칙 재사용</td></tr>
+      <tr><td><b>출력 제한</b></td><td>설정값의 절대 범위와 변화율(Rate limit) 제한, 기존 PLC 인터록이 항상 우선</td><td><span class="tag t-model">5</span> 시나리오 검증 결과</td></tr>
+      <tr><td><b>기능 차단 (Kill switch)</b></td><td>운전실에서 AI 개입을 즉시 해제</td><td><span class="tag t-plan">0</span> AI 안전 정책</td></tr>
+      <tr><td><b>수동 롤백</b></td><td>직전 안정 설정값이나 조업 표준값으로 즉시 복귀, 모델 버전 롤백</td><td><span class="tag t-base">3</span> 레지스트리·배포</td></tr>
+      <tr><td><b>감사 로그</b></td><td>AI 입력, 출력, 채택 여부, 운전원 조치를 모두 기록</td><td><span class="tag t-base">3</span> 보안·감사</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2><span class="num">7</span>자주 실패하는 지점과 예방</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>실패 유형</th><th>결과</th><th>예방</th></tr></thead>
+    <tbody>
+      <tr><td>계보 데이터 없이 모델부터 시작</td><td>PoC는 성공했지만 운영 전환에서 막힘</td><td>G3 통과 전 공정 간 모델 착수 금지</td></tr>
+      <tr><td>처음부터 제강 폐루프 제어 목표</td><td>리스크가 커서 현업 승인 불가</td><td>품질 → 압연 → 제강, L2 → L4 단계 상향</td></tr>
+      <tr><td>현업 운전원 배제</td><td>권고 채택률이 낮아 효과 측정 불가</td><td>공정별 현업 챔피언, Shadow 단계 피드백</td></tr>
+      <tr><td>배포 후 모니터링 부재</td><td>강종 변경·설비 정비 후 성능이 조용히 저하</td><td>3단계 드리프트 모니터링 필수화</td></tr>
+      <tr><td>OT 보안을 나중에 검토</td><td>3·6단계에서 연동 전면 재설계</td><td>1단계에서 네트워크·보안 진단</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+<footer>철강공장 피지컬 AI 도입 추진계획 · 2026.10 ~ 2030.12 · 외부 리소스 없이 동작하는 단일 HTML 파일</footer>
+
+<script>
+(function(){
+  // 월 인덱스: 0 = 2026.10, 50 = 2030.12 (총 51개월)
+  var TOTAL = 51;
+  var rows = [
+    {sec:"기획·진단", name:"0 추진체계·범위 정의", s:0,  e:2,  c:"plan"},
+    {sec:"",          name:"1 현황 진단",          s:1,  e:5,  c:"plan"},
+    {sec:"기반 구축", name:"2 데이터 기반 구축",    s:3,  e:14, c:"base"},
+    {sec:"",          name:"3 AI 인프라·MLOps",     s:6,  e:14, c:"base"},
+    {sec:"모델 개발", name:"4-① 품질 모델",        s:9,  e:20, c:"model"},
+    {sec:"",          name:"4-② 압연 모델",        s:12, e:23, c:"model"},
+    {sec:"",          name:"4-③ 제강 모델",        s:18, e:29, c:"model"},
+    {sec:"",          name:"5 디지털 트윈·Shadow",  s:15, e:32, c:"model"},
+    {sec:"현장 적용", name:"6-a 안전장치·L2 권고",  s:27, e:32, c:"apply"},
+    {sec:"",          name:"6-b L3 승인형 제어",    s:33, e:41, c:"apply"},
+    {sec:"",          name:"6-c L4 제한 자율제어",  s:39, e:47, c:"apply"},
+    {sec:"",          name:"7 확산·로봇화",         s:36, e:50, c:"apply"},
+    {sec:"성과",      name:"성과 검증·최종 평가",   s:45, e:50, c:"final"}
+  ];
+  var ms = [["G1",2],["G2",5],["G3·G4",14],["G5",20],["G6",32],["G7",38],["G8",50]];
+  function ym(i){var y=2026+Math.floor((9+i)/12), m=((9+i)%12)+1; return y+"."+(m<10?"0":"")+m;}
+  var host = document.getElementById("ganttRows"), html = "";
+  rows.forEach(function(r){
+    var left = r.s/TOTAL*100, width = (r.e-r.s+1)/TOTAL*100;
+    var label = ym(r.s)+" ~ "+ym(r.e);
+    html += '<div class="g-row"><div class="g-name">'+(r.sec?'<span class="sec">'+r.sec+'</span>':'')+r.name+'</div>'+
+            '<div class="g-track"><div class="bar b-'+r.c+'" style="left:'+left+'%;width:'+width+'%" title="'+r.name+' · '+label+'">'+label+'</div></div></div>';
+  });
+  html += '<div class="g-row"><div class="g-name"><span class="sec">마일스톤</span>게이트</div><div class="g-track">';
+  ms.forEach(function(m){
+    var x = (m[1]+0.5)/TOTAL*100;
+    html += '<div class="ms" style="left:'+x+'%" title="'+m[0]+' · '+ym(m[1])+'"></div>';
+  });
+  html += '</div></div><div class="g-row" style="border:none;min-height:18px"><div></div><div class="g-track" style="height:18px;background:none">';
+  ms.forEach(function(m){ html += '<span class="ms-l" style="left:'+((m[1]+0.5)/TOTAL*100)+'%">'+m[0]+'</span>'; });
+  html += '</div></div>';
+  host.innerHTML = html;
+
+  var btn = document.getElementById("themeBtn"), root = document.documentElement;
+  btn.addEventListener("click", function(){
+    var cur = root.getAttribute("data-theme");
+    var dark = cur ? cur==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    root.setAttribute("data-theme", dark ? "light" : "dark");
+  });
+})();
+</script>
+</body>
+</html>
