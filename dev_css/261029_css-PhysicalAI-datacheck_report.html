@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경남 피지컬AI 데이터 보유 점검</title>
+<style>
+:root {
+  --bg: #f6f4ef; --surface: #fffdf9; --surface-2: #efebe3; --ink: #1d1b18; --ink-2: #5b564e; --ink-3: #8a847a;
+  --line: #ddd7cc; --accent: #a8431f; --accent-soft: #f4e3da;
+  --have: #2f7a4f; --have-soft: #dcefe3; --part: #b7791f; --part-soft: #f7ead2;
+  --check: #44628a; --check-soft: #dfe7f2; --none: #9b2c2c; --none-soft: #f5dede;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --serif: "Nanum Myeongjo", "AppleMyungjo", "Batang", Georgia, serif;
+  --radius-s: 4px; --radius-m: 10px;
+  --space-section: clamp(3rem, 2rem + 4vw, 6rem);
+  --duration-fast: 150ms; --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161513; --surface: #1f1d1a; --surface-2: #2a2723; --ink: #eeeae3; --ink-2: #b5aea3; --ink-3: #847d72;
+    --line: #38342e; --accent: #e07a52; --accent-soft: #3a261d;
+    --have: #6cc28e; --have-soft: #1e3327; --part: #e2a952; --part-soft: #3a2e1a;
+    --check: #8fb0de; --check-soft: #222c3b; --none: #e88080; --none-soft: #3b2222;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161513; --surface: #1f1d1a; --surface-2: #2a2723; --ink: #eeeae3; --ink-2: #b5aea3; --ink-3: #847d72;
+  --line: #38342e; --accent: #e07a52; --accent-soft: #3a261d;
+  --have: #6cc28e; --have-soft: #1e3327; --part: #e2a952; --part-soft: #3a2e1a;
+  --check: #8fb0de; --check-soft: #222c3b; --none: #e88080; --none-soft: #3b2222;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.65 var(--sans); }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1400px; margin: 0 auto; }
+nav.side { position: sticky; top: 0; height: 100vh; padding: 2rem 1.25rem; border-right: 1px solid var(--line); overflow-y: auto; }
+nav.side .brand { font: 700 0.75rem/1.3 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+nav.side a { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.45rem 0.6rem; margin: 0 -0.6rem; border-radius: var(--radius-s);
+  color: var(--ink-2); text-decoration: none; font-size: 0.9rem; transition: background var(--duration-fast), color var(--duration-fast); }
+nav.side a span { font: 600 0.75rem var(--mono); color: var(--ink-3); }
+nav.side a:hover { background: var(--surface-2); color: var(--ink); }
+nav.side a.active { background: var(--accent-soft); color: var(--accent); }
+nav.side a.active span { color: var(--accent); }
+nav.side .theme { margin-top: 2rem; }
+button, select, input { font: inherit; color: inherit; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-s); padding: 0.35rem 0.7rem; cursor: pointer; font-size: 0.85rem; }
+.btn:hover { border-color: var(--ink-3); }
+
+main { padding: 0 clamp(16px, 3vw, 3.5rem) 6rem; min-width: 0; }
+.hero { padding: clamp(2.5rem, 2rem + 3vw, 5rem) 0 2.5rem; border-bottom: 2px solid var(--ink); }
+.hero .eyebrow { font: 600 0.8rem var(--mono); color: var(--ink-3); letter-spacing: 0.04em; }
+.hero h1 { font: 700 clamp(2rem, 1.2rem + 3.2vw, 3.6rem)/1.12 var(--serif); margin: 0.6rem 0 1rem; letter-spacing: -0.01em; }
+.hero p.lede { max-width: 60ch; color: var(--ink-2); font-size: 1.05rem; margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; color: var(--ink-3); }
+.meta b { color: var(--ink-2); font-weight: 600; }
+
+.dash { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1.5rem; margin: 2.5rem 0 0; }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 1rem 1.1rem; display: grid; grid-template-columns: 1fr auto; align-items: end; position: relative; overflow: hidden; }
+.kpi::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--k); }
+.kpi-label { grid-column: 1 / -1; font-size: 0.82rem; color: var(--ink-2); }
+.kpi-value { font: 700 2.4rem/1 var(--serif); color: var(--k); margin-top: 0.4rem; }
+.kpi-pct { font: 600 0.85rem var(--mono); color: var(--ink-3); }
+.kpi-total { --k: var(--ink); } .kpi-have { --k: var(--have); } .kpi-part { --k: var(--part); } .kpi-check { --k: var(--check); }
+.bars { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 1.1rem 1.25rem; }
+.bars h3 { margin: 0 0 0.9rem; font-size: 0.9rem; }
+.bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 2.2rem; gap: 0.75rem; align-items: center; margin: 0.45rem 0; font-size: 0.82rem; }
+.bar-label { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar { display: flex; height: 22px; border-radius: var(--radius-s); overflow: hidden; gap: 2px; }
+.seg { display: flex; align-items: center; justify-content: center; font: 600 0.72rem var(--mono); color: #fff; min-width: 1.4rem; }
+.seg-have { background: var(--have); } .seg-part { background: var(--part); } .seg-check { background: var(--check); }
+.bar-n { font: 600 0.8rem var(--mono); color: var(--ink-3); text-align: right; }
+.legend { display: flex; gap: 1rem; margin-top: 0.9rem; font-size: 0.78rem; color: var(--ink-2); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
+
+section.doc, section.result { padding-top: var(--space-section); }
+.sec-head { display: grid; grid-template-columns: auto 1fr; column-gap: 1rem; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 0.9rem; margin-bottom: 1.5rem; }
+.sec-no { font: 700 clamp(2.4rem, 2rem + 2vw, 3.6rem)/1 var(--serif); color: var(--accent); grid-row: span 2; }
+.sec-head h2 { margin: 0; font: 700 clamp(1.4rem, 1.1rem + 1vw, 1.9rem)/1.2 var(--serif); }
+.sec-src { font: 0.78rem var(--mono); color: var(--ink-3); }
+.doc h2 { font: 700 1.25rem/1.3 var(--serif); margin: 2.5rem 0 0.8rem; }
+.doc h3 { font-size: 1.02rem; margin: 2rem 0 0.6rem; }
+.doc h4 { font-size: 0.95rem; margin: 1.5rem 0 0.5rem; color: var(--ink-2); }
+.doc p, .doc li { max-width: 80ch; }
+.doc blockquote { margin: 1rem 0; padding: 0.6rem 1rem; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 var(--radius-s) var(--radius-s) 0; }
+code { font: 0.86em var(--mono); background: var(--surface-2); padding: 0.1em 0.35em; border-radius: 3px; }
+.table-wrap { overflow-x: auto; margin: 0.75rem 0 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+tr.total td { font-weight: 700; background: var(--surface-2); }
+.mono { font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; padding: 0.9rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m);
+  position: sticky; top: 0; z-index: 2; }
+.chip { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.82rem; cursor: pointer; transition: all var(--duration-fast) var(--ease-out-expo); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:hover { border-color: var(--ink-3); }
+.toolbar select, .toolbar input { border: 1px solid var(--line); background: var(--bg); border-radius: var(--radius-s); padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+.toolbar input { flex: 1 1 180px; min-width: 0; }
+.toolbar .count { font: 600 0.8rem var(--mono); color: var(--ink-3); margin-left: auto; }
+.badge { display: inline-block; padding: 0.12rem 0.55rem; border-radius: 999px; font-size: 0.76rem; font-weight: 600; white-space: nowrap; }
+.b-have { background: var(--have-soft); color: var(--have); } .b-part { background: var(--part-soft); color: var(--part); }
+.b-check { background: var(--check-soft); color: var(--check); } .b-none { background: var(--none-soft); color: var(--none); }
+#result-table td.ev { color: var(--ink-2); min-width: 280px; }
+#result-table td.item b { display: block; font-weight: 600; }
+#result-table td.item small { color: var(--ink-3); }
+#result-table tr.sheet-row td { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.02em; }
+.note { font-size: 0.85rem; color: var(--ink-2); margin: 0.8rem 0 1.4rem; }
+footer { margin-top: var(--space-section); padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 1rem 16px; display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; }
+  nav.side .brand { width: 100%; margin-bottom: 0.5rem; }
+  nav.side a { margin: 0; }
+  nav.side .theme { margin-top: 0; }
+  .dash { grid-template-columns: 1fr; }
+  main { padding: 0 16px 4rem; }
+}
+@media (max-width: 480px) { .bar-row { grid-template-columns: 88px minmax(0, 1fr) 1.8rem; } .kpi-value { font-size: 2rem; } }
+@media print { nav.side, .toolbar { display: none; } .layout { display: block; } th { position: static; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="side" aria-label="문서 목차">
+  <div class="brand">경남 피지컬AI · DataForge</div>
+  <a href="#top"><span>00</span>요약</a>
+  <a href="#req"><span>01</span>요청 사항 정리</a><a href="#mes"><span>02</span>MES Oracle 조사 결과</a><a href="#df"><span>03</span>DataForge PG 조사 결과</a>
+  <a href="#result"><span>04</span>보유 여부 매칭 결과</a>
+  <div class="theme"><button class="btn" id="theme-btn" type="button">테마 전환</button></div>
+</nav>
+<main>
+<header class="hero" id="top">
+  <div class="eyebrow">DATA AVAILABILITY REVIEW · 2026-10-29</div>
+  <h1>세아창원특수강 데이터 보유 점검</h1>
+  <p class="lede">인이지가 보낸 「예상 세부모델 및 태그 리스트」 158개 항목을 MES Oracle DB와 DataForge 수집 태그·테이블에 대조해 보유 여부를 판정했습니다.</p>
+  <div class="meta">
+    <span><b>대상 공정</b> 2제강 · 2연주 · 소형압연</span>
+    <span><b>근거</b> MES <code>cssmes</code> · DataForge <code>stats_db</code></span>
+    <span><b>작성</b> VNTG DataForge팀</span>
+  </div>
+</header>
+
+<div class="dash" aria-label="판정 요약">
+  <div class="kpis">
+    <div class="kpi kpi-total"><span class="kpi-label">전체 항목</span><span class="kpi-value">158</span><span class="kpi-pct">100%</span></div>
+    <div class="kpi kpi-have"><span class="kpi-label">보유</span><span class="kpi-value">95</span><span class="kpi-pct">60%</span></div>
+    <div class="kpi kpi-part"><span class="kpi-label">일부 보유</span><span class="kpi-value">42</span><span class="kpi-pct">27%</span></div>
+    <div class="kpi kpi-check"><span class="kpi-label">확인 필요</span><span class="kpi-value">21</span><span class="kpi-pct">13%</span></div>
+  </div>
+  <div class="bars">
+    <h3>시트별 판정 분포</h3>
+    <div class="bar-row"><span class="bar-label">공통</span><span class="bar"><span class="seg seg-have" style="flex:7" title="보유 7건">7</span><span class="seg seg-part" style="flex:4" title="일부 보유 4건">4</span><span class="seg seg-check" style="flex:2" title="확인 필요 2건">2</span></span><span class="bar-n">13</span></div><div class="bar-row"><span class="bar-label">과제1_제강성분</span><span class="bar"><span class="seg seg-have" style="flex:23" title="보유 23건">23</span><span class="seg seg-part" style="flex:11" title="일부 보유 11건">11</span><span class="seg seg-check" style="flex:1" title="확인 필요 1건">1</span></span><span class="bar-n">35</span></div><div class="bar-row"><span class="bar-label">과제2_제강온도</span><span class="bar"><span class="seg seg-have" style="flex:24" title="보유 24건">24</span><span class="seg seg-part" style="flex:4" title="일부 보유 4건">4</span><span class="seg seg-check" style="flex:7" title="확인 필요 7건">7</span></span><span class="bar-n">35</span></div><div class="bar-row"><span class="bar-label">과제3_가열로</span><span class="bar"><span class="seg seg-have" style="flex:17" title="보유 17건">17</span><span class="seg seg-part" style="flex:9" title="일부 보유 9건">9</span><span class="seg seg-check" style="flex:6" title="확인 필요 6건">6</span></span><span class="bar-n">32</span></div><div class="bar-row"><span class="bar-label">과제4_압연</span><span class="bar"><span class="seg seg-have" style="flex:13" title="보유 13건">13</span><span class="seg seg-part" style="flex:7" title="일부 보유 7건">7</span><span class="seg seg-check" style="flex:4" title="확인 필요 4건">4</span></span><span class="bar-n">24</span></div><div class="bar-row"><span class="bar-label">과제5_통합품질</span><span class="bar"><span class="seg seg-have" style="flex:11" title="보유 11건">11</span><span class="seg seg-part" style="flex:7" title="일부 보유 7건">7</span><span class="seg seg-check" style="flex:1" title="확인 필요 1건">1</span></span><span class="bar-n">19</span></div>
+    <div class="legend"><span><i style="background:var(--have)"></i>보유</span><span><i style="background:var(--part)"></i>일부 보유</span><span><i style="background:var(--check)"></i>확인 필요</span><span>미보유 0건</span></div>
+  </div>
+</div>
+
+<section id="req" class="doc"><header class="sec-head"><span class="sec-no">01</span><h2>요청 사항 정리</h2><span class="sec-src">01_요청사항_정리.md</span></header><ul>
+<li>작성일: 2026-10-29</li>
+<li>대상 스프레드시트: <a href="https://docs.google.com/spreadsheets/d/1sN_WUxAWQ4_xmwjWndR70-cntOsj1QRWBOs6mEz5ntE/edit">261029_경남피지컬AI_예상 세부모델 및 태그 리스트(인이지)</a></li>
+<li>관련 Confluence: DataForge팀(DPE) 스페이스 &gt; 경남 피지컬AI 폴더 (folder id 2874769409)</li>
+</ul>
+<h2>1. 배경</h2>
+<ul>
+<li>과제: 세아창원특수강(고객) · 인이지(AI 개발사) · VNTG DataForge팀(OT/IT 데이터 연계·보안 게이트웨이)의 "경남 피지컬AI" 과제</li>
+<li>2026-10-21 현업 미팅(창원) 이후, 인이지가 2026-10-29 메일로 <strong>"예상 세부모델 및 태그 리스트"</strong> 를 보냄</li>
+<li>이 시트는 인이지가 5개 개발 목표 모델에 필요할 것으로 예상하는 데이터 항목(158개)을 정리한 것. 세아창원특수강이 그 데이터를 <strong>보유하고 있는지</strong> 표시하는 용도</li>
+<li>시트 '개요' 안내: 보유 여부는 표시만 하면 됨. 정확한 태그 확인은 NDA 이후 인이지가 직접 함(회신 필수 아님). 신규 센서 설치는 전제하지 않음</li>
+</ul>
+<h2>2. 요청 작업</h2>
+<ol>
+<li>MES Oracle DB(<code>cssmes</code>, 계정 <code>sdp_data</code>)에서 접근 가능한 스키마·테이블 확인</li>
+<li>DataForge PostgreSQL DB(<code>stats_db</code>)에서 수집 테이블·수집 태그 정보 확인</li>
+<li>시트 158개 항목별로 두 DB의 근거를 매칭해 <strong>"보유 여부"(I열)</strong> 값 결정</li>
+<li>단계별 결과를 md 파일로 정리 (토큰 부족 시 중간 저장 후 재개 가능하게)</li>
+</ol>
+<h2>3. 시트 구조</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>시트</th>
+<th>항목 수</th>
+<th>범위</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>공통</td>
+<td>13</td>
+<td>C-01 ~ C-13</td>
+<td>ID 연결·시각·태그 사전·이력·기준</td>
+</tr>
+<tr>
+<td>과제1_제강성분</td>
+<td>35</td>
+<td>1-01 ~ 1-35</td>
+<td>스크랩 장입, 합금·부원료, EAF/AOD 운전, 성분 분석</td>
+</tr>
+<tr>
+<td>과제2_제강온도</td>
+<td>35</td>
+<td>2-01 ~ 2-35</td>
+<td>공정 시각, EAF/LF 전력, 래들, 연주, 측온</td>
+</tr>
+<tr>
+<td>과제3_가열로</td>
+<td>32</td>
+<td>3-01 ~ 3-32</td>
+<td>소재 식별, 로내 위치, 존 SV/PV, 연소, 추출</td>
+</tr>
+<tr>
+<td>과제4_압연</td>
+<td>24</td>
+<td>4-01 ~ 4-24</td>
+<td>스탠드 운전, 롤, 장력, 치수, 결함</td>
+</tr>
+<tr>
+<td>과제5_통합품질</td>
+<td>19</td>
+<td>5-01 ~ 5-19</td>
+<td>계보, 연주, 냉각, 최종 품질</td>
+</tr>
+<tr>
+<td><strong>합계</strong></td>
+<td><strong>158</strong></td>
+<td></td>
+<td>'보유 현황' 시트가 I열을 자동 집계</td>
+</tr>
+</tbody>
+</table></div>
+<p>컬럼: No / 분류 / 데이터 항목 / 설명·예시 / 예상 단위 / 관련 세부 모델 / 용도 / 예상 데이터 형태 / <strong>보유 여부(I열, 노란색)</strong></p>
+<h2>4. 입력 규칙 (시트 '개요' 기준)</h2>
+<p>I열은 드롭다운(데이터 유효성)으로 아래 4개 값만 허용됨.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>코드</th>
+<th>정의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>보유</strong></td>
+<td>데이터가 저장되어 있고 제공 가능</td>
+</tr>
+<tr>
+<td><strong>일부 보유</strong></td>
+<td>일부 기간·설비·위치만 있거나 수기 기록</td>
+</tr>
+<tr>
+<td><strong>미보유</strong></td>
+<td>측정·기록하지 않음 또는 해당 공정 없음</td>
+</tr>
+<tr>
+<td><strong>확인 필요</strong></td>
+<td>담당 부서 확인이 필요함</td>
+</tr>
+</tbody>
+</table></div>
+<h2>5. 판정 원칙 (이번 작업에서 적용)</h2>
+<ul>
+<li>DB에서 테이블·컬럼·태그와 실제 데이터(행 수, 기간)까지 확인되면 → <strong>보유</strong></li>
+<li>일부 설비·공정·기간만 확인되거나, 해당 공정 일부만 확인되면 → <strong>일부 보유</strong></li>
+<li>기준·설계 자료(도면, 물성, 단가 등)처럼 DB 밖 문서일 가능성이 크고 DB에서 근거가 없으면 → <strong>확인 필요</strong></li>
+<li>DB 권한이 없어 확인할 수 없는 경우도 → <strong>확인 필요</strong> (근거 칸에 "권한 없음" 명시)</li>
+<li><strong>미보유</strong>는 공정이 없다는 사실이 DB로 명확할 때만 사용 (DB에서 못 찾았다는 것만으로는 미보유로 판정하지 않음)</li>
+<li>시트에 값을 넣기 전에 판정 결과 md(04)를 먼저 검토받는 것을 전제로 함</li>
+</ul>
+<h2>6. 산출물</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01_요청사항_정리.md</code></td>
+<td>본 문서</td>
+</tr>
+<tr>
+<td><code>02_MES_Oracle_조사결과.md</code></td>
+<td>MES DB 접근 가능 스키마·테이블, 공정별 주요 테이블</td>
+</tr>
+<tr>
+<td><code>03_DataForge_PG_조사결과.md</code></td>
+<td>수집 테이블·태그 현황</td>
+</tr>
+<tr>
+<td><code>04_보유여부_매칭결과.md</code></td>
+<td>158개 항목별 보유 여부 + 근거</td>
+</tr>
+<tr>
+<td><code>05_진행상황_재개정보.md</code></td>
+<td>진행 상태, 재개 방법</td>
+</tr>
+</tbody>
+</table></div></section><section id="mes" class="doc"><header class="sec-head"><span class="sec-no">02</span><h2>MES Oracle 조사 결과</h2><span class="sec-src">02_MES_Oracle_조사결과.md</span></header><ul>
+<li>조사일: 2026-10-29</li>
+<li>접속: <code>172.16.120.160:1521/cssmes</code> (Oracle 19c EE), 계정 <code>SDP_DATA</code> (role: CONNECT)</li>
+<li>조사 방식: <code>ALL_TABLES</code>·<code>ALL_TAB_COMMENTS</code>·<code>ALL_COL_COMMENTS</code> 카탈로그 조회 → 공정별 핵심 테이블의 컬럼 구성과 날짜 컬럼 min/max 확인 (읽기 전용 SELECT만 수행)</li>
+</ul>
+<h2>1. 권한 현황</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>스키마</th>
+<th>객체</th>
+<th>SDP_DATA SELECT 권한</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMES (MES)</td>
+<td>테이블 4,261 / 뷰 268</td>
+<td>4,533개</td>
+<td>사실상 MES 전체 조회 가능</td>
+</tr>
+<tr>
+<td>BESTERP (ERP)</td>
+<td>테이블 3,356 / 뷰 70</td>
+<td>3,426개</td>
+<td>원료 구매·단가·회계</td>
+</tr>
+<tr>
+<td>EMS00</td>
+<td>테이블 1</td>
+<td>PUBLIC</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>→ "권한이 없을 수 있다"는 우려와 달리 <strong>이번 판정에 필요한 테이블은 모두 조회 가능</strong>했음.</p>
+<p>주의: 테이블 통계(<code>NUM_ROWS</code>, <code>LAST_ANALYZED</code>)는 대부분 2024-07 기준으로 오래됨. 그래서 실제 데이터 기간은 날짜 컬럼으로 따로 확인함. 일부 날짜 컬럼에 <code>9999-12-31</code>, <code>1111-11-11</code> 같은 더미 값이 섞여 있음.</p>
+<h2>2. CMES 모듈 구조 (테이블명 접두어)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>접두어</th>
+<th>영역</th>
+<th>테이블 수</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB*</td>
+<td>제강 (EAF·AOD·LT·LF·VD·연주·조괴)</td>
+<td>약 470</td>
+<td><code>PLNT_CODE</code>: <strong>S = 2제강</strong>, N = 3제강</td>
+</tr>
+<tr>
+<td>SPRC*</td>
+<td>압연·단조·산세·열처리·정정·롤</td>
+<td>약 860</td>
+<td>소형압연(선재) 설비코드 <code>8601</code></td>
+</tr>
+<tr>
+<td>SPRD* / SPRA*</td>
+<td>LOT 공통 / 생산계획·재공</td>
+<td>약 440</td>
+<td></td>
+</tr>
+<tr>
+<td>SQAW*</td>
+<td>품질 (시험·성분·보증서·판정)</td>
+<td>약 430</td>
+<td></td>
+</tr>
+<tr>
+<td>STCW*</td>
+<td>기술표준·강종·규격</td>
+<td>약 280</td>
+<td></td>
+</tr>
+<tr>
+<td>SFMZ*</td>
+<td>설비(SAP PM 연계)</td>
+<td>약 80</td>
+<td></td>
+</tr>
+<tr>
+<td>SMAZ*</td>
+<td>원료·고철 검수·자재</td>
+<td>약 230</td>
+<td>BESTERP에도 SMAZ 고철 단가</td>
+</tr>
+<tr>
+<td>ODS_<em>, SAP_</em></td>
+<td>SAP 인터페이스</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. 공정별 핵심 테이블 (데이터 기간은 실측)</h2>
+<h3>3.1 제강 — Heat·지시·경로</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+<th>주요 컬럼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3010</td>
+<td>BSA_HEAT공통</td>
+<td>~2026-10 (통계일 2026-10-23)</td>
+<td>HEAT_NO, CAST_NO, IRN_CODE, REFN_METH(정련방법), PATH_CODE, 잔탕량, 출탕량·온도, SLAG_THK, SLAG_WGT, LF/VOD 전력·가스, 연주도착일시</td>
+</tr>
+<tr>
+<td>SPRB2010</td>
+<td>제강 HEAT 지시</td>
+<td>2017 ~ 2026-11</td>
+<td>지시 CAST/HEAT 순서, 강종</td>
+</tr>
+<tr>
+<td>SPRB4010</td>
+<td>재료일품(CC/IC ID)</td>
+<td>2001 ~ 2026-10-29</td>
+<td>MATR_NO–HEAT_NO, 외경·폭·길이·중량</td>
+</tr>
+<tr>
+<td>SPRB3440</td>
+<td>CC 빌렛</td>
+<td>2017 ~ 2026-10-29</td>
+<td>HEAT_NO, STR_NO, SEQ, 재료코드, 중량</td>
+</tr>
+<tr>
+<td>SPRB3360 / SPRB1040</td>
+<td>공정별 작업실적 / 표준 라우트</td>
+<td>~2026-10-29</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.2 제강 — 원료·합금 투입</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+<th>주요 컬럼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3030</td>
+<td>BSB_원료 (장입·합금·부원료 투입)</td>
+<td>~2026-10-29 (2026년 17.5만 건)</td>
+<td>HEAT_NO, USE_RTN(공정), SEQ, MATL_CODE, USE_WGT, PRICE, <strong>BK_NO(버킷)</strong>, ENTRY_TIME</td>
+</tr>
+<tr>
+<td>SPRB3040</td>
+<td>원료 WIRE</td>
+<td>~2026</td>
+<td>투입시각·길이·속도·투입구</td>
+</tr>
+<tr>
+<td>SPRB1630 / SPRB1640</td>
+<td>원료 품위 성분 / 원료성분</td>
+<td>~2026-09</td>
+<td>원료코드별 C·Si·Mn·P·S·Ni·Cr·Mo·Cu·Sn…</td>
+</tr>
+<tr>
+<td>SPRB_MIX_20/30/40</td>
+<td>강종 목표성분 / 합금철 단가·재고 / 합금철 품위</td>
+<td>2023 ~ 2026-10</td>
+<td>원료 배합 시뮬레이션용</td>
+</tr>
+<tr>
+<td>SPRB3521~3553</td>
+<td>원료 MIX 최적화 시뮬레이션</td>
+<td>~2024</td>
+<td>공정별 적입량 제약, 강종 SPEC, 단가</td>
+</tr>
+<tr>
+<td>SMAZ5200</td>
+<td>철스크랩 검사 및 입하</td>
+<td>2017 ~ 2026-10-29</td>
+<td>LOT_NO, 등급·비율, 감량, 검사원</td>
+</tr>
+<tr>
+<td>SMAZ4750 / 4751</td>
+<td>수입 일반/STS 스크랩 화학성분</td>
+<td>~2026-10</td>
+<td>LOT별 C·Si·Mn·P·S·Ni·Cr·Cu·Sn</td>
+</tr>
+<tr>
+<td>SPRB3950 / 3951</td>
+<td>스크랩 분석 대상·결과</td>
+<td><strong>2013년만</strong></td>
+<td>시험적 수행 기록</td>
+</tr>
+<tr>
+<td>BESTERP.SMAZ3200~3220</td>
+<td>고철 구매 단가</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.3 제강 — EAF 운전</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+<th>주요 컬럼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3060</td>
+<td>EAF 공통 (Heat 단위)</td>
+<td>2007 ~ 2026-10-29 (2제강 1년 3,513 Heat)</td>
+<td>정련·출탕 시각, 용락/정련 유효·무효전력, 탭, 산소(자동·측면·버너·랜스), LNG·경유, CI량, 장입량, 잔탕량, 출탕량, 통전시간, TTT</td>
+</tr>
+<tr>
+<td>SPRB3061</td>
+<td>EAF 용락 (차수별)</td>
+<td>~2026-10-29</td>
+<td>차수별 시작·종료, 전력량, 탭(00=장입)</td>
+</tr>
+<tr>
+<td>SPRB3062</td>
+<td>EAF 냉각수</td>
+<td>~2026-10-29</td>
+<td>벽체·천정·엘보·변압기·전극ARM 입출측 온도, 유량</td>
+</tr>
+<tr>
+<td>SPRB3063</td>
+<td>EAF 집진기</td>
+<td>~2026-10-29</td>
+<td>Baghouse 온도·압력, TMS 분진·유량·온도</td>
+</tr>
+<tr>
+<td>SPRB3065</td>
+<td>EAF 설비</td>
+<td>~2026-10-29</td>
+<td>내화물·패널 사용횟수, 벽체·변압기 최고온도</td>
+</tr>
+<tr>
+<td>SPRB8410~8450</td>
+<td>2제강 EAF 정주기</td>
+<td>2024-07 ~ 2026-10-29</td>
+<td>가탄제·산화제 취입속도/량, 유효·무효전력, 역률, 측면버너 O2·LNG, 메인/측면 산소</td>
+</tr>
+<tr>
+<td>SPRB3700</td>
+<td>2제강 전기로 FM01</td>
+<td>2019 ~ 2026-10-29</td>
+<td>변압기 역률·유효전력·2차 전압/전류(3상), 냉각수</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.4 제강 — AOD·LT·LF·VD</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3420 / 3421</td>
+<td>AOD 공통 / AOD 단계실적 (단계별 O2·Ar·N2 랜스·투이어 사용량·유량, 온도·측정시각)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3709</td>
+<td>2제강 AOD (FM, 블로잉 패턴·단계·가스)</td>
+<td>2019 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3430 / 3431</td>
+<td>LT 공통 / LT 단계 (도착·출발 온도·시각, 버블링 Ar·N2·압력)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3080</td>
+<td>LF 공통 (안치·이동 시각, 전력, Ar·N2, 종점온도, 도착량)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3120</td>
+<td>정련 작업실적 (작업별 시각, 가스 압력·유량, 탭, MW, MWH)</td>
+<td>~2026-10</td>
+</tr>
+<tr>
+<td>SPRB8460</td>
+<td>2제강 LF 정주기 (분취, MW, MWH)</td>
+<td>2024-07 ~ 2026-10-29</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.5 제강 — 측정·분석</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3160</td>
+<td>온도 (공정·차수별 측온값·시각, <strong>측정방식</strong>, <strong>산소량(활성도)</strong>, 탄소량)</td>
+<td>~2026-10</td>
+</tr>
+<tr>
+<td>SPRB3910</td>
+<td>샘플 (채취 시각)</td>
+<td>~2026-10</td>
+</tr>
+<tr>
+<td>SPRB3920</td>
+<td>성분 (TST_CNT 1x=EAF, 3x=LF, 4x=VD/VOD, 9x=래들; C~Sn 등 202컬럼, 분석일시)</td>
+<td>2002 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3190</td>
+<td>제강 슬래그 성분 (로내·래들 CaO·SiO2·Cr2O3·Al2O3·염기도)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SQAW2630</td>
+<td>슬래그 성분 (CaO·MgO·<strong>FeO</strong>·MnO·Cr2O3·SiO2·Al2O3 등)</td>
+<td>~2026-09</td>
+</tr>
+<tr>
+<td>SPRB3210</td>
+<td>슬래그 POT 번호 (공정별 배재)</td>
+<td>~2026-10-29</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.6 래들·내화물</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB6030</td>
+<td>래들 (래들번호, 상태, 수리후 수명, 예열 개시·완료·온도, LNG·O2)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB6040</td>
+<td>래들 가열</td>
+<td>2007 ~ <strong>2023-02</strong> (중단)</td>
+</tr>
+<tr>
+<td>SPRB3032~3035, SPRB5240</td>
+<td>내화물 사용관리, 축로실적</td>
+<td>~2026-09</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.7 연주 (2연주)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRB3230</td>
+<td>제강 CC (Heat 단위: 도착온도, 턴디시 합탕·잔탕, 몰드레벨 적중률)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3240</td>
+<td>CC 주조 (스트랜드별 냉각수 유량·입출측 온도·ΔT, 2차 냉각 비수량, EMS MOLD/FINAL, 주조 시각)</td>
+<td>~2026-10-30</td>
+</tr>
+<tr>
+<td>SPRB3220</td>
+<td>CC 주조속도 (체크시각별 TD 온도, ΔT, 표준/실적 주속, 비수량)</td>
+<td>~2026-10-29</td>
+</tr>
+<tr>
+<td>SPRB3252</td>
+<td>연주 빌렛 정주기 (래들중량, TD 온도·중량, 스토퍼, 주속, 몰드레벨, 몰드 냉각수, Heat flux, OSC, M-EMS, Zone 수량·압력)</td>
+<td>2019 ~ 2026-10-16</td>
+</tr>
+<tr>
+<td>SPRB_CC_OSC</td>
+<td>2제강 연주 OSC 측정값</td>
+<td>2024-06 ~ 2026-10-29</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.8 소형압연 (선재, 설비코드 8601)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPRC03051</td>
+<td>선재 가열실적 (빌렛 단위: 장입·추출 온도·시각, 가열대/균열대 온도(상·하·좌·우), Gas·Air 유량, 공연비, <strong>가열대 O2 농도</strong>, 로내 압력, Descaler 압력, 체류·총재로 시간, QR 빌렛 번호)</td>
+<td>2015 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SPRC03052</td>
+<td>선재 작업실적 (압연 시각, 코블 발생·위치·사유, 측정 치수 최대·최소, 편경차, 컨베이어 속도, Cover 개폐, Damper, Fan 수, Scale, 결함 분포)</td>
+<td>2008 ~ 2026-10-28</td>
+</tr>
+<tr>
+<td>SPRC03055</td>
+<td>선재 조업데이터 (스탠드별 속도·전류, 스탠드 전면 온도, BGM, NTM 치수·Oval, 냉각수 On/Off, 톤수)</td>
+<td>~2026</td>
+</tr>
+<tr>
+<td>SPRC03054 / 03059</td>
+<td>선재 ECT(와전류) 실적</td>
+<td>~2026</td>
+</tr>
+<tr>
+<td>SPRC0A066 / 0A071 / 0A078</td>
+<td>COBBLE 감지 / 조압연 BGM / 조압연 0.2초 실적</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SPRC03010</td>
+<td>압연 정지실적 (설비·정지코드·시각)</td>
+<td>2015 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SPRC03210</td>
+<td>장입순서 자동편성 결과</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SPRC05013 / 05015 / 05026</td>
+<td>롤 마스터 / 롤 가공실적(~2024-06) / 롤 인입실적(스탠드·공형·톤수·가이드NO, ~2026-10-29)</td>
+<td></td>
+</tr>
+<tr>
+<td>SPRC01068 / 01035</td>
+<td>표준 선재 가열로(~2016) / 소형압연 조업 종합기준</td>
+<td></td>
+</tr>
+<tr>
+<td>SPRC01075_1~3 / SPRC01090_TEMP</td>
+<td>소형압연 온도예측 기준 (HTC, 강종그룹별 밀도·열전도도·비열) / 가열로 열전달계수</td>
+<td>기존 온도모델 기준값</td>
+</tr>
+</tbody>
+</table></div>
+<h3>3.9 품질</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>테이블</th>
+<th>내용</th>
+<th>데이터 기간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQAW2511</td>
+<td>LOT별 검사시험 실적 — 최근 2개월 항목: 인장·제품경도·충격·<strong>결정입도·탈탄층·미세조직·마크로조직</strong>·표면조도·페라이트분율·크리프 등</td>
+<td>2002 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SQAW2552</td>
+<td>인장시험장비 수신 (YS·TS·EL·RA·직경)</td>
+<td>2021 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>SQAW2110 / 2150</td>
+<td>래들 화학성분 / Check 성분</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SQAW1210 / 1211</td>
+<td>마크로 검사 (Heat, 단면·크랙 이미지)</td>
+<td>2017 ~ 2026-10-26</td>
+</tr>
+<tr>
+<td>SQAW1660</td>
+<td>종합판정 LOG</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SPRC04001 / 04002 / 04090</td>
+<td>검사실적(비파괴) / 이상재 / UT Report</td>
+<td>2007 ~ 2026-10-29</td>
+</tr>
+<tr>
+<td>STCW3210 / STCW4000</td>
+<td>표준규격 화학성분(주문·사내 MIN/MAX/목표) / 사내강종(정련방법, Melting point)</td>
+<td>~2026-10</td>
+</tr>
+<tr>
+<td>STCW8010</td>
+<td>열간가공성 DB</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<h2>4. MES에서 찾지 못한 것 (판정 시 "확인 필요"로 처리)</h2>
+<ul>
+<li>설비 도면·제원(노·래들·턴디시 형상, 내화물 두께, 가열로 존 길이, 압연 스탠드 배치·밀 강성)</li>
+<li>래들 외피 온도, 래들 덮개 사용 여부, 다지점 측온·혼합 시험, 빌렛 내부 열전대 시험</li>
+<li>빌렛 표면(교정·절단 구간) 측온값</li>
+<li>롤갭 설정·측정값, 스탠드 간 장력 직접값</li>
+<li>레큐퍼레이터 온도, 스키드 냉각수</li>
+<li>용강·슬래그·내화물 열물성, 변형 저항 시험값(열간가공성 DB 외)</li>
+</ul></section><section id="df" class="doc"><header class="sec-head"><span class="sec-no">03</span><h2>DataForge PG 조사 결과</h2><span class="sec-src">03_DataForge_PG_조사결과.md</span></header><ul>
+<li>조사일: 2026-10-29</li>
+<li>접속: <code>172.16.208.8:9999/stats_db</code> (PostgreSQL 13.12), 계정 <code>sa_dev</code>, <strong>읽기 전용 세션</strong>으로 조회</li>
+<li>성격: 수집 데이터 본체가 아니라 <strong>수집 태그·수집 테이블 메타데이터</strong>와 집계 통계를 관리하는 DB. 실제 시계열은 공장별 DB(<code>sm2_db</code>, <code>cs2_db</code>, <code>srl_db</code> 등)에 있음</li>
+</ul>
+<h2>1. 스키마 구성</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>스키마</th>
+<th>주요 테이블</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>comm_df</code></td>
+<td><code>data_tags</code> (29,316)</td>
+<td>태그 사전: 공장·설비·장치·태그설명·단위·수집주기·수집여부·저장소</td>
+</tr>
+<tr>
+<td></td>
+<td><code>tag_new_mt</code> (26,746) / <code>tag_mt</code></td>
+<td>표준 태그 마스터 (Tag 종류 C/V/T, 측정값 유형 actual/set/target 등)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>clct_pg_table_mt</code> (341) / <code>clct_table_mt</code> (390) / <code>clct_column_mt</code> (14,603)</td>
+<td>PostgreSQL·BigQuery 수집 테이블과 컬럼</td>
+</tr>
+<tr>
+<td></td>
+<td><code>clct_src_device_mt</code> (293)</td>
+<td>수집 장치(PLC, IBA, MODBUS, DB)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>factory_mt</code> (19) / <code>facility_mt</code> (60,514) / <code>sap_facility_mt</code></td>
+<td>공장·설비 마스터 (SAP 기능위치 연계)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>used_tags</code> (3,329)</td>
+<td>Grafana 대시보드에서 쓰는 태그</td>
+</tr>
+<tr>
+<td><code>comm_stat</code></td>
+<td><code>tag_5m_st</code> (1,519만) / <code>tag_1d_st</code> (372만)</td>
+<td>태그별 5분·1일 집계(min/max/avg/std/median, 불변 여부)</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td><code>stats</code>, <code>stats_hour</code></td>
+<td>테이블·태그별 수집 건수</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. 대상 공장 수집 태그 현황 (<code>comm_df.data_tags</code>)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>공장</th>
+<th>수집 중(Y)</th>
+<th>미수집(N)</th>
+<th>주요 설비</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2제강</td>
+<td>686</td>
+<td>136</td>
+<td>MHS(합금 투입 BIN) 145, 래들 예열기 69, EAF 58, 전극제어 29, VD 28, Wire feeder 22, AOD(CONVERTER) 20, 카본 인젝션 18, LTS 16</td>
+</tr>
+<tr>
+<td>2연주</td>
+<td>647</td>
+<td>61</td>
+<td>스트랜드 1~6 냉각계(각 42~46), 인발·교정, 몰드, 스토퍼, 턴디시, M/F-EMS, TCM</td>
+</tr>
+<tr>
+<td>소형압연</td>
+<td>1,642</td>
+<td>5,966</td>
+<td>가열로(균열대 117, 가열대 40, 워킹빔 39, 고정빔 12), 조압연·RSB·KOCKS·NTM 스탠드, Pouring reel, DST, 유도가열</td>
+</tr>
+<tr>
+<td>3제강 / 3연주</td>
+<td>338 / 652</td>
+<td>—</td>
+<td>(이번 대상 외)</td>
+</tr>
+<tr>
+<td>대형압연</td>
+<td>535</td>
+<td>2,359</td>
+<td>(보조)</td>
+</tr>
+<tr>
+<td>산세</td>
+<td>423</td>
+<td>1,069</td>
+<td>(후속)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>2.1 항목별 태그 근거 (수집 중 태그 수)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>데이터</th>
+<th>공장</th>
+<th>태그 수</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EAF 전력·전극</td>
+<td>2제강</td>
+<td>35+</td>
+<td>Activation power(적산), COS PF, 전극별 전압·전류</td>
+</tr>
+<tr>
+<td>산소·랜스·버너</td>
+<td>2제강</td>
+<td>다수</td>
+<td>Lance position/speed, 측면 산소 랜스</td>
+</tr>
+<tr>
+<td>카본 인젝션</td>
+<td>2제강</td>
+<td>22</td>
+<td>Carbon insert quantity/weight, 가탄기 압력</td>
+</tr>
+<tr>
+<td>EAF 패널 온도</td>
+<td>2제강</td>
+<td>20</td>
+<td>NO# PANEL TEMPERATURE, BAYCOVER</td>
+</tr>
+<tr>
+<td>바텀 버블링</td>
+<td>2제강</td>
+<td>6</td>
+<td>BOTTOM_BUBBLING 1~6 TEMPERATURE</td>
+</tr>
+<tr>
+<td>VD</td>
+<td>2제강</td>
+<td>28</td>
+<td>진공도(mbar), Ar·N2 유량·적산, 스팀</td>
+</tr>
+<tr>
+<td>래들 예열</td>
+<td>2제강</td>
+<td>73</td>
+<td>Preheater 전력, 가열시간, 연료 적산</td>
+</tr>
+<tr>
+<td>몰드 냉각</td>
+<td>2연주</td>
+<td>44</td>
+<td>몰드 냉각 유량 SV/PV/MV, 입구 온도</td>
+</tr>
+<tr>
+<td>2차 냉각</td>
+<td>2연주</td>
+<td>261</td>
+<td>Zone별 유량 SV/PV, Max/Min set</td>
+</tr>
+<tr>
+<td>몰드 레벨·OSC·EMS</td>
+<td>2연주</td>
+<td>30 / 30 / 43</td>
+<td>몰드레벨 실제·SP·헌팅, OSC 주파수·NSR·NST, M/F-EMS 전류·전압</td>
+</tr>
+<tr>
+<td>턴디시·래들 중량</td>
+<td>2연주</td>
+<td>27 / 4</td>
+<td>TUNDISH TEMPERATURE, 래들 터렛 ARM 중량</td>
+</tr>
+<tr>
+<td>가열로 존 온도·제어</td>
+<td>소형압연</td>
+<td>50+</td>
+<td>가열대·균열대 TI, TIC SV/PV/MV, 균열대 상·하·동·서</td>
+</tr>
+<tr>
+<td>가열로 유량 제어</td>
+<td>소형압연</td>
+<td>70+</td>
+<td>FIC SV/PV/MV (연료·공기 유량 제어기)</td>
+</tr>
+<tr>
+<td>로압</td>
+<td>소형압연</td>
+<td>11</td>
+<td>PIC SV/PV/MV</td>
+</tr>
+<tr>
+<td>로내 O2·NOx</td>
+<td>소형압연</td>
+<td>3</td>
+<td>DST O2 probe, SCR NOx 10분 평균</td>
+</tr>
+<tr>
+<td>스탠드 속도</td>
+<td>소형압연</td>
+<td>101</td>
+<td>조압연 STAND1~10 실제·기준 속도(RPM·MPM)</td>
+</tr>
+<tr>
+<td>스탠드 전류·토크</td>
+<td>소형압연</td>
+<td>49</td>
+<td>조압연·RSB 스탠드 전류·토크</td>
+</tr>
+<tr>
+<td>압연 하중</td>
+<td>소형압연</td>
+<td>6</td>
+<td><strong>RSB ROLL FORCE STAND1~6만</strong></td>
+</tr>
+<tr>
+<td>루퍼</td>
+<td>소형압연</td>
+<td>36</td>
+<td>LOOP 실제값, 스캐너</td>
+</tr>
+<tr>
+<td>파이로미터</td>
+<td>소형압연</td>
+<td>152</td>
+<td>유도가열 파이로미터, Pouring reel 온도</td>
+</tr>
+<tr>
+<td>치수 게이지</td>
+<td>소형압연</td>
+<td>43</td>
+<td>프로파일 게이지, RSB Diameter</td>
+</tr>
+<tr>
+<td>HMD·Hot Eye</td>
+<td>소형압연</td>
+<td>39</td>
+<td>HMD R10/R11, KOCKS500</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. 수집 테이블 (<code>comm_df.clct_pg_table_mt</code>)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>공장 DB</th>
+<th>스키마</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sm2_db</code> (2제강)</td>
+<td><code>sm2idmatch</code></td>
+<td>EAF·AOD·LF·LTS·VD <strong>ID 매칭</strong> (태그 시계열 ↔ Heat)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>sm2mes</code></td>
+<td>eaf_slag, lfaod_slag, lfvdcc_target(목표), cc_work_result, workorder_perfm_joined, sm2_monthly_prod_plan, sts_quality_analysis</td>
+</tr>
+<tr>
+<td></td>
+<td><code>sm2plc</code></td>
+<td>eaf/aod/lf/lts/vd/energy PLC 시계열</td>
+</tr>
+<tr>
+<td></td>
+<td><code>sm2shop</code>, <code>sm2zonematch</code></td>
+<td>idtracking, workorder, zone_tracking</td>
+</tr>
+<tr>
+<td><code>cs2_db</code> (2연주)</td>
+<td><code>cs2idmatch</code>, <code>cs2plc</code></td>
+<td>공통·스트랜드 1~6 ID 매칭, PLC</td>
+</tr>
+<tr>
+<td></td>
+<td><code>cs2l2</code></td>
+<td>bts_20mm_l2 (L2 20mm 단위), summary</td>
+</tr>
+<tr>
+<td></td>
+<td><code>cs2mes</code>, <code>cs2shop</code></td>
+<td>cc_work_result, sq_master, idtracking</td>
+</tr>
+<tr>
+<td><code>srl_db</code> (소형압연)</td>
+<td><code>srlidmatch</code></td>
+<td>furnace, furnaceline, roughmill, rsb, rsm, ntm, layinghead, pouringreel, dst, cb ID 매칭</td>
+</tr>
+<tr>
+<td></td>
+<td><code>srll2</code></td>
+<td><strong>furnace_regularperiod_l2</strong>(가열로 정주기), furnace_bt_l2, roughmill/intermediatemill/rsm BGM, <strong>rsb_4deagle_l2</strong>, <strong>rsb/rsm_hoteye_l2</strong></td>
+</tr>
+<tr>
+<td></td>
+<td><code>srlmes</code></td>
+<td>wire_heat_perfm_sprc03051, wire_work_data_sprc03055, wire_work_perfm_sprc03052, quality_wire_bad/work</td>
+</tr>
+<tr>
+<td></td>
+<td><code>srlanaly</code></td>
+<td><strong>srl_heating_score / quality_nidx</strong> (가열 품질 지수 — 기존 분석 모델 산출물)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>srlzonematch</code></td>
+<td>srl_idtracking_inout, tag_zone</td>
+</tr>
+<tr>
+<td><code>common_db</code></td>
+<td><code>common</code></td>
+<td>heatno_matl_use_stat, irn_matl_price_stat, lot_info, sprb4010_heat_lot_match_mt, <strong>tms_analyzer</strong>, geems(에너지)</td>
+</tr>
+</tbody>
+</table></div>
+<h2>4. 시사점</h2>
+<ul>
+<li><strong>소재 ID 추적(Genealogy)이 이미 구현</strong>돼 있음: 공정별 <code>*_id_matching</code>, <code>*_idtracking</code>, <code>zone_tracking</code> 이 태그 시계열을 Heat·LOT에 연결. 킥오프 회의의 "소재 ID 트래킹 구조 구축" 발언과 일치</li>
+<li>태그 사전(설명·단위·수집주기·수집여부)이 DB로 관리되고 있어 공통 C-07 "태그 사전"은 보유로 판정</li>
+<li>다만 태그 설명이 비어 있는 태그가 상당수(가열로 FIXED_BEAM/MOV_BEAM, FS# 등) → NDA 후 인이지가 description 확인할 때 보완 필요</li>
+<li>회의 메모: 2020년부터 데이터가 있으나 온전한 기간은 2023년 이후, NTP 미동기로 시간 보정 필요 (킥오프 회의 3)</li>
+</ul></section>
+
+<section id="result" class="result">
+  <header class="sec-head"><span class="sec-no">04</span><h2>보유 여부 매칭 결과</h2><span class="sec-src">04_보유여부_매칭결과.md</span></header>
+  <p class="note">판정 기준: DB에서 실데이터까지 확인되면 <span class="badge b-have">보유</span>, 일부 설비·기간·속성만 있으면 <span class="badge b-part">일부 보유</span>,
+  DB 밖 문서이거나 근거가 없으면 <span class="badge b-check">확인 필요</span>. DB에서 찾지 못했다는 이유만으로 미보유로 판정하지 않았습니다.
+  근거 표기의 <b>MES</b>는 Oracle CMES 스키마 테이블, <b>DF</b>는 DataForge 수집 태그·테이블입니다.</p>
+
+  <h3>요약</h3>
+  <div class="table-wrap"><table><thead><tr><th>시트</th><th>항목 수</th><th>보유</th><th>일부 보유</th><th>미보유</th><th>확인 필요</th></tr></thead><tbody><tr><td>공통</td><td>13</td><td>7</td><td>4</td><td>0</td><td>2</td></tr><tr><td>과제1_제강성분</td><td>35</td><td>23</td><td>11</td><td>0</td><td>1</td></tr><tr><td>과제2_제강온도</td><td>35</td><td>24</td><td>4</td><td>0</td><td>7</td></tr><tr><td>과제3_가열로</td><td>32</td><td>17</td><td>9</td><td>0</td><td>6</td></tr><tr><td>과제4_압연</td><td>24</td><td>13</td><td>7</td><td>0</td><td>4</td></tr><tr><td>과제5_통합품질</td><td>19</td><td>11</td><td>7</td><td>0</td><td>1</td></tr><tr class="total"><td>합계</td><td>158</td><td>95</td><td>42</td><td>0</td><td>21</td></tr></tbody></table></div>
+
+  <h3>항목별 판정</h3>
+  <div class="toolbar" role="search">
+    <button class="chip" data-status="" aria-pressed="true" type="button">전체</button>
+    <button class="chip" data-status="보유" aria-pressed="false" type="button">보유</button>
+    <button class="chip" data-status="일부 보유" aria-pressed="false" type="button">일부 보유</button>
+    <button class="chip" data-status="확인 필요" aria-pressed="false" type="button">확인 필요</button>
+    <select id="sheet-filter" aria-label="시트 선택"><option value="">모든 시트</option><option>공통</option><option>과제1_제강성분</option><option>과제2_제강온도</option><option>과제3_가열로</option><option>과제4_압연</option><option>과제5_통합품질</option></select>
+    <input id="q" type="search" placeholder="항목·근거·테이블명 검색" aria-label="검색">
+    <span class="count" id="count"></span>
+  </div>
+  <div class="table-wrap"><table id="result-table">
+    <thead><tr><th>No</th><th>데이터 항목</th><th>형태</th><th>보유 여부</th><th>근거</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+
+  <h3>확인 필요 항목 — 담당 부서 확인 요청 목록</h3>
+  <div class="table-wrap"><table><thead><tr><th>No</th><th>데이터 항목</th><th>확인할 내용</th></tr></thead><tbody><tr><td class="mono">C-11</td><td>기존 해석·시험 자료</td><td>DB에서 CFD·열해석·현장 시험 자료 확인 안 됨 (문서 자료일 가능성)</td></tr><tr><td class="mono">C-13</td><td>설비 도면·제원</td><td>설비 마스터(SAP 기능위치)는 보유, 도면·형상 제원은 DB에 없음</td></tr><tr><td class="mono">1-26</td><td>AOD 샘플 성분</td><td>SPRB3920에 AOD 전용 차수 코드가 주석에 없음(EAF 1/LF 3/VD·VOD 4/래들 9). AOD 단계별 샘플 기록 위치 확인 필요</td></tr><tr><td class="mono">2-19</td><td>래들 열 상태 관리 기준·보정 규칙</td><td>래들 운영·출강온도 보정 기준이 DB에서 확인 안 됨 (작업표준 문서 확인 필요)</td></tr><tr><td class="mono">2-20</td><td>래들 외피 온도</td><td>래들 외피 온도(열화상) 데이터 확인 안 됨</td></tr><tr><td class="mono">2-21</td><td>덮개·보온</td><td>래들 덮개·보온재 사용 기록 확인 안 됨</td></tr><tr><td class="mono">2-30</td><td>다지점 측온·혼합 시험</td><td>다지점 측온·혼합 시험 자료 확인 안 됨</td></tr><tr><td class="mono">2-33</td><td>운전 한계</td><td>전력·가열시간·가스유량 설비 한계 기준 DB 확인 안 됨</td></tr><tr><td class="mono">2-34</td><td>설비 제원</td><td>노·래들·턴디시 형상·내화물 두께 등 제원 DB 확인 안 됨</td></tr><tr><td class="mono">2-35</td><td>물성 자료</td><td>용강·슬래그·내화물 열물성 DB 확인 안 됨 (STCW4000 Melting point만 보유)</td></tr><tr><td class="mono">3-10</td><td>가동부·고정부 측 온도</td><td>DF FIXED_BEAM(12)·MOV_BEAM(7) 태그는 있으나 설명이 비어 있어 측 온도 여부 확인 필요</td></tr><tr><td class="mono">3-14</td><td>연소 공기 온도·압력</td><td>레큐퍼레이터 입출구 온도·연소공기 압력 태그 확인 안 됨</td></tr><tr><td class="mono">3-18</td><td>스키드 냉각수</td><td>스키드 냉각수 태그 확인 안 됨</td></tr><tr><td class="mono">3-23</td><td>빌렛 내부·중심 온도 시험</td><td>빌렛 열전대 매설 시험 자료 확인 안 됨</td></tr><tr><td class="mono">3-24</td><td>산화·스케일</td><td>MES SPRC03052에 Scale 컬럼 있으나 의미 미확인. 산화감량·스케일 두께 시험 자료 확인 안 됨</td></tr><tr><td class="mono">3-30</td><td>가열로 제원</td><td>가열로 존 구성·버너 배치·내화물 제원 DB 확인 안 됨</td></tr><tr><td class="mono">4-07</td><td>롤갭</td><td>롤갭 설정·위치 측정 태그 확인 안 됨</td></tr><tr><td class="mono">4-10</td><td>스탠드 간 장력</td><td>스탠드 간 장력 직접값 확인 안 됨 (루퍼 태그만 있음)</td></tr><tr><td class="mono">4-21</td><td>조작 가능 변수·범위</td><td>운전 중 변경 가능 변수·권한·대응시간은 현업 확인 필요</td></tr><tr><td class="mono">4-22</td><td>압연 설비 제원</td><td>스탠드 배치·밀 강성·모터 정격 제원 DB 확인 안 됨</td></tr><tr><td class="mono">5-06</td><td>빌렛 표면 온도</td><td>교정·절단 구간 빌렛 표면 측온 태그·테이블 확인 안 됨</td></tr></tbody></table></div>
+
+  <h3>스프레드시트 반영</h3>
+  <ul>
+    <li><code>06_보유여부_반영본.xlsx</code>: 원본 사본의 I열(보유 여부)에 판정값, J열에 "VNTG 확인 근거"를 넣은 파일입니다. 드롭다운과 '보유 현황' 집계 수식은 그대로입니다.</li>
+    <li>Google 시트 원본에는 반영하지 않았습니다. 업로드는 담당자가 직접 진행합니다.</li>
+    <li>시트 '개요'에 따르면 보유 여부 표시는 회신 필수가 아니며, 정확한 태그 확인은 NDA 이후 인이지가 직접 진행할 예정입니다.</li>
+  </ul>
+</section>
+
+<footer>경남 피지컬AI 과제 · 세아창원특수강 × 인이지 × VNTG DataForge팀 · 2026-10-29 작성 · 내부 검토용</footer>
+</main>
+</div>
+<script>
+const ROWS = [{"sheet": "공통", "no": "C-01", "cat": "생산 단위 연결", "item": "생산 단위 ID", "desc": "Heat ID, Billet ID, 제품 Coil/Lot ID와 상호 연결표", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB4010(재료일품–HEAT), SPRB3440(HEAT–스트랜드–빌렛), SPRC02002(LOT–HEAT); DF common.sprb4010_heat_lot_match_mt, 공정별 idtracking"}, {"sheet": "공통", "no": "C-02", "cat": "생산 단위 연결", "item": "설비 ID", "desc": "EAF·AOD·LF·래들·연주기·스트랜드·가열로·압연 라인 ID", "form": "생산·투입 기록", "status": "보유", "evidence": "MES EQUIP_NO·STR_NO·설비코드(8601 등), SFMZ2010_SAP 설비 LIST; DF facility_mt·sap_facility_mt"}, {"sheet": "공통", "no": "C-03", "cat": "생산 단위 연결", "item": "실제 처리 경로", "desc": "Heat별 실제 거친 공정 순서(예: EAF→LF, EAF→AOD→LF)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3010.REFN_METH/PATH_CODE, SPRB1040 표준라우트, SPRB3360 공정별 작업실적"}, {"sheet": "공통", "no": "C-04", "cat": "시간", "item": "시각 구분", "desc": "측정 시각, 시료 채취 시각, 분석 결과 등록 시각, 데이터 송신 시각 구분 여부", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3910 샘플시각, SPRB3920 성분분석일시, SPRB3160 측온시각, 각 테이블 IN_DATE(등록); DF 수집 시각 별도"}, {"sheet": "공통", "no": "C-05", "cat": "데이터 성격", "item": "설정값·실제값 구분", "desc": "주요 운전 항목의 설정값(SV)과 실제값(PV) 구분 보유 여부", "form": "센서 시계열", "status": "보유", "evidence": "DF 태그 SV/PV/MV 구분(가열로 TIC·FIC·PIC, 연주 냉각 유량 등), tag_new_mt.sensing_value_type"}, {"sheet": "공통", "no": "C-06", "cat": "데이터 성격", "item": "실측·계산값 구분", "desc": "센서 실측값, 보정·보간값, 기존 시스템(Level 2 등) 계산값, 수기 기록 구분", "form": "계산·추정값", "status": "일부 보유", "evidence": "DF tag_kind(C 수집/V 가상/T Tag화)로 일부 구분. 보정·보간값, L2 계산값, 수기 기록 구분은 체계적이지 않음"}, {"sheet": "공통", "no": "C-07", "cat": "태그 정보", "item": "태그 사전", "desc": "실제 태그명·테이블·컬럼, 단위·배율, 측정 위치, 수집 주기, 보유 기간을 정리한 기존 문서", "form": "기준·설계 자료", "status": "보유", "evidence": "DF comm_df.data_tags(29,316 태그: 설명·단위·수집주기·저장소), clct_pg_table_mt·clct_column_mt. 일부 태그 설명 누락"}, {"sheet": "공통", "no": "C-08", "cat": "이력", "item": "설비 변경·보수 이력", "desc": "리뱀핑, 설비 보수, 센서 교체, 롤 교체 이력과 적용 일자", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRC05026 롤 인입(교체), SPRB6080 몰드 보수, SPRB3065 EAF 내화물 사용횟수, SFMZ4010 설비 이상통지(SAP). 센서 교체·리뱀핑 이력은 미확인"}, {"sheet": "공통", "no": "C-09", "cat": "이력", "item": "운전 이력", "desc": "원료 변경, 운전 테스트, 셧다운·장기 휴지 이력", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRB3280 제강 정지실적, SPRC03010 압연 정지실적, SPRBT090 제강 테스트 현황; DF operation_schedule_mt. 원료 변경 이력은 별도 정리 없음"}, {"sheet": "공통", "no": "C-10", "cat": "기존 모델", "item": "기존 모델 입출력·성능", "desc": "운영 중인 온도·성분·가열 모델의 입력·출력 항목과 성능", "form": "계산·추정값", "status": "일부 보유", "evidence": "MES SPRB3521~3553 원료 MIX 최적화 시뮬레이션, SPRC01075 소형압연 온도예측 기준, SPRC01090_TEMP 가열로 열전달계수; DF srlanaly.srl_heating_score. 모델 성능 자료는 담당 부서 확인 필요"}, {"sheet": "공통", "no": "C-11", "cat": "기존 모델", "item": "기존 해석·시험 자료", "desc": "CFD·열해석 결과, 현장 시험(측온·혼합·가열 시험) 자료", "form": "시료 분석·검사", "status": "확인 필요", "evidence": "DB에서 CFD·열해석·현장 시험 자료 확인 안 됨 (문서 자료일 가능성)"}, {"sheet": "공통", "no": "C-12", "cat": "기준", "item": "강종 목록", "desc": "강종 코드, 규격, 계통(탄소강·스테인리스 등) 목록", "form": "기준·설계 자료", "status": "보유", "evidence": "MES STCW4000 사내강종, STCW3000/3200 표준규격·화학성분"}, {"sheet": "공통", "no": "C-13", "cat": "기준", "item": "설비 도면·제원", "desc": "노·래들·턴디시·가열로·압연기 도면과 설비 마스터", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "설비 마스터(SAP 기능위치)는 보유, 도면·형상 제원은 DB에 없음"}, {"sheet": "과제1_제강성분", "no": "1-01", "cat": "식별·목표", "item": "Heat 식별 정보", "desc": "Heat ID, 강종, 처리 경로(EAF·AOD·LF), 목표 출강량", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3010(HEAT_NO, IRN_CODE, REFN_METH, PATH_CODE), SPRB2010 HEAT 지시, SPRB3110 HEAT 예상용강량"}, {"sheet": "과제1_제강성분", "no": "1-02", "cat": "식별·목표", "item": "강종별 목표 성분", "desc": "원소별 목표 범위와 상한(예: Cu·Sn·Ni 상한)", "form": "기준·설계 자료", "status": "보유", "evidence": "MES STCW3210 표준규격 화학성분(주문·사내 MIN/MAX/목표), SPRB_MIX_20 강종별 목표 성분"}, {"sheet": "과제1_제강성분", "no": "1-03", "cat": "식별·목표", "item": "LF 투입 전 용강 품질 기준", "desc": "현장에서 사용하는 LF 투입 전 성분·온도·산소 관리 기준", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRB1090 표준EAF, SPRB1110 표준LFVD 작업표준. 현장의 LF 투입 전 관리 기준은 문서 확인 필요"}, {"sheet": "과제1_제강성분", "no": "1-04", "cat": "원료 장입", "item": "스크랩 구분별 장입량", "desc": "현장 스크랩 구분별 버킷·장입 단위 중량(예: 슈레더, 국내A압축, 국내A(생철), 국내C압축, 주물 편철, 지금 등)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 원료(HEAT·공정·차수·품명코드·사용량·BK_NO 버킷), 2026년 17.5만 건"}, {"sheet": "과제1_제강성분", "no": "1-05", "cat": "원료 장입", "item": "스크랩 공급사·Lot", "desc": "공급사, 입고 Lot, 입고일, 장입 버킷 번호", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SMAZ5200 철스크랩 검사·입하(LOT_NO·등급·검사원), SMAZ5300 고철 입고(거래처). Heat 장입(SPRB3030)과 입고 LOT 연결 정보는 없음"}, {"sheet": "과제1_제강성분", "no": "1-06", "cat": "원료 장입", "item": "스크랩 성분 정보", "desc": "구분별 규격 성분 범위, 표본 분석값(보유 시)", "form": "시료 분석·검사", "status": "일부 보유", "evidence": "MES SPRB1630 원료품위성분(규격), SMAZ4750/4751 수입 스크랩 LOT별 성분(~2026-10). 국내 스크랩 표본 분석은 SPRB3951(2013년만)"}, {"sheet": "과제1_제강성분", "no": "1-07", "cat": "원료 장입", "item": "장입 순서·시각", "desc": "버킷별 장입 순서와 장입 시각", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 SEQ·BK_NO·ENTRY_TIME, SPRB3061 용락 차수별 시각(TAP 00=장입)"}, {"sheet": "과제1_제강성분", "no": "1-08", "cat": "원료 장입", "item": "총 장입량", "desc": "전장입량(포함되는 원료 범위 확인)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060 CHRG_WGT 장입량, EAF_INPT_WGT"}, {"sheet": "과제1_제강성분", "no": "1-09", "cat": "원료 장입", "item": "용선·선철 장입량(사용 시)", "desc": "장입량, 온도, 성분", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "선철은 원료코드로 SPRB3030에 기록(사용 시). 100% 고철 기반으로 용선 공정 없음"}, {"sheet": "과제1_제강성분", "no": "1-10", "cat": "원료 장입", "item": "잔탕량·잔탕 성분", "desc": "직전 Heat 잔탕 중량과 성분(측정·추정 구분)", "form": "계산·추정값", "status": "일부 보유", "evidence": "MES SPRB3060 REMAIN_MOLTEN_WGT, SPRB3010 EAF_REMAIN_MOLTEN_WGT(잔탕량). 잔탕 성분은 없음"}, {"sheet": "과제1_제강성분", "no": "1-11", "cat": "합금·부원료 투입", "item": "합금철 투입", "desc": "종류(FeMn·FeSi·FeCr·Ni 등), 투입량, 투입 공정(출강·AOD·LF), 투입 순서·시점(기록 시)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030(USE_RTN 공정별 합금철 품명·사용량·투입시각), SPRB3040 WIRE"}, {"sheet": "과제1_제강성분", "no": "1-12", "cat": "합금·부원료 투입", "item": "합금철 성분 규격", "desc": "품목별 성분표, 공급사 성적서와 Lot", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRB_MIX_40 합금철 품위/성분, SPRB1630 원료품위성분. 공급사 성적서·Lot은 미확인"}, {"sheet": "과제1_제강성분", "no": "1-13", "cat": "합금·부원료 투입", "item": "탈산제 투입", "desc": "Al·FeSi·SiMn 등 종류별 투입량, 투입 순서·시점(기록 시)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030(Al·FeSi·SiMn 등), SPRB3040 Al·CaSi WIRE 투입시각·길이"}, {"sheet": "과제1_제강성분", "no": "1-14", "cat": "합금·부원료 투입", "item": "부원료(조재제) 투입", "desc": "생석회·돌로마이트·형석 등 투입량·투입 시점", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 부원료(생석회·돌로마이트 등) 투입량·등록시각"}, {"sheet": "과제1_제강성분", "no": "1-15", "cat": "합금·부원료 투입", "item": "가탄제·카본 인젝션", "desc": "장입 가탄제량, 카본 인젝션량·시점", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB8410 가탄제 취입속도·취입량(정주기, 2024-07~), SPRB3060 MD/REFN_CI_WGT; DF 카본 인젝션 태그 22개"}, {"sheet": "과제1_제강성분", "no": "1-16", "cat": "합금·부원료 투입", "item": "환원제 투입(AOD)", "desc": "FeSi·Al 등 환원제 투입량·투입 시점", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 AOD 공정 환원제 투입, SPRB3420 합금철량"}, {"sheet": "과제1_제강성분", "no": "1-17", "cat": "EAF 운전", "item": "EAF 전력", "desc": "전력량, 통전 시간, 통전 중단 이력", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3060 용락/정련 유효전력·통전시간, SPRB3061 차수별 전력량, SPRB8410 정주기 유효·무효전력·역률"}, {"sheet": "과제1_제강성분", "no": "1-18", "cat": "EAF 운전", "item": "산소·버너 가스", "desc": "랜스·버너별 산소 유량·적산, 버너 가스량", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3060 자동·측면·버너·랜스 산소, LNG·경유, SPRB8430 측면버너 O2·LNG, SPRB8440 메인/측면 산소(정주기)"}, {"sheet": "과제1_제강성분", "no": "1-19", "cat": "EAF 운전", "item": "EAF 조업 시간", "desc": "Tap-to-tap 시간, 장입·용락·출강 시각, 슬래그 배재 이벤트", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060 정련·출탕 시각, TTT, SPRB3061 용락 차수, SPRB3210 슬래그 POT(배재)"}, {"sheet": "과제1_제강성분", "no": "1-20", "cat": "EAF 운전", "item": "배가스 성분·유량", "desc": "배가스 CO·CO2·O2 농도, 유량", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "MES SPRB3063 집진기 TMS 유량·온도·분진. 배가스 CO·CO2·O2 농도는 없음"}, {"sheet": "과제1_제강성분", "no": "1-21", "cat": "AOD 운전", "item": "AOD 취입 가스", "desc": "단계별 O2·Ar·N2 유량·적산, 취입 단계 전환 시각", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3421 AOD 단계별 O2·Ar·N2(랜스·투이어) 사용량·유량·시각, SPRB3709 블로잉 패턴·단계"}, {"sheet": "과제1_제강성분", "no": "1-22", "cat": "측정·분석", "item": "용강 온도", "desc": "EAF·출강·AOD 측온값과 측온 시각", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3160 공정별 측온값·측온시각·측정방식, SPRB3060 출탕온도"}, {"sheet": "과제1_제강성분", "no": "1-23", "cat": "측정·분석", "item": "출강량", "desc": "래들 계량 출강 중량", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060 CH_WGT 출탕량, SPRB3010 CG_WGT 출강량, SPRB3070 출탕량 변경이력"}, {"sheet": "과제1_제강성분", "no": "1-24", "cat": "측정·분석", "item": "EAF 샘플 성분", "desc": "용락 후·출강 전 샘플의 C·Si·Mn·P·S·Cu·Sn·Ni·Cr·Mo 등, 채취 시각", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRB3920 TST_CNT 1x(EAF) C·Si·Mn·P·S·Cu·Sn·Ni·Cr·Mo, 분석일시; SPRB3910 채취시각"}, {"sheet": "과제1_제강성분", "no": "1-25", "cat": "측정·분석", "item": "출강 후 샘플 성분", "desc": "출강 후 래들 샘플 성분, 채취 시각", "form": "시료 분석·검사", "status": "일부 보유", "evidence": "SPRB3920 TST_CNT 9x 래들 성분 보유. 출강 직후 래들 샘플과 LF 도착 샘플의 구분은 현업 확인 필요"}, {"sheet": "과제1_제강성분", "no": "1-26", "cat": "측정·분석", "item": "AOD 샘플 성분", "desc": "AOD 단계별·종점 샘플의 C·Cr·Ni·Mo·Si 등, 채취 시각", "form": "시료 분석·검사", "status": "확인 필요", "evidence": "SPRB3920에 AOD 전용 차수 코드가 주석에 없음(EAF 1/LF 3/VD·VOD 4/래들 9). AOD 단계별 샘플 기록 위치 확인 필요"}, {"sheet": "과제1_제강성분", "no": "1-27", "cat": "측정·분석", "item": "LF 도착 샘플 성분", "desc": "LF 투입 직후 샘플 성분, 채취 시각", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRB3920 TST_CNT 31(LF 1차), SPRB3910 채취시각"}, {"sheet": "과제1_제강성분", "no": "1-28", "cat": "측정·분석", "item": "용강 산소 활성도", "desc": "산소 프로브 측정값과 측정 시각", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3160 O2_VALUE(산소량), C_METER(측온 시 측정)"}, {"sheet": "과제1_제강성분", "no": "1-29", "cat": "측정·분석", "item": "슬래그 조성", "desc": "FeO·CaO·SiO2·MgO·Al2O3·Cr2O3 등, 채취 시각", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SQAW2630 슬래그 CaO·MgO·FeO·MnO·Cr2O3·SiO2·Al2O3(~2026-09), SPRB3190 로내·래들 슬래그 성분(~2026-10)"}, {"sheet": "과제1_제강성분", "no": "1-30", "cat": "측정·분석", "item": "슬래그량", "desc": "배재량 또는 추정량", "form": "계산·추정값", "status": "일부 보유", "evidence": "MES SPRB3010 SLAG_WGT, SPRB3420 SLAG_WGT(기록·추정값)"}, {"sheet": "과제1_제강성분", "no": "1-31", "cat": "측정·분석", "item": "분진·배재 기록", "desc": "집진 분진 발생량, 슬래그 배재 횟수·중량", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRB3210 공정별 슬래그 POT 번호(배재 횟수), SPRB3063 TMS 분진 농도. 분진 발생량·배재 중량은 미확인"}, {"sheet": "과제1_제강성분", "no": "1-32", "cat": "기준·비용", "item": "원료·합금 단가", "desc": "스크랩 구분별·합금철 단가와 적용일", "form": "기준·설계 자료", "status": "보유", "evidence": "MES SPRB_MIX_30 합금철 단가, SPRB3030 PRICE, SPRB1630 입고·표준단가; BESTERP SMAZ3200~3220 고철 구매 단가"}, {"sheet": "과제1_제강성분", "no": "1-33", "cat": "기준·비용", "item": "재고·사용 가능량", "desc": "원료별 재고량, 입고 예정량", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB_MIX_30 재고량·재고단가연월, SMAZ6000 자재 입출고 마감"}, {"sheet": "과제1_제강성분", "no": "1-34", "cat": "기준·비용", "item": "장입·배합 제약", "desc": "장입 용량, 허용 원료 조합, 원료별 최소·최대 투입량", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRB3525 시뮬레이션 공정별 적입량 제약, SPRB1240 장입원료 정의, SPRB_MIX_50 BIN 사용 설정"}, {"sheet": "과제1_제강성분", "no": "1-35", "cat": "생산 계획", "item": "생산 계획", "desc": "원자재, 후공정 및 설비 한계를 고려한 생산 계획", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB2010 HEAT 지시, SPRA2101 제강계획; DF sm2mes.sm2_monthly_prod_plan"}, {"sheet": "과제2_제강온도", "no": "2-01", "cat": "식별·경로", "item": "공정별 처리 시각", "desc": "Heat별 공정 도착·처리 시작·종료·출발 시각과 실제 경로", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060(EAF)·SPRB3420(AOD)·SPRB3430(LT)·SPRB3080(LF)·SPRB3230/3240(CC) 시각; DF sm2_idtracking·zone_tracking"}, {"sheet": "과제2_제강온도", "no": "2-02", "cat": "EAF 운전", "item": "EAF 전력", "desc": "유효전력, 역률, 전압·전류, 변압기 탭, 통전 시간·중단", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3700 변압기 역률·유효전력·2차 전압/전류(3상, 2019~), SPRB3061 탭·전력, SPRB3060 통전시간; DF 전극 전압·전류 태그"}, {"sheet": "과제2_제강온도", "no": "2-03", "cat": "EAF 운전", "item": "산소·카본·버너 가스", "desc": "산소·카본 인젝션·버너 가스 투입량·유량", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3060 산소·CI·LNG, SPRB8410/8430/8440 정주기; DF 카본 인젝션·랜스 태그"}, {"sheet": "과제2_제강온도", "no": "2-04", "cat": "EAF 운전", "item": "장입량·잔탕량", "desc": "장입량, 잔탕량(과제 1과 공통)", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060 CHRG_WGT·REMAIN_MOLTEN_WGT"}, {"sheet": "과제2_제강온도", "no": "2-05", "cat": "EAF 운전", "item": "수냉 패널 냉각수", "desc": "냉각 회로별 유량, 입출구 온도", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRB3062 회로별(벽체·천정·엘보·변압기·전극ARM) 입출측 온도·유량(Heat 단위); DF EAF 패널 온도 태그"}, {"sheet": "과제2_제강온도", "no": "2-06", "cat": "EAF 운전", "item": "배가스 온도·유량", "desc": "배가스 온도와 유량", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "MES SPRB3063 집진기 입구 온도·TMS 유량·온도. 노 직후 배가스 온도·유량은 미확인"}, {"sheet": "과제2_제강온도", "no": "2-07", "cat": "출강", "item": "EAF 출강 정보", "desc": "출강량, 출강 시작·종료 시각, 출강 중 합금·부원료 투입량, 출강 래들 번호", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3060 출탕 개시·완료·출탕량, SPRB6030 래들번호, SPRB3030 출강 중 투입"}, {"sheet": "과제2_제강온도", "no": "2-08", "cat": "출강", "item": "AOD 장입 정보", "desc": "래들에서 AOD로 장입한 시각·소요 시간, 장입량", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3420 장입량, SPRB3421 단계 개시 시각"}, {"sheet": "과제2_제강온도", "no": "2-09", "cat": "출강", "item": "AOD 출강 정보", "desc": "AOD 출강량, 출강 시작·종료 시각, 출강 중 투입량, AOD 이후 래들 번호", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3420 출강 개시·완료 일시, 합금철량, SPRB6030 래들번호"}, {"sheet": "과제2_제강온도", "no": "2-10", "cat": "AOD 운전", "item": "AOD 취입 가스", "desc": "단계별 O2·Ar·N2 유량·취입 시간", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3421 단계별 가스 유량·사용량·시간"}, {"sheet": "과제2_제강온도", "no": "2-11", "cat": "AOD 운전", "item": "냉각재·합금·환원제 투입", "desc": "종류, 투입량, 투입 시점", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 AOD 공정 투입 품명·사용량·등록시각"}, {"sheet": "과제2_제강온도", "no": "2-12", "cat": "LF 운전", "item": "LF 전력", "desc": "전력량, 전압 탭, 통전 시간", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3080 전력사용량, SPRB3120 탭·MW·MWH·작업시각, SPRB8460 정주기 MW·MWH"}, {"sheet": "과제2_제강온도", "no": "2-13", "cat": "LF 운전", "item": "아르곤 교반", "desc": "아르곤 유량·압력, 교반 시간", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3080 AR 사용량, SPRB3120 Ar 유량·가스 압력, SPRB3431 버블링 Ar·N2·압력"}, {"sheet": "과제2_제강온도", "no": "2-14", "cat": "LF 운전", "item": "LF 합금·부원료 투입", "desc": "종류, 투입량, 투입 시점", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3030 LF 공정 투입, SPRB3040 WIRE"}, {"sheet": "과제2_제강온도", "no": "2-15", "cat": "LF 운전", "item": "슬래그 상태", "desc": "슬래그 두께, 포밍 상태(기록 시)", "form": "계산·추정값", "status": "일부 보유", "evidence": "MES SPRB3010 SLAG_THK(슬래그 두께). 포밍 상태 기록 없음"}, {"sheet": "과제2_제강온도", "no": "2-16", "cat": "래들·이송", "item": "래들 사용 이력", "desc": "래들 번호, 사용 횟수, 직전 사용 종료 시각, 빈 래들 대기 시간", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB6030 래들번호·상태·수리후 수명·작업일시"}, {"sheet": "과제2_제강온도", "no": "2-17", "cat": "래들·이송", "item": "래들 예열", "desc": "예열 온도, 예열 시간", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB6030 예열 개시·완료·온도, LNG·O2; SPRB6040(2023-02까지); DF 래들 예열기 태그 73개"}, {"sheet": "과제2_제강온도", "no": "2-18", "cat": "래들·이송", "item": "내화물 보수·교체", "desc": "보수·교체 일자와 부위", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB6030 중수리/전수리 후 수명, SPRB5240 축로실적, SPRB3032 내화물 사용관리"}, {"sheet": "과제2_제강온도", "no": "2-19", "cat": "래들·이송", "item": "래들 열 상태 관리 기준·보정 규칙", "desc": "기존 래들 운영 기준(예열·대기 기준), 출강 온도 보정 규칙, 기존 래들 열 추적 모델", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "래들 운영·출강온도 보정 기준이 DB에서 확인 안 됨 (작업표준 문서 확인 필요)"}, {"sheet": "과제2_제강온도", "no": "2-20", "cat": "래들·이송", "item": "래들 외피 온도", "desc": "열화상 또는 외피 측온", "form": "설비 보유 시 측정", "status": "확인 필요", "evidence": "래들 외피 온도(열화상) 데이터 확인 안 됨"}, {"sheet": "과제2_제강온도", "no": "2-21", "cat": "래들·이송", "item": "덮개·보온", "desc": "덮개 사용 여부, 보온재 투입", "form": "생산·투입 기록", "status": "확인 필요", "evidence": "래들 덮개·보온재 사용 기록 확인 안 됨"}, {"sheet": "과제2_제강온도", "no": "2-22", "cat": "래들·이송", "item": "이송·대기 시간", "desc": "구간별(EAF→AOD, AOD→LF, EAF→LF, LF→연주) 이송·대기 실적과 계획", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRB3080 LT 이동·후공정 이동·주입이동 시각, SPRB3010 연주도착일시(실적), SPRB2010 지시(계획)"}, {"sheet": "과제2_제강온도", "no": "2-23", "cat": "생산 계획", "item": "연주 스케쥴 및 허용 용량", "desc": "연주 스케쥴 및 허용 최대 용량 상/하한(대기시간 산출)", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRB2010 CAST·HEAT 지시 순서, SPRB1440 표준2CC. 허용 용량 상·하한 기준은 확인 필요"}, {"sheet": "과제2_제강온도", "no": "2-24", "cat": "연주", "item": "주조 정보", "desc": "주조 속도, 래들 잔량(로드셀), 턴디시 중량, 래들 교체 시각, 시퀀스 번호", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3220 주속·TD온도, SPRB3252 래들중량·TD중량·주속(정주기), SPRB3230 래들/TD 잔탕; DF 터렛 ARM 중량 태그"}, {"sheet": "과제2_제강온도", "no": "2-25", "cat": "연주", "item": "턴디시 이력", "desc": "턴디시 예열·사용 이력", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRB5250 TD 실적, SPRB6070 설비 턴디시; DF 턴디시 예열기 태그. 예열 이력 정리 수준은 확인 필요"}, {"sheet": "과제2_제강온도", "no": "2-26", "cat": "측온", "item": "EAF·출강 측온", "desc": "측온값, 측온 시각, 측정 위치·깊이, 측정 방식(수동·자동 랜스·광섬유 등), 측정 시 통전 여부, 재측정 기록", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3160 측온값·시각·측정방식(MEAS_METH)·재측정(WRK_SEQ). 측정 위치·깊이·통전 여부는 없음"}, {"sheet": "과제2_제강온도", "no": "2-27", "cat": "측온", "item": "AOD 측온", "desc": "처리 중·종점·출강 측온값과 시각", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3421 단계별 온도·측정시각, SPRB3160"}, {"sheet": "과제2_제강온도", "no": "2-28", "cat": "측온", "item": "LF 측온", "desc": "도착·처리 중·종료·출발 측온값과 시각", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3160 LF 측온, SPRB3080 종점온도, SPRB3430 LT 도착·출발 온도"}, {"sheet": "과제2_제강온도", "no": "2-29", "cat": "측온", "item": "턴디시 측온", "desc": "턴디시 간헐 측온 또는 연속 측온", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRB3220 TD 온도(체크시각별), SPRB3252 TD 온도(정주기); DF TUNDISH TEMPERATURE 태그"}, {"sheet": "과제2_제강온도", "no": "2-30", "cat": "측온", "item": "다지점 측온·혼합 시험", "desc": "위치별 측온·샘플, 기존 혼합 시험·유동 해석 자료", "form": "설비 보유 시 측정", "status": "확인 필요", "evidence": "다지점 측온·혼합 시험 자료 확인 안 됨"}, {"sheet": "과제2_제강온도", "no": "2-31", "cat": "성분", "item": "공정별 용강 성분", "desc": "공정별 샘플 성분(액상선 온도 계산용)", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRB3920 공정별 성분(EAF·LF·VD·래들)"}, {"sheet": "과제2_제강온도", "no": "2-32", "cat": "기준·설계", "item": "공정별 목표 온도", "desc": "강종별 출강·LF 종료·턴디시 목표 온도, 목표 과열도", "form": "기준·설계 자료", "status": "보유", "evidence": "MES SPRB1090 표준EAF, SPRB1110 표준LFVD, SPRB1440 표준2CC 작업표준; DF sm2mes.lfvdcc_target"}, {"sheet": "과제2_제강온도", "no": "2-33", "cat": "기준·설계", "item": "운전 한계", "desc": "전력·가열 시간·가스 유량의 설비·운전 한계", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "전력·가열시간·가스유량 설비 한계 기준 DB 확인 안 됨"}, {"sheet": "과제2_제강온도", "no": "2-34", "cat": "기준·설계", "item": "설비 제원", "desc": "노·래들·턴디시 형상·용량, 전극·노즐 위치, 내화물 층별 두께", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "노·래들·턴디시 형상·내화물 두께 등 제원 DB 확인 안 됨"}, {"sheet": "과제2_제강온도", "no": "2-35", "cat": "기준·설계", "item": "물성 자료", "desc": "용강·슬래그·내화물 열물성, 합금 용해 엔탈피", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "용강·슬래그·내화물 열물성 DB 확인 안 됨 (STCW4000 Melting point만 보유)"}, {"sheet": "과제3_가열로", "no": "3-01", "cat": "소재 정보", "item": "소재 식별", "desc": "Lot No·순번, 빌렛 No, Charge(Heat) No, 제품 Lot No", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03051 LOT·PON·HEAT_NO·재료일품번호·QR 빌렛번호/스트랜드"}, {"sheet": "과제3_가열로", "no": "3-02", "cat": "소재 정보", "item": "소재 사양", "desc": "강종, 성분, 소재 형식(단면 치수), 길이, 중량, 품종·제품 사이즈", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03051 사내강종·투입 형태·외경·길이·중량, SPRC02002 품종·제품 사이즈; 성분은 HEAT로 SPRB3920 연결"}, {"sheet": "과제3_가열로", "no": "3-03", "cat": "소재 정보", "item": "장입 온도·장입 구분", "desc": "장입 온도, 냉간·열간 장입 구분", "form": "간헐 측정", "status": "보유", "evidence": "MES SPRC03051 장입온도, SPRB3010 HOT_CH_COND(열간장입 조건)"}, {"sheet": "과제3_가열로", "no": "3-04", "cat": "위치·이력", "item": "로내 위치 이력", "desc": "소재별 시간별 로내 위치, 장입 열(1열·2열), 해당 존", "form": "센서 시계열", "status": "일부 보유", "evidence": "MES SPRC03051 가열대·균열대 진입·체류시간(존 단위); DF srlidmatch.furnace_id_matching, srll2.furnace_bt_l2. 시간별 연속 위치·장입 열 정보는 확인 필요"}, {"sheet": "과제3_가열로", "no": "3-05", "cat": "위치·이력", "item": "장입·추출 이력", "desc": "장입·추출 시각, 재로 시간, 추출 피치, 로내 소재 수", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03051 작업 시작·종료, 총재로시간, 장입·추출 작업조"}, {"sheet": "과제3_가열로", "no": "3-06", "cat": "위치·이력", "item": "이동·정지 이력", "desc": "워킹빔(이동 hearth) 동작, 정지·대기·압연 지연, 장입·추출문 개폐, 후공정에 의한 압연 지연, 정지·대기", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03010 압연 정지실적(정지코드·시각), SPRC0A038 휴지실적; DF 워킹빔 동작·장입문 태그"}, {"sheet": "과제3_가열로", "no": "3-07", "cat": "생산 계획", "item": "생산 계획", "desc": "생산 순서, 사양 전환 계획", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC02001 작업지시, SPRC03210 장입순서 자동편성 결과"}, {"sheet": "과제3_가열로", "no": "3-08", "cat": "로 설정·로온", "item": "존별 설정온도(SV)·제어 모드", "desc": "예열대·가열대·균열대별 설정온도와 온도 설정 모드", "form": "센서 시계열", "status": "보유", "evidence": "DF 가열대·균열대 TIC SV/MV 태그(설정온도·제어 출력)"}, {"sheet": "과제3_가열로", "no": "3-09", "cat": "로 설정·로온", "item": "존별 로온(PV)", "desc": "존별 남·북, 상·하부 로온, 입구 로온", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03051 가열대·균열대 온도(상부·하부 L/R), 장입대 상·하부 온도; DF 존별 TI·TIC PV 태그"}, {"sheet": "과제3_가열로", "no": "3-10", "cat": "로 설정·로온", "item": "가동부·고정부 측 온도", "desc": "이동 hearth 가동부·고정부 측 온도", "form": "센서 시계열", "status": "확인 필요", "evidence": "DF FIXED_BEAM(12)·MOV_BEAM(7) 태그는 있으나 설명이 비어 있어 측 온도 여부 확인 필요"}, {"sheet": "과제3_가열로", "no": "3-11", "cat": "연소·가스", "item": "존별 연료 가스", "desc": "존별 연료 가스 유량·적산과 설정 SV 혹은 MV", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03051 가열대·균열대 Gas 유량, Main Gas 유량; DF FIC SV/PV/MV 태그"}, {"sheet": "과제3_가열로", "no": "3-12", "cat": "연소·가스", "item": "존별 연소 공기", "desc": "존별 연소 공기 유량·적산과 설정 SV 혹은 MV, 공기비", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03051 가열대·균열대 Air 유량·공연비, Main Air 유량"}, {"sheet": "과제3_가열로", "no": "3-13", "cat": "연소·가스", "item": "연료 본관·발열량", "desc": "본관 유량·온도·압력, 연료 종류·발열량", "form": "센서 시계열", "status": "일부 보유", "evidence": "MES SPRC03051 Main Gas 유량. 본관 온도·압력, 발열량은 미확인"}, {"sheet": "과제3_가열로", "no": "3-14", "cat": "연소·가스", "item": "연소 공기 온도·압력", "desc": "레큐퍼레이터 입·출구 온도, 연소 공기 압력", "form": "센서 시계열", "status": "확인 필요", "evidence": "레큐퍼레이터 입출구 온도·연소공기 압력 태그 확인 안 됨"}, {"sheet": "과제3_가열로", "no": "3-15", "cat": "로내 분위기·배기", "item": "로압·댐퍼", "desc": "로내 압력, 압력 댐퍼 개도", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03051 로내 압력; DF 로압 PIC SV/PV/MV 태그"}, {"sheet": "과제3_가열로", "no": "3-16", "cat": "로내 분위기·배기", "item": "로내 산소 농도", "desc": "로내 분위기 O2 농도", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03051 가열대 O2 농도; DF O2 probe 태그"}, {"sheet": "과제3_가열로", "no": "3-17", "cat": "로내 분위기·배기", "item": "배기가스 성분", "desc": "배기 O2·CO·CO2·NOx·SO2, 스택·TMS 데이터", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "DF common.tms_analyzer, SCR NOx 10분 평균 태그. 가열로 스택별 O2·CO 연결은 확인 필요"}, {"sheet": "과제3_가열로", "no": "3-18", "cat": "로내 분위기·배기", "item": "스키드 냉각수", "desc": "스키드 냉각수 유량, 입출구 온도", "form": "설비 보유 시 측정", "status": "확인 필요", "evidence": "스키드 냉각수 태그 확인 안 됨"}, {"sheet": "과제3_가열로", "no": "3-19", "cat": "추출·이송", "item": "추출 후 이송", "desc": "이송 속도, 이송 시간, 대기 시간", "form": "센서 시계열", "status": "일부 보유", "evidence": "MES SPRC03055 구간 통과시각; DF 배출 롤러테이블 속도 태그"}, {"sheet": "과제3_가열로", "no": "3-20", "cat": "추출·이송", "item": "디스케일링", "desc": "디스케일링 압력·유량·작동 시간", "form": "센서 시계열", "status": "일부 보유", "evidence": "MES SPRC03051·03055 Descaler 압력; DF Descaler 분사 압력 태그. 유량·작동시간은 미확인"}, {"sheet": "과제3_가열로", "no": "3-21", "cat": "측정·시험", "item": "추출 표면 온도", "desc": "추출구 파이로미터 측정값", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03051 추출온도, 균열대 BT 표면온도"}, {"sheet": "과제3_가열로", "no": "3-22", "cat": "측정·시험", "item": "압연 입구 표면 온도", "desc": "조압연 입구 파이로미터 측정값", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03055 STD_1 전면 온도(조압연 입구)"}, {"sheet": "과제3_가열로", "no": "3-23", "cat": "측정·시험", "item": "빌렛 내부·중심 온도 시험", "desc": "열전대 매설 시험 결과", "form": "시료 분석·검사", "status": "확인 필요", "evidence": "빌렛 열전대 매설 시험 자료 확인 안 됨"}, {"sheet": "과제3_가열로", "no": "3-24", "cat": "측정·시험", "item": "산화·스케일", "desc": "산화감량, 스케일 두께, 산화 전후 중량·치수, 회수 스케일량", "form": "시료 분석·검사", "status": "확인 필요", "evidence": "MES SPRC03052에 Scale 컬럼 있으나 의미 미확인. 산화감량·스케일 두께 시험 자료 확인 안 됨"}, {"sheet": "과제3_가열로", "no": "3-25", "cat": "측정·시험", "item": "탈탄 깊이", "desc": "표층 탈탄 깊이 검사 결과", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SQAW2511 검사항목 502 탈탄층(LOT별)"}, {"sheet": "과제3_가열로", "no": "3-26", "cat": "측정·시험", "item": "조압연 하중·토크", "desc": "조압연 스탠드별 하중·토크·전류", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "DF 조압연 스탠드 전류·토크 태그, RSB 1~6 ROLL FORCE. 조압연 하중계는 미확인"}, {"sheet": "과제3_가열로", "no": "3-27", "cat": "기존 시스템 계산값", "item": "기존 소재 계산 온도", "desc": "기존 시스템(Level 2 등)의 소재 평균·상·중·하 계산 온도와 로온 계산값(실측과 구분)", "form": "계산·추정값", "status": "일부 보유", "evidence": "DF srlanaly.srl_heating_score·quality_nidx(가열 품질 지수), MES SPRC01075 온도예측 기준. L2 소재 계산온도 자체는 확인 필요"}, {"sheet": "과제3_가열로", "no": "3-28", "cat": "기준·설계", "item": "목표 추출온도·허용 편차", "desc": "소재·품종별 목표 추출온도, 중심·표면 허용 범위", "form": "기준·설계 자료", "status": "보유", "evidence": "MES SPRC01068 표준 선재 가열로(가열·균열 기준·목표 온도, 재로시간), SPRC01035 소형압연 조업 종합기준"}, {"sheet": "과제3_가열로", "no": "3-29", "cat": "기준·설계", "item": "표준 로온·운전 한계", "desc": "품종별 표준 로온, 설정온도 변경 범위·속도, 최소 연소량", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRC01068 표준 균열대 온도·재로시간(~2016 등록). 설정온도 변경 범위·최소 연소량은 미확인"}, {"sheet": "과제3_가열로", "no": "3-30", "cat": "기준·설계", "item": "가열로 제원", "desc": "존 구성·길이, 버너 배치, 내화물, 리뱀핑 이후 설비 사양", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "가열로 존 구성·버너 배치·내화물 제원 DB 확인 안 됨"}, {"sheet": "과제3_가열로", "no": "3-31", "cat": "기준·설계", "item": "소재 형식-단면 대응표", "desc": "소재 형식 코드와 단면 치수 대응표", "form": "기준·설계 자료", "status": "보유", "evidence": "MES SPRB4010·SPRC03051 재료코드·외경·폭(단면) 정보, SPRB1010 가변몰드 중량표"}, {"sheet": "과제3_가열로", "no": "3-32", "cat": "기준·설계", "item": "소재 물성", "desc": "강종별 비열·열전도율·밀도·방사율, 상변태 특성", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRC01075_3 강종그룹별 온도별 밀도·열전도도·비열. 방사율·상변태 특성은 없음"}, {"sheet": "과제4_압연", "no": "4-01", "cat": "소재", "item": "소재 식별·사양", "desc": "빌렛 No, 강종·성분, 입구 단면, 목표 제품 사이즈", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03052 빌렛·LOT·HEAT·강종·투입 외경·지시 외경"}, {"sheet": "과제4_압연", "no": "4-02", "cat": "소재", "item": "압연 입구 온도", "desc": "조압연 입구 소재 표면 온도(과제 3과 공통)", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03055 STD_1 전면 온도"}, {"sheet": "과제4_압연", "no": "4-03", "cat": "스탠드 운전", "item": "롤 회전수·속도", "desc": "스탠드별 롤 회전수·속도 설정값과 실제값", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03055 스탠드별 속도; DF 조압연 STAND1~10 실제·기준 속도(RPM·MPM)"}, {"sheet": "과제4_압연", "no": "4-04", "cat": "스탠드 운전", "item": "실제 소재 속도", "desc": "소재 속도 계측값 또는 기존 추정값", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "DF 스탠드 실제 속도(MPM) 태그로 추정 가능. 소재 속도 직접 계측은 미확인"}, {"sheet": "과제4_압연", "no": "4-05", "cat": "스탠드 운전", "item": "모터 전류·전력·토크", "desc": "스탠드별 값(직접 계측과 드라이브 추정값 구분)", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03055 스탠드별 전류; DF 조압연·RSB 스탠드 전류·토크 태그(드라이브 값)"}, {"sheet": "과제4_압연", "no": "4-06", "cat": "스탠드 운전", "item": "압연 하중", "desc": "스탠드별 로드셀 하중", "form": "설비 보유 시 측정", "status": "일부 보유", "evidence": "DF RSB ROLL FORCE STAND1~6만 보유. 조압연·사상 스탠드 하중계는 미확인"}, {"sheet": "과제4_압연", "no": "4-07", "cat": "롤·패스", "item": "롤갭", "desc": "스탠드별 롤갭 설정값과 위치 측정값", "form": "센서 시계열", "status": "확인 필요", "evidence": "롤갭 설정·위치 측정 태그 확인 안 됨"}, {"sheet": "과제4_압연", "no": "4-08", "cat": "롤·패스", "item": "롤경·롤홈·패스 스케줄", "desc": "공형(롤홈) 도면, 롤경, 롤 재질, 패스 조건", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRC05011 ROLL 기준, SPRC05013 ROLL, SPRC05026 공형 위치. 공형 도면은 문서"}, {"sheet": "과제4_압연", "no": "4-09", "cat": "롤·패스", "item": "롤 교체·마모 이력", "desc": "교체 일시, 교체 후 누적 압연량, 연마 이력, 마모 측정값", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC05026 롤 인입(교체 일시·스탠드·용적톤수·압연수량), SPRC05015 롤 가공(연마, ~2024-06)"}, {"sheet": "과제4_압연", "no": "4-10", "cat": "장력·루퍼", "item": "스탠드 간 장력", "desc": "직접 계측값 또는 기존 제어기 추정값(구분)", "form": "설비 보유 시 측정", "status": "확인 필요", "evidence": "스탠드 간 장력 직접값 확인 안 됨 (루퍼 태그만 있음)"}, {"sheet": "과제4_압연", "no": "4-11", "cat": "장력·루퍼", "item": "루퍼", "desc": "루퍼 각도·높이·제어 신호", "form": "센서 시계열", "status": "보유", "evidence": "DF LOOP 실제값·스캐너 태그 36개"}, {"sheet": "과제4_압연", "no": "4-12", "cat": "장력·루퍼", "item": "가이드", "desc": "가이드 간극·설정·마모·교체 이력", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRC05026 가이드 NO. 가이드 간극·설정·마모는 미확인"}, {"sheet": "과제4_압연", "no": "4-13", "cat": "냉각", "item": "롤·구간 냉각수", "desc": "롤 냉각수·구간 냉각수 유량·압력", "form": "센서 시계열", "status": "일부 보유", "evidence": "MES SPRC03055 냉각수 On/Off; DF 스탠드 냉각수 On 태그. 유량·압력은 미확인"}, {"sheet": "과제4_압연", "no": "4-14", "cat": "냉각", "item": "구간별 소재 표면 온도", "desc": "스탠드 간 파이로미터 측정값", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03055 STD 전면, K370·K500 전면, PSB·FB·LH 후면 온도"}, {"sheet": "과제4_압연", "no": "4-15", "cat": "치수 측정", "item": "온라인 치수", "desc": "바게이지·프로파일 게이지의 직경·단면·진원도 측정값", "form": "설비 보유 시 측정", "status": "보유", "evidence": "MES SPRC03055 BGM·NTM 치수·Oval, SPRC0A071 조압연 BGM, SPRC0A069/0A070 4D EAGLE; DF rsb_4deagle_l2, BGM L2"}, {"sheet": "과제4_압연", "no": "4-16", "cat": "치수 측정", "item": "최종 치수 검사", "desc": "최종 치수 검사 결과", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRC03052 측정 치수 최대·최소·편경차, SQAW2552 직경"}, {"sheet": "과제4_압연", "no": "4-17", "cat": "이상·불량", "item": "Hot Eye·스파크", "desc": "Hot Eye·스파크 감지 이벤트, 영상, 감지 보고", "form": "설비 보유 시 측정", "status": "보유", "evidence": "DF srll2.rsb_hoteye_l2·rsm_hoteye_l2, HMD 태그. 영상은 별도 확인 필요"}, {"sheet": "과제4_압연", "no": "4-18", "cat": "이상·불량", "item": "미스롤·코블 이력", "desc": "발생 시각, 스탠드, 원인 기록", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03052 코블 발생 일시·위치·사유, SPRC0A066 COBBLE 감지"}, {"sheet": "과제4_압연", "no": "4-19", "cat": "이상·불량", "item": "표면 결함 검사", "desc": "결함 유형(가이드 긁힘 포함)·크기·위치(원주·길이 방향)·확정 판정, 검사 범위", "form": "시료 분석·검사", "status": "일부 보유", "evidence": "MES SPRC04001 검사실적(비파괴), SPRC03054 ECT, SPRC03052 결함 분포(DEFECT_DIST), SPRC04002 이상재. 원주·길이 위치 단위 기록은 확인 필요"}, {"sheet": "과제4_압연", "no": "4-20", "cat": "이상·불량", "item": "압연 실적·품질 결과 보고", "desc": "압연 실적 보고, 품질 결과 보고", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03052 선재 작업실적, SPRC07010 작업실적, SQAW 품질 결과"}, {"sheet": "과제4_압연", "no": "4-21", "cat": "기준·설계", "item": "조작 가능 변수·범위", "desc": "운전 중 변경 가능한 속도·롤갭·가이드 설정, 변경 권한과 대응 시간", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "운전 중 변경 가능 변수·권한·대응시간은 현업 확인 필요"}, {"sheet": "과제4_압연", "no": "4-22", "cat": "기준·설계", "item": "압연 설비 제원", "desc": "스탠드 수·배치·간격, 밀 강성, 모터 정격, 루퍼 제원", "form": "기준·설계 자료", "status": "확인 필요", "evidence": "스탠드 배치·밀 강성·모터 정격 제원 DB 확인 안 됨"}, {"sheet": "과제4_압연", "no": "4-23", "cat": "기준·설계", "item": "변형 저항·마찰 자료", "desc": "강종별 변형 저항 시험값, 롤-소재 마찰 자료", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES STCW8010 열간가공성 DB, SQAW2511 열간 가공성시험(3B7). 롤–소재 마찰 자료는 없음"}, {"sheet": "과제4_압연", "no": "4-24", "cat": "생산 계획", "item": "생산 계획", "desc": "설비 한계 및 전공정을 고려한 생산 계획", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC02001 작업지시, SPRA 생산계획 테이블"}, {"sheet": "과제5_통합품질", "no": "5-01", "cat": "이력·연결", "item": "소재 계보(Genealogy)", "desc": "스크랩 Lot–Heat–스트랜드–빌렛–제품(Coil/Lot) 연결표. 기존 소재 추적 시스템·연결 자료가 있으면 해당 자료", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "Heat–스트랜드–빌렛–LOT–제품 연결은 보유(SPRB3440, SPRB4010, SPRC02002; DF idtracking). 스크랩 Lot–Heat 연결은 없음"}, {"sheet": "과제5_통합품질", "no": "5-02", "cat": "이력·연결", "item": "길이 위치·절단 이력", "desc": "빌렛 절단 순번·위치, 머리·몸통·꼬리 구분, 크롭·분할·재작업 이력", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SPRB3440 스트랜드·순번, SPRC02013/02014 LOT 분할; DF TCM 절단 길이 태그. 머리·몸통·꼬리 구분 정리는 확인 필요"}, {"sheet": "과제5_통합품질", "no": "5-03", "cat": "연주", "item": "주입·주조", "desc": "턴디시 온도, 주조 속도, 시퀀스·Heat 교체 시각, 턴디시 잔량", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3220 TD온도·주속, SPRB3252 정주기, SPRB3230 TD 잔탕·합탕, SPRB2010 시퀀스"}, {"sheet": "과제5_통합품질", "no": "5-04", "cat": "연주", "item": "몰드·2차 냉각", "desc": "몰드 냉각수 유량·입출구 온도, 2차 냉각 구간별 수량·압력", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3240 스트랜드별 냉각수 유량·입출측 온도·2차 냉각 비수량, SPRB3252 Zone 수량·압력; DF 냉각계 태그 261개"}, {"sheet": "과제5_통합품질", "no": "5-05", "cat": "연주", "item": "몰드 레벨·EMS·오실레이션", "desc": "몰드 레벨 변동, 전자 교반(EMS) 설정, 오실레이션 조건, 노즐 상태", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRB3252 몰드레벨·OSC·M-EMS, SPRB_CC_OSC, SPRB3240 EMS 설정; DF 몰드레벨·EMS·OSC 태그. 노즐 상태는 미확인"}, {"sheet": "과제5_통합품질", "no": "5-06", "cat": "연주", "item": "빌렛 표면 온도", "desc": "교정·절단 구간 빌렛 표면 측온", "form": "설비 보유 시 측정", "status": "확인 필요", "evidence": "교정·절단 구간 빌렛 표면 측온 태그·테이블 확인 안 됨"}, {"sheet": "과제5_통합품질", "no": "5-07", "cat": "연주", "item": "빌렛 검사·손질", "desc": "매크로 검사(편석·기공·균열) 결과, 표면 손질 이력", "form": "시료 분석·검사", "status": "일부 보유", "evidence": "MES SQAW1210/1211 마크로 검사(Heat, 크랙 이미지), SPRB4030 검사일품. 표면 손질 이력은 확인 필요"}, {"sheet": "과제5_통합품질", "no": "5-08", "cat": "압연 후 냉각·후처리", "item": "냉각 라인 조건", "desc": "냉각 컨베이어 속도, 송풍기 출력, 보온 커버 개폐, 기준 온도", "form": "센서 시계열", "status": "보유", "evidence": "MES SPRC03052 컨베이어 속도·Cover 개폐·Damper 개폐율·Fan 가동 수"}, {"sheet": "과제5_통합품질", "no": "5-09", "cat": "압연 후 냉각·후처리", "item": "후처리 조건", "desc": "열처리·산세 등 실제 수행 공정 조건", "form": "생산·투입 기록", "status": "보유", "evidence": "MES SPRC03061 산세열처리, SPRC03082/03084 열처리실적·온도"}, {"sheet": "과제5_통합품질", "no": "5-10", "cat": "최종 품질", "item": "제품 성분", "desc": "최종 성분 분석값과 목표 성분", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SQAW2110 래들 화학성분, SQAW2150 Check 성분, STCW3210 목표"}, {"sheet": "과제5_통합품질", "no": "5-11", "cat": "최종 품질", "item": "치수", "desc": "최종 제품의 실제 치수와 목표 치수", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRC03052 측정 치수, SQAW2552 직경, SQAW2511"}, {"sheet": "과제5_통합품질", "no": "5-12", "cat": "최종 품질", "item": "진원도", "desc": "최종 제품의 실제 진원도와 목표 진원도(산출 방식 포함)", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRC03052 편경차, SPRC01082 편경차 실적, 4D EAGLE 편경차 집계(SPRC0A069_T4)"}, {"sheet": "과제5_통합품질", "no": "5-13", "cat": "최종 품질", "item": "기계적 성질", "desc": "항복강도·인장강도·연신율·경도와 목표값", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SQAW2552 YS·TS·EL·RA, SQAW2511 인장·경도(318·319·3L4)"}, {"sheet": "과제5_통합품질", "no": "5-14", "cat": "최종 품질", "item": "조직", "desc": "결정립 크기·상분율 시험 결과", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SQAW2511 결정입도(501·584), 미세조직(505), 페라이트분율(3B8)"}, {"sheet": "과제5_통합품질", "no": "5-15", "cat": "최종 품질", "item": "결함 보고", "desc": "결함 유형·위치·크기·판정, 초음파(UT) 검사 결과", "form": "시료 분석·검사", "status": "보유", "evidence": "MES SPRC04001 비파괴 검사실적, SPRC04090 UT Report, SPRC04002 이상재"}, {"sheet": "과제5_통합품질", "no": "5-16", "cat": "최종 품질", "item": "검사 범위", "desc": "검사 대상 길이·채취 위치, 미검사·재검 여부", "form": "생산·투입 기록", "status": "일부 보유", "evidence": "MES SQAW0200 시편(편성공정·시편 길이·수량·판정). 미검사·재검 구간 정리는 확인 필요"}, {"sheet": "과제5_통합품질", "no": "5-17", "cat": "최종 품질", "item": "종합 품질 지표", "desc": "현장에서 사용하는 종합 품질 지표와 정의", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SQAW1660 종합판정 LOG, SPRA8001 품질 종합실수율. 현장 종합 품질 지표 정의는 확인 필요"}, {"sheet": "과제5_통합품질", "no": "5-18", "cat": "기준·설계", "item": "연주 설비 제원", "desc": "몰드 길이·단면, 2차 냉각 구간, 턴디시 용량", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES SPRB1440 표준2CC, SPRB6170 설비주형. 2차 냉각 구간·턴디시 용량 제원은 확인 필요"}, {"sheet": "과제5_통합품질", "no": "5-19", "cat": "기준·설계", "item": "강종 물성", "desc": "액상선·고상선 온도, 응고 잠열, 상변태 특성", "form": "기준·설계 자료", "status": "일부 보유", "evidence": "MES STCW4000 Melting point. 액상선·고상선·잠열·상변태 특성은 없음"}];
+const KEY = {"보유": "have", "일부 보유": "part", "미보유": "none", "확인 필요": "check"};
+const state = { status: '', sheet: '', q: '' };
+const tbody = document.querySelector('#result-table tbody');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render() {
+  const q = state.q.trim().toLowerCase();
+  const hit = ROWS.filter(r => (!state.status || r.status === state.status) && (!state.sheet || r.sheet === state.sheet) &&
+    (!q || [r.no, r.item, r.desc, r.evidence, r.cat].join(' ').toLowerCase().includes(q)));
+  let html = '', last = '';
+  for (const r of hit) {
+    if (r.sheet !== last) { html += `<tr class="sheet-row"><td colspan="5">${esc(r.sheet)}</td></tr>`; last = r.sheet; }
+    html += `<tr><td class="mono">${r.no}</td><td class="item"><b>${esc(r.item)}</b><small>${esc(r.desc)}</small></td>` +
+      `<td><small>${esc(r.form)}</small></td><td><span class="badge b-${KEY[r.status]}">${r.status}</span></td><td class="ev">${esc(r.evidence)}</td></tr>`;
+  }
+  tbody.innerHTML = html || '<tr><td colspan="5">조건에 맞는 항목이 없습니다.</td></tr>';
+  document.getElementById('count').textContent = `${hit.length} / ${ROWS.length}건`;
+}
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  state.status = b.dataset.status; render();
+}));
+document.getElementById('sheet-filter').addEventListener('change', e => { state.sheet = e.target.value; render(); });
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; render(); });
+render();
+
+const root = document.documentElement;
+try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (e) {}
+document.getElementById('theme-btn').addEventListener('click', () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+});
+
+const links = [...document.querySelectorAll('nav.side a')];
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+}), { rootMargin: '-30% 0px -60% 0px' });
+['top', 'req', 'mes', 'df', 'result'].forEach(id => io.observe(document.getElementById(id)));
+</script>
+</body>
+</html>
